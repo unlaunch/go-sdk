@@ -1,18 +1,36 @@
 package client
 
+import "github.com/unlaunch/go-sdk/unlaunchio/util/logger"
+
+// UnlaunchFactory ...
 type UnlaunchFactory struct {
-	Client *UnlaunchClient
+	sdkKey string
+	config *UnlaunchClientConfig
+	logger logger.Interface
 }
 
-func NewUnlaunchClientFactory(config *UnlaunchClientConfig) *UnlaunchFactory {
-	client := &UnlaunchClient{
-		SDKKey:          config.SDKKey,
-		PollingInterval: config.PollingInterval,
-		HTTPTimeout:     config.HTTPTimeout,
+// NewUnlaunchClientFactory is a factory
+func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*UnlaunchFactory, error) {
+
+	if cfg == nil {
+		cfg = DefaultConfig()
 	}
 
+	logging := logger.NewLogger(cfg.loggerConfig)
+
 	return &UnlaunchFactory{
-		Client: client,
+		sdkKey: SDKKey,
+		config: cfg,
+		logger: logging,
+	}, nil
+}
+
+func (f *UnlaunchFactory) Client() *UnlaunchClient {
+	return &UnlaunchClient{
+		sdkKey:          f.sdkKey,
+		pollingInterval: f.config.pollingInterval,
+		httpTimeout: f.config.httpTimeout,
+		logger: f.logger,
 	}
 
 }
