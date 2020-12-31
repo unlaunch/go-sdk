@@ -1,0 +1,56 @@
+{
+  "status": {
+    "code": "200"
+  },
+  "data": {
+    "projectName": "GoTest",
+    "envName": "Production",
+    "flags": [
+      {
+        "id": 9,
+        "key": "initech-login",
+        "variations": [
+          {
+            "id": 18,
+            "key": "ON_DEFAULT_RULE",
+            "name": null,
+            "configs": {},
+            "order": 1,
+            "allowList": ""
+          },
+          {
+            "id": 17,
+            "key": "off",
+            "name": null,
+            "configs": {},
+            "order": 2,
+            "allowList": "user123, user455"
+          }
+        ],
+        "type": "string",
+        "state": "ACTIVE",
+        "offVariation": 17,
+        "rules": [
+          {
+            "id": 20,
+            "isDefault": true,
+            "delete": false,
+            "conditions": [],
+            "splits": [
+              {
+                "id": 36,
+                "variationId": 18,
+                "rolloutPercentage": 100,
+                "delete": false
+              }
+            ],
+            "priority": 0
+          }
+        ],
+        "clientSideAccess": false,
+        "prerequisiteFlags": {},
+        "targetUsers": null
+      }
+    ]
+  }
+}
