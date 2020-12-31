@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"io/ioutil"
+	"strconv"
 	"testing"
 )
 
@@ -79,3 +80,35 @@ func TestWhen_FlagIsEnabledAndUserIsInAllowList_Then_AllowListVariationIsReturne
 		t.Error("Variation Id was not 17")
 	}
 }
+
+func TestWhen_RollOutIsEnabled_Then_VariationIsAllocatedByBucketing(t *testing.T) {
+	var mockedDisabledFlag, _ = ioutil.ReadFile("../testdata/enabledFlagWithRollout.json")
+	var responseDto dtos.Feature
+	err := json.Unmarshal(mockedDisabledFlag, &responseDto)
+
+	if err != nil {
+		t.Error("Error parsing mock flag JSON ", err)
+	}
+
+	countOn, countOff := 0, 0
+	for i:= 0; i<50; i++ {
+		ulf, err := Evaluate(&responseDto, "user-" + strconv.Itoa(i), nil)
+
+		if err != nil {
+			t.Error("evaluation threw error ", err)
+		}
+
+		if ulf.Variation.Key == "on" {
+			countOn++
+		} else if ulf.Variation.Key == "off" {
+			countOff++
+		} else {
+			t.Error("Only on and off variation were expected.")
+		}
+	}
+
+	if countOn < 15 || countOff < 15 {
+		t.Error(fmt.Sprintf("Variation bucketing distribution was not even. on: %d, off: %d", countOn, countOff))
+	}
+}
+

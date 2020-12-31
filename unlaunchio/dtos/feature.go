@@ -17,22 +17,43 @@ func (f *Feature) Enabled() bool {
 	}
 }
 
+func (f *Feature) DefaultRule() *Rule {
+	for _, rule := range f.Rules {
+		if rule.IsDefault {
+			return &rule
+		}
+	}
+
+	// TODO log error; flag format is wrong
+	return nil
+}
+
+func (f *Feature) VariationById(id int) *Variation {
+	for _, variation := range f.Variations {
+		if id == variation.Id {
+			return &variation
+		}
+	}
+	return nil
+
+}
+
 type Variation struct {
-	Id 	int
-	Key string
-	AllowList string
+	Id 			int
+	Key 		string
+	AllowList 	string
 }
 
 type Rollout struct {
-	Id int
-	VariationId int
-	RolloutPercentage int
+	Id 					int
+	VariationId 		int
+	RolloutPercentage 	int
 }
 
 type Rule struct {
-	IsDefault bool
-	Priority uint64
-	Rollout []Rollout `json:"splits"`
+	IsDefault 	bool
+	Priority 	uint64
+	Rollout 	[]Rollout `json:"splits"`
 }
 
 type Data struct {
@@ -46,7 +67,7 @@ type TopLevelEnvelope struct {
 }
 
 type UnlaunchFeature struct {
-	Feature string
-	Variation *Variation
+	Feature 		string
+	Variation 		*Variation
 	EvaluationReason string
 }

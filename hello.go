@@ -8,7 +8,7 @@ import (
 
 func main() {
 	config := client.DefaultConfig()
-	factory, err := client.NewUnlaunchClientFactory("<apikey>", config)
+	factory, err := client.NewUnlaunchClientFactory("prod-sdk-e40d9c6a-8bfb-414f-8737-353c5bec2db8", config)
 
 	if err != nil {
 		fmt.Printf("Unable to initialize Unlaunch Client because there was an error %s\n", err)
