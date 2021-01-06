@@ -51,5 +51,6 @@ func (c *UnlaunchClient) Variation(
 }
 
 func (c *UnlaunchClient) BlockUntilReady(timeout uint32) error {
+	c.FeatureStore.Ready()
 	return nil
 }

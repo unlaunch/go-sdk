@@ -4,17 +4,19 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/http"
+	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
+	"sync"
 )
 
-type HttpStore struct {
-	service http.ServiceClient
-	logger  logger.Interface
+type HttpFeatureStore struct {
+	service  util.HttpClient
+	logger   logger.Interface
 	features map[string]dtos.Feature
 }
 
-func (h *HttpStore) fetchFlags() ([]byte, error) {
+func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
+	defer wg.Done()
 	res, err := h.service.Get("/api/v1/flags")
 
 	if err != nil {
@@ -41,18 +43,20 @@ func (h *HttpStore) fetchFlags() ([]byte, error) {
 	return res, nil
 }
 
-type FeatureStore interface {
-	GetFeature(key string) (*dtos.Feature, error)
-}
-
-func (h *HttpStore) GetFeature(key string) (*dtos.Feature, error) {
-
+func (h *HttpFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	if feature, ok := h.features[key]; ok {
 		return &feature, nil
 	} else {
 		return nil, errors.New("flag was not found in local storage")
 	}
 }
+
+func (h *HttpFeatureStore) Ready()  {
+	wg.Wait()
+}
+
+
+var wg sync.WaitGroup
 
 func NewHTTPStore(
 	sdkKey string,
@@ -62,13 +66,14 @@ func NewHTTPStore(
 	logger logger.Interface,
 ) FeatureStore {
 
-	httpStore := &HttpStore{
-		service: http.NewHTTPClient(sdkKey, host, httpTimeout, logger),
-		logger:  logger,
+	httpStore := &HttpFeatureStore{
+		service:  util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
+		logger:   logger,
 		features: make(map[string]dtos.Feature),
 	}
 
-	httpStore.fetchFlags()
+	wg.Add(1)
+	go httpStore.fetchFlags()
 
 	return httpStore
 }

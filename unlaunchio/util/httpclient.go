@@ -1,4 +1,4 @@
-package http
+package util
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ import (
 )
 
 // Client ...
-type ServiceClient interface {
+type HttpClient interface {
 	Get(service string) ([]byte, error)
 	Post(service string, body []byte, headers map[string]string) error
 }
@@ -28,7 +28,7 @@ func NewHTTPClient(
 	host string,
 	timeout int,
 	logger logger.Interface,
-	) ServiceClient {
+	) HttpClient {
 
 	client := &http.Client{
 		Timeout: time.Duration(timeout) * time.Second,
@@ -80,6 +80,8 @@ func (c *Client) Get(path string) ([]byte, error) {
 		}
 	}
 }
+
+
 
 func (c *Client) Post(service string, body []byte, headers map[string]string) error {
 	return nil
