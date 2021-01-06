@@ -13,8 +13,8 @@ type UnlaunchClientConfig struct {
 // DefaultConfig ...
 func DefaultConfig() *UnlaunchClientConfig {
 	return &UnlaunchClientConfig{
-		pollingInterval: 30,
-		httpTimeout:     30,
+		pollingInterval: 15000,
+		httpTimeout:     1000,
 		host:			"https://api.unlaunch.io",
 		loggerConfig:    nil,
 	}

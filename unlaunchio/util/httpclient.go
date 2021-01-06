@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-// Client ...
-type HttpClient interface {
+// HTTPClient ...
+type HTTPService interface {
 	Get(service string) ([]byte, error)
 	Post(service string, body []byte, headers map[string]string) error
 }
 
-type Client struct {
+type HTTPClient struct {
 	host        string
 	httpClient *http.Client
 	headers    map[string]string
@@ -28,13 +28,13 @@ func NewHTTPClient(
 	host string,
 	timeout int,
 	logger logger.Interface,
-	) HttpClient {
+	) HTTPService {
 
 	client := &http.Client{
-		Timeout: time.Duration(timeout) * time.Second,
+		Timeout: time.Duration(timeout) * time.Millisecond,
 	}
 
-	return &Client{
+	return &HTTPClient{
 		host: host,
 		httpClient: client,
 		logger: logger,
@@ -42,7 +42,7 @@ func NewHTTPClient(
 	}
 }
 
-func (c *Client) Get(path string) ([]byte, error) {
+func (c *HTTPClient) Get(path string) ([]byte, error) {
 	apiEndpoint := c.host + path
 	c.logger.Debug("[HTTP GET] ", apiEndpoint)
 
@@ -83,6 +83,6 @@ func (c *Client) Get(path string) ([]byte, error) {
 
 
 
-func (c *Client) Post(service string, body []byte, headers map[string]string) error {
+func (c *HTTPClient) Post(service string, body []byte, headers map[string]string) error {
 	return nil
 }

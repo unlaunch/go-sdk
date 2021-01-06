@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/unlaunch/go-sdk/unlaunchio/client"
 )
@@ -22,6 +23,14 @@ func main() {
 	}
 
 	variation := unlaunchClient.Variation("adadadada-hi", "user123", nil)
-	fmt.Printf("The variation for feature is %s", variation)
+	fmt.Printf("The variation for feature is %s\n", variation)
+	
+	go func() {
+		variation := unlaunchClient.Variation("adadadada-hi", "user123", nil)
+		fmt.Printf("- The variation for feature is %s\n", variation)
+
+	}()
+
+	time.Sleep(1 * time.Second)
 
 }

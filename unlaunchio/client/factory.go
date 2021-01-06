@@ -38,7 +38,7 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		sdkKey:          f.sdkKey,
 		pollingInterval: f.cfg.pollingInterval,
 		httpTimeout:     f.cfg.httpTimeout,
-		FeatureStore:    store.NewHTTPStore(f.sdkKey, f.cfg.host, f.cfg.httpTimeout, f.cfg.pollingInterval, f.logger),
+		FeatureStore:    store.NewHTTPFeatureStore(f.sdkKey, f.cfg.host, f.cfg.httpTimeout, f.cfg.pollingInterval, f.logger),
 		logger:          f.logger,
 	}
 
