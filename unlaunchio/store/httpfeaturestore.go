@@ -35,7 +35,7 @@ func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
 		h.logger.Error("error fetching flags ", err)
 	}
 
-	//h.logger.Debug("responseDto ", string(res))
+	h.logger.Debug("responseDto ", string(res))
 
 	var responseDto dtos.TopLevelEnvelope
 	err = json.Unmarshal(res, &responseDto)
@@ -45,12 +45,18 @@ func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
 		return nil, err
 	}
 
+
+
+
 	h.logger.Debug("responseDto ", responseDto)
 
 	// Store features in the store/map
+	temp := make(map[string]dtos.Feature)
 	for _, feature := range responseDto.Data.Features {
-		h.features[feature.Key] = feature
+		temp[feature.Key] = feature
+
 	}
+	h.features = temp
 
 	return res, nil
 }
@@ -86,7 +92,7 @@ func NewHTTPFeatureStore(
 		service:  util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
 		logger:   logger,
 		initialSyncComplete: false,
-		features: make(map[string]dtos.Feature),
+		features: nil,
 	}
 
 	wg.Add(1)

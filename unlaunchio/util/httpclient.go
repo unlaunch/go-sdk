@@ -49,8 +49,6 @@ func (c *HTTPClient) Get(path string) ([]byte, error) {
 	req, _ := http.NewRequest("GET", apiEndpoint, nil)
 	req.Header.Add("X-Api-Key", c.sdkKey)
 	req.Header.Add("Content-Type", "application/json")
-	// X-Api-Key
-
 	resp, err := c.httpClient.Do(req)
 
 	if err != nil {

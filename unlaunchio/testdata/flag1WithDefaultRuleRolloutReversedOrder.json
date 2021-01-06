@@ -1,0 +1,48 @@
+{
+  "id": 9,
+  "key": "flag-with-rollout",
+  "variations": [
+    {
+      "id": 18,
+      "key": "on",
+      "configs": {},
+      "order": 1,
+      "allowList": ""
+    },
+    {
+      "id": 17,
+      "key": "off",
+      "configs": {},
+      "order": 2,
+      "allowList": ""
+    }
+  ],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 18,
+  "rules": [
+    {
+      "id": 20,
+      "isDefault": true,
+      "delete": false,
+      "conditions": [],
+      "splits": [
+        {
+          "id": 38,
+          "variationId": 17,
+          "rolloutPercentage": 50,
+          "delete": false
+        },
+        {
+          "id": 37,
+          "variationId": 18,
+          "rolloutPercentage": 50,
+          "delete": false
+        }
+      ],
+      "priority": 0
+    }
+  ],
+  "prerequisiteFlags": {},
+  "targetUsers": null
+}

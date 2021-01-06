@@ -24,9 +24,9 @@ func main() {
 
 	variation := unlaunchClient.Variation("adadadada-hi", "user123", nil)
 	fmt.Printf("The variation for feature is %s\n", variation)
-	
+
 	go func() {
-		variation := unlaunchClient.Variation("adadadada-hi", "user123", nil)
+		variation := unlaunchClient.Variation("adadadada-hi", "user123631", nil)
 		fmt.Printf("- The variation for feature is %s\n", variation)
 
 	}()
