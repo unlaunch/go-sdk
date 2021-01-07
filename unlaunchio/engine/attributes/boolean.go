@@ -1,5 +1,4 @@
-package engine
-
+package attributes
 
 func BooleanApply(value bool, userValue bool, operator string) bool {
 	if operator == "EQ" {
@@ -9,7 +8,7 @@ func BooleanApply(value bool, userValue bool, operator string) bool {
 	}
 
 	// Todo log invalid op warning
-	return false;
+	return false
 }
 
 func applyEquals(value bool, userValue bool) bool {
