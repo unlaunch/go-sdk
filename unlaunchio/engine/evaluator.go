@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"math"
+	"strconv"
 	"strings"
 )
+
 
 func Evaluate(feature *dtos.Feature, identity string, attributes *map[string]interface{}) (*dtos.UnlaunchFeature, error) {
 	result := new(dtos.UnlaunchFeature)
@@ -69,21 +71,44 @@ func variationIfUserInAllowList(f *dtos.Feature, identity string) *dtos.Variatio
 	return nil
 }
 
-
-
 func matchTargetingRules(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
+
+	if attributes == nil {
+		return nil
+	}
+
+	for _, rule := range feature.Rules {
+		for _, condition := range rule.Conditions {
+
+			if attr, ok := (*attributes)[condition.Attribute]; ok {
+				if condition.Type == "boolean" {
+					v, _ := strconv.ParseBool(condition.Value)
+					if BooleanApply(v, attr.(bool), condition.Op) {
+						return getRuleVariation(&rule, feature, identity)
+					}
+				}
+
+			}
+		}
+
+	}
+
 	return nil
 }
 
 func defaultRule(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
 	defaultRule := feature.DefaultRule()
+	return getRuleVariation(defaultRule, feature, identity)
+}
+
+func getRuleVariation(rule *dtos.Rule, feature *dtos.Feature, identity string) *dtos.Variation {
 	calculatedBucket := bucket(feature.Key + identity)
 
 	// Return Default Rule if targeting rules don't match
-	if len(defaultRule.Rollout) == 1 && defaultRule.Rollout[0].RolloutPercentage == 100 {
-		return variationById(defaultRule.Rollout[0].VariationId, feature)
+	if len(rule.Rollout) == 1 && rule.Rollout[0].RolloutPercentage == 100 {
+		return variationById(rule.Rollout[0].VariationId, feature)
 	} else {
-		vId, _ := foo(defaultRule, calculatedBucket)
+		vId, _ := foo(rule, calculatedBucket)
 		return feature.VariationById(vId)
 	}
 

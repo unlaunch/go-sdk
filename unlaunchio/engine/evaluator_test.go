@@ -6,6 +6,7 @@ import (
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"io/ioutil"
 	"math/rand"
+	"sort"
 	"strconv"
 	"testing"
 )
@@ -87,16 +88,25 @@ func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t 
 	var responseDto dtos.Feature
 	json.Unmarshal(mockedDisabledFlag, &responseDto)
 
+		sort.Sort(dtos.ByRulePriority(responseDto.Rules))
+		for _, rule := range responseDto.Rules {
+			sort.Sort(dtos.ByVariationId(rule.Rollout))
+		}
+
+
 	// This is the same flag as above but splits are unordered
 	var mockedDisabledFlagReversed, _ = ioutil.ReadFile("../testdata/flag1WithDefaultRuleRolloutReversedOrder.json")
 	var responseDtoReversed dtos.Feature
 	json.Unmarshal(mockedDisabledFlagReversed, &responseDtoReversed)
 
 	for i := 0; i<10; i++ {
-		ulf, _ := Evaluate(&responseDto, "user-"+ strconv.Itoa(rand.Intn(1000)), nil)
+		userId := "user-"+ strconv.Itoa(rand.Intn(1000))
+		ulf, _ := Evaluate(&responseDto, userId, nil)
 		variation := ulf.Variation.Key
-		ulf, _ = Evaluate(&responseDto, "user123", nil)
-		ulf, _ = Evaluate(&responseDtoReversed, "user123", nil)
+
+		// Evaluate using both ordered and (reversed) order data
+		// Result should be the same
+		ulf, _ = Evaluate(&responseDtoReversed, userId, nil)
 
 		if variation != ulf.Variation.Key {
 			t.Error(fmt.Sprintf("expected variation %s actual variation %s on the iteration #%d",

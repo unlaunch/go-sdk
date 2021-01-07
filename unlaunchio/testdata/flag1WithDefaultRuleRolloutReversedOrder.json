@@ -3,17 +3,17 @@
   "key": "flag-with-rollout",
   "variations": [
     {
-      "id": 18,
-      "key": "on",
-      "configs": {},
-      "order": 1,
-      "allowList": ""
-    },
-    {
       "id": 17,
       "key": "off",
       "configs": {},
       "order": 2,
+      "allowList": ""
+    },
+    {
+      "id": 18,
+      "key": "on",
+      "configs": {},
+      "order": 1,
       "allowList": ""
     }
   ],
@@ -27,6 +27,7 @@
       "delete": false,
       "conditions": [],
       "splits": [
+
         {
           "id": 38,
           "variationId": 17,

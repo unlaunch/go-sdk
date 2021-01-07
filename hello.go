@@ -22,7 +22,10 @@ func main() {
 		fmt.Printf("Unlaunch Client isn't ready %s\n", err)
 	}
 
-	variation := unlaunchClient.Variation("adadadada-hi", "user123", nil)
+	attributes := make(map[string]interface{})
+	attributes["showBalance"] = true
+
+	variation := unlaunchClient.Variation("adadadada-hi", "user123", &attributes)
 	fmt.Printf("The variation for feature is %s\n", variation)
 
 	go func() {

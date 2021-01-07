@@ -50,10 +50,32 @@ type Rollout struct {
 	RolloutPercentage 	int
 }
 
+type ByVariationId []Rollout
+
+func (ro ByVariationId) Len() int           { return len(ro) }
+func (ro ByVariationId) Less(i, j int) bool { return ro[i].VariationId < ro[j].VariationId }
+func (ro ByVariationId) Swap(i, j int)      { ro[i], ro[j] = ro[j], ro[i] }
+
 type Rule struct {
 	IsDefault 	bool
-	Priority 	uint64
+	Priority 	int
 	Rollout 	[]Rollout `json:"splits"`
+	Conditions  []Condition
+}
+
+type ByRulePriority []Rule
+
+func (r ByRulePriority) Len() int           { return len(r) }
+func (r ByRulePriority) Less(i, j int) bool { return r[i].Priority < r[j].Priority }
+func (r ByRulePriority) Swap(i, j int)      { r[i], r[j] = r[j], r[i] }
+
+type Condition struct {
+	Id int
+	AttributeId int
+	Attribute string
+	Type string
+	Value string
+	Op string
 }
 
 type Data struct {
