@@ -1,0 +1,233 @@
+{
+  "id": 19,
+  "key": "number-types-flag",
+  "name": "number types flag",
+  "description": "",
+  "variations": [
+    {
+      "id": 48,
+      "key": "lte",
+      "name": null,
+      "description": "",
+      "color": "#5BA393",
+      "configs": {},
+      "order": 6,
+      "allowList": null
+    },
+    {
+      "id": 46,
+      "key": "gte",
+      "name": null,
+      "description": "",
+      "color": "#F07F5A",
+      "configs": {},
+      "order": 5,
+      "allowList": null
+    },
+    {
+      "id": 50,
+      "key": "defvar",
+      "name": null,
+      "description": "",
+      "color": "#69A35B",
+      "configs": {},
+      "order": 7,
+      "allowList": null
+    },
+    {
+      "id": 45,
+      "key": "gt",
+      "name": null,
+      "description": "",
+      "color": "#4F7AF0",
+      "configs": {},
+      "order": 3,
+      "allowList": null
+    },
+    {
+      "id": 49,
+      "key": "lt",
+      "name": null,
+      "description": "",
+      "color": "#FFD66E",
+      "configs": {},
+      "order": 4,
+      "allowList": null
+    },
+    {
+      "id": 51,
+      "key": "eq",
+      "name": null,
+      "description": "",
+      "color": "#F0C24F",
+      "configs": {},
+      "order": 1,
+      "allowList": null
+    },
+    {
+      "id": 47,
+      "key": "defrule",
+      "name": null,
+      "description": "",
+      "color": "#153BA3",
+      "configs": {},
+      "order": 2,
+      "allowList": null
+    }
+  ],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 50,
+  "rules": [
+    {
+      "id": 55,
+      "isDefault": true,
+      "delete": false,
+      "conditions": [],
+      "splits": [
+        {
+          "id": 78,
+          "variationId": 47,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 0
+    },
+    {
+      "id": 57,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 21,
+          "attributeId": 8,
+          "attribute": "numberAttr",
+          "type": "number",
+          "value": "-50",
+          "op": "LTE",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 80,
+          "variationId": 48,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 5
+    },
+    {
+      "id": 59,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 23,
+          "attributeId": 8,
+          "attribute": "numberAttr",
+          "type": "number",
+          "value": "50",
+          "op": "GTE",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 82,
+          "variationId": 46,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 3
+    },
+    {
+      "id": 56,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 20,
+          "attributeId": 8,
+          "attribute": "numberAttr",
+          "type": "number",
+          "value": "1",
+          "op": "EQ",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 79,
+          "variationId": 51,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 1
+    },
+    {
+      "id": 60,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 24,
+          "attributeId": 8,
+          "attribute": "numberAttr",
+          "type": "number",
+          "value": "-100",
+          "op": "LT",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 83,
+          "variationId": 49,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 4
+    },
+    {
+      "id": 58,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 22,
+          "attributeId": 8,
+          "attribute": "numberAttr",
+          "type": "number",
+          "value": "100",
+          "op": "GT",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 81,
+          "variationId": 45,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 2
+    }
+  ],
+  "enviornments": null,
+  "createdAt": 1610060544334,
+  "lastModifiedAt": 1610060544334,
+  "clientSideAccess": false,
+  "archived": false,
+  "creator": "Umer Mansoor",
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}

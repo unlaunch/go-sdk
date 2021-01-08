@@ -19,7 +19,7 @@ type UnlaunchClient struct {
 func (c *UnlaunchClient) Variation(
 	featureKey string,
 	identity string,
-	attributes *map[string]interface{},
+	attributes map[string]interface{},
 	) string {
 	if featureKey == "" {
 		c.logger.Error("feature key cannot be empty")
@@ -38,7 +38,7 @@ func (c *UnlaunchClient) Variation(
 		return "control"
 	}
 
-	ulFeature, err := engine.Evaluate(feature, identity, attributes)
+	ulFeature, err := engine.Evaluate(feature, identity, &attributes)
 
 	if err != nil {
 		c.logger.Error("error evaluating flag: ", err)

@@ -1,0 +1,108 @@
+{
+  "id": 20,
+  "key": "boolean-types-flag",
+  "name": "when bootAttr not equals true, return offf",
+  "description": "",
+  "variations": [{
+    "id": 54,
+    "key": "off",
+    "name": null,
+    "description": "",
+    "color": "#153BA3",
+    "configs": {},
+    "order": 2,
+    "allowList": null
+  }, {
+    "id": 52,
+    "key": "defrule",
+    "name": null,
+    "description": "",
+    "color": "#4F7AF0",
+    "configs": {},
+    "order": 3,
+    "allowList": null
+  }, {
+    "id": 55,
+    "key": "defvar",
+    "name": null,
+    "description": "",
+    "color": "#FFD66E",
+    "configs": {},
+    "order": 4,
+    "allowList": null
+  }, {
+    "id": 53,
+    "key": "on",
+    "name": null,
+    "description": "",
+    "color": "#F0C24F",
+    "configs": {},
+    "order": 1,
+    "allowList": null
+  }],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 55,
+  "rules": [{
+    "id": 61,
+    "isDefault": true,
+    "delete": false,
+    "conditions": [],
+    "splits": [{
+      "id": 87,
+      "variationId": 52,
+      "rolloutPercentage": 100,
+      "delete": false
+    }],
+    "priority": 0
+  }, {
+    "id": 64,
+    "isDefault": false,
+    "delete": false,
+    "conditions": [{
+      "id": 26,
+      "attributeId": 9,
+      "attribute": "boolAttr",
+      "type": "boolean",
+      "value": "true",
+      "op": "EQ",
+      "delete": false
+    }],
+    "splits": [{
+      "id": 89,
+      "variationId": 54,
+      "rolloutPercentage": 100,
+      "delete": false
+    }],
+    "priority": 1
+  }, {
+    "id": 63,
+    "isDefault": false,
+    "delete": false,
+    "conditions": [{
+      "id": 25,
+      "attributeId": 9,
+      "attribute": "boolAttr",
+      "type": "boolean",
+      "value": "false",
+      "op": "EQ",
+      "delete": false
+    }],
+    "splits": [{
+      "id": 86,
+      "variationId": 53,
+      "rolloutPercentage": 100,
+      "delete": false
+    }],
+    "priority": 2
+  }],
+  "enviornments": null,
+  "createdAt": 1610063180977,
+  "lastModifiedAt": 1610063180977,
+  "clientSideAccess": false,
+  "archived": false,
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}

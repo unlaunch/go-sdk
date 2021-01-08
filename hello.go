@@ -9,7 +9,8 @@ import (
 
 func main() {
 	config := client.DefaultConfig()
-	factory, err := client.NewUnlaunchClientFactory("prod-sdk-e40d9c6a-8bfb-414f-8737-353c5bec2db8", config)
+	flagKey := "boolean-types-flag"
+	factory, err := client.NewUnlaunchClientFactory("prod-server-51028624-eb18-4bc7-986f-5a0de8084589", config)
 
 	if err != nil {
 		fmt.Printf("Unable to initialize Unlaunch Client because there was an error %s\n", err)
@@ -23,17 +24,18 @@ func main() {
 	}
 
 	attributes := make(map[string]interface{})
-	attributes["showBalance"] = true
+	attributes["boolAttr"] = true
 
-	variation := unlaunchClient.Variation("adadadada-hi", "user123", &attributes)
+	variation := unlaunchClient.Variation(flagKey, "user123", attributes)
 	fmt.Printf("The variation for feature is %s\n", variation)
 
 	go func() {
-		variation := unlaunchClient.Variation("adadadada-hi", "user123631", nil)
+		variation := unlaunchClient.Variation(flagKey, "user123631", nil)
 		fmt.Printf("- The variation for feature is %s\n", variation)
 
 	}()
 
 	time.Sleep(1 * time.Second)
+	fmt.Println("bye")
 
 }

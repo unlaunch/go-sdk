@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	attributes2 "github.com/unlaunch/go-sdk/unlaunchio/engine/attributes"
+	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"math"
 	"strconv"
 	"strings"
@@ -80,23 +81,25 @@ func matchTargetingRules(feature *dtos.Feature, identity string, attributes *map
 
 	for _, rule := range feature.Rules {
 		for _, condition := range rule.Conditions {
-
 			if attr, ok := (*attributes)[condition.Attribute]; ok {
 				if condition.Type == "boolean" {
 					v, _ := strconv.ParseBool(condition.Value)
-					if attributes2.BooleanApply(v, attr.(bool), condition.Op) {
+					if util.IsBool(attr) && attributes2.BooleanApply(v, attr.(bool), condition.Op) {
 						return getRuleVariation(&rule, feature, identity)
 					}
 				} else if condition.Type == "string" {
-					if attributes2.StringApply(condition.Value, attr.(string), condition.Op) {
+					if util.IsString(attr) && attributes2.StringApply(condition.Value, attr.(string), condition.Op) {
 						return getRuleVariation(&rule, feature, identity)
 					}
-
+				} else if condition.Type == "number" {
+					v, _ := strconv.ParseFloat(condition.Value, 64)
+					uVal, err := util.ConvertToFloat64(attr)
+					if err == nil && attributes2.NumberApply(v, uVal, condition.Op) {
+						return getRuleVariation(&rule, feature, identity)
+					}
 				}
-
 			}
 		}
-
 	}
 
 	return nil

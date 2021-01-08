@@ -1,0 +1,88 @@
+{
+  "id": 21,
+  "key": "boolean-not-equals-type",
+  "name": "boolean not equals type",
+  "description": "",
+  "variations": [{
+    "id": 58,
+    "key": "onn",
+    "name": null,
+    "description": "",
+    "color": "#F0C24F",
+    "configs": {},
+    "order": 1,
+    "allowList": null
+  }, {
+    "id": 57,
+    "key": "offf",
+    "name": null,
+    "description": "",
+    "color": "#153BA3",
+    "configs": {},
+    "order": 2,
+    "allowList": null
+  }, {
+    "id": 59,
+    "key": "defrule",
+    "name": null,
+    "description": "",
+    "color": "#4F7AF0",
+    "configs": {},
+    "order": 3,
+    "allowList": null
+  }, {
+    "id": 56,
+    "key": "defvar",
+    "name": null,
+    "description": "",
+    "color": "#FFD66E",
+    "configs": {},
+    "order": 4,
+    "allowList": null
+  }],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 56,
+  "rules": [{
+    "id": 67,
+    "isDefault": false,
+    "delete": false,
+    "conditions": [{
+      "id": 27,
+      "attributeId": 9,
+      "attribute": "boolAttr",
+      "type": "boolean",
+      "value": "true",
+      "op": "NEQ",
+      "delete": false
+    }],
+    "splits": [{
+      "id": 95,
+      "variationId": 57,
+      "rolloutPercentage": 100,
+      "delete": false
+    }],
+    "priority": 2
+  }, {
+    "id": 66,
+    "isDefault": true,
+    "delete": false,
+    "conditions": [],
+    "splits": [{
+      "id": 92,
+      "variationId": 59,
+      "rolloutPercentage": 100,
+      "delete": false
+    }],
+    "priority": 0
+  }],
+  "enviornments": null,
+  "createdAt": 1610064490992,
+  "lastModifiedAt": 1610064490992,
+  "clientSideAccess": false,
+  "archived": false,
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}

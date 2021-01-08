@@ -1,0 +1,152 @@
+{
+  "id": 18,
+  "key": "string-types-flag",
+  "name": "string types flag",
+  "description": "",
+  "variations": [
+    {
+      "id": 38,
+      "key": "eq",
+      "name": null,
+      "description": "",
+      "color": "#F0C24F",
+      "configs": {},
+      "order": 1,
+      "allowList": null
+    },
+    {
+      "id": 39,
+      "key": "con",
+      "name": null,
+      "description": "",
+      "color": "#69A35B",
+      "configs": {},
+      "order": 7,
+      "allowList": null
+    },
+    {
+      "id": 40,
+      "key": "lte",
+      "name": null,
+      "description": "",
+      "color": "#FFD66E",
+      "configs": {},
+      "order": 4,
+      "allowList": null
+    },
+    {
+      "id": 41,
+      "key": "neq",
+      "name": null,
+      "description": "",
+      "color": "#153BA3",
+      "configs": {},
+      "order": 2,
+      "allowList": null
+    },
+    {
+      "id": 36,
+      "key": "lt",
+      "name": null,
+      "description": "",
+      "color": "#4F7AF0",
+      "configs": {},
+      "order": 3,
+      "allowList": null
+    },
+    {
+      "id": 37,
+      "key": "gt",
+      "name": null,
+      "description": "",
+      "color": "#F07F5A",
+      "configs": {},
+      "order": 5,
+      "allowList": null
+    },
+    {
+      "id": 44,
+      "key": "def",
+      "name": "",
+      "description": "",
+      "color": "#A33188",
+      "configs": {},
+      "order": 9,
+      "allowList": null
+    },
+    {
+      "id": 42,
+      "key": "ncon",
+      "name": null,
+      "description": "",
+      "color": "#F05BCD",
+      "configs": {},
+      "order": 8,
+      "allowList": null
+    },
+    {
+      "id": 43,
+      "key": "gte",
+      "name": null,
+      "description": "",
+      "color": "#5BA393",
+      "configs": {},
+      "order": 6,
+      "allowList": null
+    }
+  ],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 44,
+  "rules": [
+    {
+      "id": 50,
+      "isDefault": true,
+      "delete": false,
+      "conditions": [],
+      "splits": [
+        {
+          "id": 68,
+          "variationId": 44,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 0
+    },
+    {
+      "id": 52,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 18,
+          "attributeId": 7,
+          "attribute": "strAttr",
+          "type": "string",
+          "value": "cisco",
+          "op": "NEW",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 75,
+          "variationId": 40,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 2
+    }
+  ],
+  "enviornments": null,
+  "createdAt": 1610052266194,
+  "lastModifiedAt": 1610052266194,
+  "clientSideAccess": false,
+  "archived": false,
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}

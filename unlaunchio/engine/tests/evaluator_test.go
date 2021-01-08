@@ -1,9 +1,10 @@
-package engine
+package tests
 
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
+	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"io/ioutil"
 	"math/rand"
 	"sort"
@@ -13,7 +14,7 @@ import (
 
 func TestWhen_FlagIsDisabled_Then_DefaultVariationIsReturned(t *testing.T) {
 
-	var mockedDisabledFlag, _ = ioutil.ReadFile("../testdata/disabledFlag.json")
+	var mockedDisabledFlag, _ = ioutil.ReadFile("../../testdata/disabledFlag.json")
 	var responseDto dtos.TopLevelEnvelope
 	err := json.Unmarshal(mockedDisabledFlag, &responseDto)
 
@@ -21,7 +22,7 @@ func TestWhen_FlagIsDisabled_Then_DefaultVariationIsReturned(t *testing.T) {
 		t.Error("Error parsing mock flag JSON ", err)
 	}
 
-	ulf, err := Evaluate(&responseDto.Data.Features[0], "d", nil)
+	ulf, err := engine.Evaluate(&responseDto.Data.Features[0], "d", nil)
 
 	if err != nil {
 		t.Error("evaluation threw error ", err)
@@ -37,7 +38,7 @@ func TestWhen_FlagIsDisabled_Then_DefaultVariationIsReturned(t *testing.T) {
 }
 
 func TestWhen_FlagIsEnabled_Then_DefaultRuleIsReturned(t *testing.T) {
-	var mockedDisabledFlag, _ = ioutil.ReadFile("../testdata/enabledFlagWithAllowList.json")
+	var mockedDisabledFlag, _ = ioutil.ReadFile("../../testdata/enabledFlagWithAllowList.json")
 	var responseDto dtos.TopLevelEnvelope
 	err := json.Unmarshal(mockedDisabledFlag, &responseDto)
 
@@ -45,7 +46,7 @@ func TestWhen_FlagIsEnabled_Then_DefaultRuleIsReturned(t *testing.T) {
 		t.Error("Error parsing mock flag JSON ", err)
 	}
 
-	ulf, err := Evaluate(&responseDto.Data.Features[0], "d", nil)
+	ulf, err := engine.Evaluate(&responseDto.Data.Features[0], "d", nil)
 
 	if err != nil {
 		t.Error("evaluation threw error ", err)
@@ -61,7 +62,7 @@ func TestWhen_FlagIsEnabled_Then_DefaultRuleIsReturned(t *testing.T) {
 }
 
 func TestWhen_FlagIsEnabledAndUserIsInAllowList_Then_AllowListVariationIsReturned(t *testing.T) {
-	var mockedDisabledFlag, _ = ioutil.ReadFile("../testdata/enabledFlagWithAllowList.json")
+	var mockedDisabledFlag, _ = ioutil.ReadFile("../../testdata/enabledFlagWithAllowList.json")
 	var responseDto dtos.TopLevelEnvelope
 	err := json.Unmarshal(mockedDisabledFlag, &responseDto)
 
@@ -69,7 +70,7 @@ func TestWhen_FlagIsEnabledAndUserIsInAllowList_Then_AllowListVariationIsReturne
 		t.Error("Error parsing mock flag JSON ", err)
 	}
 
-	ulf, err := Evaluate(&responseDto.Data.Features[0], "user123", nil)
+	ulf, err := engine.Evaluate(&responseDto.Data.Features[0], "user123", nil)
 
 	if err != nil {
 		t.Error("evaluation threw error ", err)
@@ -84,7 +85,7 @@ func TestWhen_FlagIsEnabledAndUserIsInAllowList_Then_AllowListVariationIsReturne
 }
 
 func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t *testing.T) {
-	var mockedDisabledFlag, _ = ioutil.ReadFile("../testdata/flag1WithDefaultRuleRollout.json")
+	var mockedDisabledFlag, _ = ioutil.ReadFile("../../testdata/flag1WithDefaultRuleRollout.json")
 	var responseDto dtos.Feature
 	json.Unmarshal(mockedDisabledFlag, &responseDto)
 
@@ -95,18 +96,18 @@ func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t 
 
 
 	// This is the same flag as above but splits are unordered
-	var mockedDisabledFlagReversed, _ = ioutil.ReadFile("../testdata/flag1WithDefaultRuleRolloutReversedOrder.json")
+	var mockedDisabledFlagReversed, _ = ioutil.ReadFile("../../testdata/flag1WithDefaultRuleRolloutReversedOrder.json")
 	var responseDtoReversed dtos.Feature
 	json.Unmarshal(mockedDisabledFlagReversed, &responseDtoReversed)
 
 	for i := 0; i<10; i++ {
 		userId := "user-"+ strconv.Itoa(rand.Intn(1000))
-		ulf, _ := Evaluate(&responseDto, userId, nil)
+		ulf, _ := engine.Evaluate(&responseDto, userId, nil)
 		variation := ulf.Variation.Key
 
 		// Evaluate using both ordered and (reversed) order data
 		// Result should be the same
-		ulf, _ = Evaluate(&responseDtoReversed, userId, nil)
+		ulf, _ = engine.Evaluate(&responseDtoReversed, userId, nil)
 
 		if variation != ulf.Variation.Key {
 			t.Error(fmt.Sprintf("expected variation %s actual variation %s on the iteration #%d",
@@ -117,7 +118,7 @@ func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t 
 }
 
 func TestWhen_RollOutIsEnabled_Then_VariationIsAllocatedByBucketing(t *testing.T) {
-	var mockedDisabledFlag, _ = ioutil.ReadFile("../testdata/flag1WithDefaultRuleRollout.json")
+	var mockedDisabledFlag, _ = ioutil.ReadFile("../../testdata/flag1WithDefaultRuleRollout.json")
 	var responseDto dtos.Feature
 	err := json.Unmarshal(mockedDisabledFlag, &responseDto)
 
@@ -127,7 +128,7 @@ func TestWhen_RollOutIsEnabled_Then_VariationIsAllocatedByBucketing(t *testing.T
 
 	countOn, countOff := 0, 0
 	for i:= 0; i<50; i++ {
-		ulf, err := Evaluate(&responseDto, "user-" + strconv.Itoa(i), nil)
+		ulf, err := engine.Evaluate(&responseDto, "user-" + strconv.Itoa(i), nil)
 
 		if err != nil {
 			t.Error("evaluation threw error ", err)

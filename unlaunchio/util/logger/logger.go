@@ -23,27 +23,27 @@ type Logger struct {
 
 // Trace ...
 func (l *Logger) Trace(msg ...interface{}) {
-	l.traceLogger.Println(msg)
+	l.traceLogger.Println(msg...)
 }
 
 // Debug ...
 func (l *Logger) Debug(msg ...interface{}) {
-	l.debugLogger.Println(msg)
+	l.debugLogger.Println(msg...)
 }
 
 // Info ...
 func (l *Logger) Info(msg ...interface{}) {
-	l.infoLogger.Println(msg)
+	l.infoLogger.Println(msg...)
 }
 
 // Warning ...
 func (l *Logger) Warning(msg ...interface{}) {
-	l.warningLogger.Println(msg)
+	l.warningLogger.Println(msg...)
 }
 
 // Error ...
 func (l *Logger) Error(msg ...interface{}) {
-	l.errorLogger.Println(msg)
+	l.errorLogger.Println(msg...)
 }
 
 // NewLogger ...
