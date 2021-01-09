@@ -1,0 +1,137 @@
+{
+  "id": 24,
+  "key": "date-time-flag",
+  "name": "date time flag",
+  "description": "",
+  "variations": [
+    {
+      "id": 75,
+      "key": "defrule",
+      "name": null,
+      "description": "",
+      "color": "#FFD66E",
+      "configs": {},
+      "order": 4,
+      "allowList": null
+    },
+    {
+      "id": 72,
+      "key": "eq",
+      "name": null,
+      "description": "",
+      "color": "#F0C24F",
+      "configs": {},
+      "order": 1,
+      "allowList": null
+    },
+    {
+      "id": 71,
+      "key": "gt",
+      "name": null,
+      "description": "",
+      "color": "#153BA3",
+      "configs": {},
+      "order": 2,
+      "allowList": null
+    },
+    {
+      "id": 73,
+      "key": "defvar",
+      "name": null,
+      "description": "",
+      "color": "#F07F5A",
+      "configs": {},
+      "order": 5,
+      "allowList": null
+    },
+    {
+      "id": 74,
+      "key": "lt",
+      "name": null,
+      "description": "",
+      "color": "#4F7AF0",
+      "configs": {},
+      "order": 3,
+      "allowList": null
+    }
+  ],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 73,
+  "rules": [
+    {
+      "id": 81,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 36,
+          "attributeId": 14,
+          "attribute": "dateTimeAttr",
+          "type": "datetime",
+          "value": "1609655580000",
+          "op": "GT",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 115,
+          "variationId": 71,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 1
+    },
+    {
+      "id": 80,
+      "isDefault": true,
+      "delete": false,
+      "conditions": [],
+      "splits": [
+        {
+          "id": 114,
+          "variationId": 75,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 0
+    },
+    {
+      "id": 82,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 37,
+          "attributeId": 14,
+          "attribute": "dateTimeAttr",
+          "type": "datetime",
+          "value": "1588883700000",
+          "op": "LT",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 116,
+          "variationId": 72,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 2
+    }
+  ],
+  "enviornments": null,
+  "createdAt": 1610173799236,
+  "lastModifiedAt": 1610173799236,
+  "clientSideAccess": false,
+  "archived": false,
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}

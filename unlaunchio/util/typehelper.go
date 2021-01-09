@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-// ConvertToFloat64 There has to be better way to do this
-func ConvertToFloat64(attr interface{}) (float64, error) {
+// GetFloat64 There has to be better way to do this
+func GetFloat64(attr interface{}) (float64, error) {
 	uVal := 0.0
 
 	// Todo: Move to util
@@ -44,33 +44,44 @@ func ConvertToFloat64(attr interface{}) (float64, error) {
 	return uVal, nil
 }
 
-// IsBool
-func IsBool(attr interface{}) bool {
+// GetBool
+func GetBool(attr interface{}) (bool, error) {
 	switch v := attr.(type) {
 	case bool:
-		return true
+		return attr.(bool), nil
 	default:
 		fmt.Sprintf("%v", v)
-		return false
+		return false, errors.New("not boolean")
 	}
 }
 
-func IsString(attr interface{}) bool {
+func GetString(attr interface{}) (string, error) {
 	switch v := attr.(type) {
 	case string:
-		return true
+		return attr.(string), nil
 	default:
 		fmt.Sprintf("%v", v)
-		return false
+		return "", errors.New("not string")
 	}
 }
 
-func IsNumber(attr interface{}) bool {
+func GetInt64(attr interface{}) (int64, error) {
 	switch v := attr.(type) {
-	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, float32, float64:
-		return true
+	case int64:
+		return attr.(int64), nil
 	default:
 		fmt.Sprintf("%v", v)
-		return false
+		return 0, errors.New("not int64")
+	}
+}
+
+
+func GetInt(attr interface{}) (int, error) {
+	switch v := attr.(type) {
+	case int64:
+		return attr.(int), nil
+	default:
+		fmt.Sprintf("%v", v)
+		return 0, errors.New("not int")
 	}
 }

@@ -1,20 +1,36 @@
 package attributes
 
-func NumberApply(value float64, userValue float64, operator string) bool {
-	if operator == "EQ" {
-		return value == userValue
-	} else if operator == "NEQ" {
-		return value != userValue
-	} else if operator == "GT" {
-		return userValue > value
-	} else if operator == "GTE" {
-		return userValue >= value
-	} else if operator == "LT" {
-		return userValue < value
-	} else if operator == "LTE" {
-		return userValue <= value
+import (
+	"github.com/unlaunch/go-sdk/unlaunchio/util"
+	"strconv"
+)
+
+func numberApply(val interface{}, userVal interface{}, op string) bool {
+
+	v, _ := strconv.ParseFloat(val.(string), 64)
+	uv, err := util.GetFloat64(userVal)
+
+	if err != nil {
+		// TODO log warning that name matches but type is not bool
+		return false
 	}
 
-	// Todo log invalid op warning
-	return false
+	switch op {
+	case "EQ":
+		return uv == v
+	case "GT":
+		return uv > v
+	case "GTE":
+		return uv >= v
+	case "LT":
+		return uv < v
+	case "LTE":
+		return uv <= v
+	case "NEQ":
+		return uv != v
+	default:
+		// Todo log invalid op warning
+		return false
+
+	}
 }

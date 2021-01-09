@@ -5,12 +5,11 @@ import (
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	attributes2 "github.com/unlaunch/go-sdk/unlaunchio/engine/attributes"
-	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"math"
-	"strconv"
 	"strings"
 )
 
+var tr = attributes2.NewTargetingRule()
 
 func Evaluate(feature *dtos.Feature, identity string, attributes *map[string]interface{}) (*dtos.UnlaunchFeature, error) {
 	result := new(dtos.UnlaunchFeature)
@@ -80,25 +79,21 @@ func matchTargetingRules(feature *dtos.Feature, identity string, attributes *map
 	}
 
 	for _, rule := range feature.Rules {
+		matched := false
+
+		// Iterate through all conditions
 		for _, condition := range rule.Conditions {
 			if attr, ok := (*attributes)[condition.Attribute]; ok {
-				if condition.Type == "boolean" {
-					v, _ := strconv.ParseBool(condition.Value)
-					if util.IsBool(attr) && attributes2.BooleanApply(v, attr.(bool), condition.Op) {
-						return getRuleVariation(&rule, feature, identity)
-					}
-				} else if condition.Type == "string" {
-					if util.IsString(attr) && attributes2.StringApply(condition.Value, attr.(string), condition.Op) {
-						return getRuleVariation(&rule, feature, identity)
-					}
-				} else if condition.Type == "number" {
-					v, _ := strconv.ParseFloat(condition.Value, 64)
-					uVal, err := util.ConvertToFloat64(attr)
-					if err == nil && attributes2.NumberApply(v, uVal, condition.Op) {
-						return getRuleVariation(&rule, feature, identity)
-					}
+				if !tr.Apply(condition.Type, condition.Value, attr, condition.Op) {
+					matched = false
+					break
+				} else {
+					matched = true
 				}
 			}
+		}
+		if matched {
+			return getRuleVariation(&rule, feature, identity)
 		}
 	}
 
@@ -138,7 +133,6 @@ func bucket(key string) int {
 	hashKey = Murmur32Hash([]byte(key), 0)
 	return int(math.Abs(float64(hashKey%100)) + 1)
 }
-
 
 func foo(rule *dtos.Rule, bucket int) (int, error) {
 	var sum = 0

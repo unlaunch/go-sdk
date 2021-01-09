@@ -1,24 +1,35 @@
 package attributes
 
-import "strings"
+import (
+	"github.com/unlaunch/go-sdk/unlaunchio/util"
+	"strings"
+)
 
-func StringApply(value string, userValue string, operator string) bool {
-	if operator == "EQ" {
-		return value == userValue
-	} else if operator == "NEQ" {
-		return value != userValue
-	} else if operator == "SW" {
-		return strings.HasPrefix(userValue, value)
-	} else if operator == "NSW" {
-		return !strings.HasPrefix(userValue, value)
-	} else if operator == "EW" {
-		return strings.HasSuffix(userValue, value)
-	} else if operator == "NEW" {
-		return !strings.HasSuffix(userValue, value)
-	} else if operator == "CON" {
-		return strings.Contains(userValue, value)
-	} else if operator == "NCON" {
-		return !strings.Contains(userValue, value)
+func stringApply(val interface{}, userVal interface{}, op string) bool {
+	v := val.(string)
+	uv, err := util.GetString(userVal)
+
+	if err != nil {
+		// TODO log warning that name matches but type is not bool
+		return false
+	}
+
+	if op == "EQ" {
+		return v == userVal
+	} else if op == "NEQ" {
+		return v != userVal
+	} else if op == "SW" {
+		return strings.HasPrefix(uv, v)
+	} else if op == "NSW" {
+		return !strings.HasPrefix(uv, v)
+	} else if op == "EW" {
+		return strings.HasSuffix(uv, v)
+	} else if op == "NEW" {
+		return !strings.HasSuffix(uv, v)
+	} else if op == "CON" {
+		return strings.Contains(uv, v)
+	} else if op == "NCON" {
+		return !strings.Contains(uv, v)
 	}
 
 	// Todo log invalid op warning

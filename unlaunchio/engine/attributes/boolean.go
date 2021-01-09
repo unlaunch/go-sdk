@@ -1,12 +1,24 @@
 package attributes
 
-func BooleanApply(value bool, userValue bool, operator string) bool {
-	if operator == "EQ" {
-		return userValue == value
-	} else if operator == "NEQ" {
-		return userValue != value
+import (
+	"github.com/unlaunch/go-sdk/unlaunchio/util"
+	"strconv"
+)
+
+func boolApply(val interface{}, userVal interface{}, op string) bool {
+	v, _ := strconv.ParseBool(val.(string))
+	uv, err := util.GetBool(userVal)
+	if err != nil {
+		// TODO log warning that name matches but type is not bool
+		return false
 	}
 
-	// Todo log invalid op warning
+	if op == "EQ" {
+		return uv == v
+	} else if op == "NEQ" {
+		return uv != v
+	}
+
+	// Todo log invalid op warning; flag json broken
 	return false
 }

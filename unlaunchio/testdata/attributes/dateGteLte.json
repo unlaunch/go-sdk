@@ -1,0 +1,154 @@
+{
+  "id": 23,
+  "key": "date-attr-type",
+  "name": "date attr type",
+  "description": "",
+  "variations": [
+    {
+      "id": 65,
+      "key": "gte",
+      "name": null,
+      "description": "",
+      "color": "#153BA3",
+      "configs": {},
+      "order": 2,
+      "allowList": null
+    },
+    {
+      "id": 69,
+      "key": "lte",
+      "name": null,
+      "description": "",
+      "color": "#F07F5A",
+      "configs": {},
+      "order": 5,
+      "allowList": null
+    },
+    {
+      "id": 64,
+      "key": "gt",
+      "name": null,
+      "description": "",
+      "color": "#4F7AF0",
+      "configs": {},
+      "order": 3,
+      "allowList": null
+    },
+    {
+      "id": 67,
+      "key": "eq",
+      "name": null,
+      "description": "",
+      "color": "#F0C24F",
+      "configs": {},
+      "order": 1,
+      "allowList": null
+    },
+    {
+      "id": 68,
+      "key": "defvar",
+      "name": null,
+      "description": "",
+      "color": "#69A35B",
+      "configs": {},
+      "order": 7,
+      "allowList": null
+    },
+    {
+      "id": 66,
+      "key": "lt",
+      "name": null,
+      "description": "",
+      "color": "#FFD66E",
+      "configs": {},
+      "order": 4,
+      "allowList": null
+    },
+    {
+      "id": 70,
+      "key": "defrule",
+      "name": null,
+      "description": "",
+      "color": "#5BA393",
+      "configs": {},
+      "order": 6,
+      "allowList": null
+    }
+  ],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 68,
+  "rules": [
+    {
+      "id": 77,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 34,
+          "attributeId": 13,
+          "attribute": "dateAttr",
+          "type": "date",
+          "value": "1614499200000",
+          "op": "GTE",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 110,
+          "variationId": 65,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 3
+    },
+    {
+      "id": 76,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 33,
+          "attributeId": 13,
+          "attribute": "dateAttr",
+          "type": "date",
+          "value": "1610611200000",
+          "op": "LTE",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 111,
+          "variationId": 67,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 1
+    },
+    {
+      "id": 75,
+      "isDefault": true,
+      "delete": false,
+      "conditions": [],
+      "splits": [
+        {
+          "id": 106,
+          "variationId": 70,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 0
+    }
+  ],
+  "enviornments": null,
+  "clientSideAccess": false,
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}
