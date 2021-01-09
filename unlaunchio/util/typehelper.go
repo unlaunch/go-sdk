@@ -3,6 +3,7 @@ package util
 import (
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 // GetFloat64 There has to be better way to do this
@@ -76,12 +77,13 @@ func GetInt64(attr interface{}) (int64, error) {
 }
 
 
-func GetInt(attr interface{}) (int, error) {
-	switch v := attr.(type) {
-	case int64:
-		return attr.(int), nil
-	default:
-		fmt.Sprintf("%v", v)
-		return 0, errors.New("not int")
+func GetSet(attr interface{}) (map[string]interface{}, error) {
+	v := reflect.ValueOf(attr)
+	if v.Kind() == reflect.Map {
+		return attr.(map[string]interface{}), nil
 	}
+
+	return nil, errors.New("not map")
+
+
 }

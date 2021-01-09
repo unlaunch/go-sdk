@@ -15,6 +15,8 @@ func (tr *TargetingRuleCondition) Apply(attrType string, val interface{}, userVa
 		return dateOrDateTimeApply(val, userVal, op, true)
 	case "datetime":
 		return dateOrDateTimeApply(val, userVal, op, false)
+	case "set":
+		return setApply(val, userVal, op)
 	default:
 		// todo log "invalid condition type"
 		return false

@@ -1,0 +1,127 @@
+{
+  "id": 22,
+  "key": "set-attribute-type",
+  "name": "set attribute type",
+  "description": "",
+  "variations": [
+    {
+      "id": 63,
+      "key": "off",
+      "name": null,
+      "description": "",
+      "color": "#153BA3",
+      "configs": {},
+      "order": 2,
+      "allowList": null
+    },
+    {
+      "id": 61,
+      "key": "on",
+      "name": null,
+      "description": "",
+      "color": "#F0C24F",
+      "configs": {},
+      "order": 1,
+      "allowList": null
+    },
+    {
+      "id": 62,
+      "key": "defvar",
+      "name": null,
+      "description": "",
+      "color": "#FFD66E",
+      "configs": {},
+      "order": 4,
+      "allowList": null
+    },
+    {
+      "id": 60,
+      "key": "defrule",
+      "name": null,
+      "description": "",
+      "color": "#4F7AF0",
+      "configs": {},
+      "order": 3,
+      "allowList": null
+    }
+  ],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 62,
+  "rules": [
+    {
+      "id": 70,
+      "isDefault": true,
+      "delete": false,
+      "conditions": [],
+      "splits": [
+        {
+          "id": 118,
+          "variationId": 60,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 0
+    },
+    {
+      "id": 83,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 38,
+          "attributeId": 10,
+          "attribute": "setAttr",
+          "type": "set",
+          "value": "joker,batman,gordon",
+          "op": "HA",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 117,
+          "variationId": 61,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 1
+    },
+    {
+      "id": 84,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 39,
+          "attributeId": 10,
+          "attribute": "setAttr",
+          "type": "set",
+          "value": "superman,wonderwoman,greenlantern",
+          "op": "AO",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 119,
+          "variationId": 63,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 2
+    }
+  ],
+  "enviornments": null,
+  "createdAt": 1610068363029,
+  "lastModifiedAt": 1610068363029,
+  "clientSideAccess": false,
+  "archived": false,
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}

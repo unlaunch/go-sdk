@@ -1,0 +1,127 @@
+{
+  "id": 25,
+  "key": "set-attr-type-3",
+  "name": "set attr type 3",
+  "description": "",
+  "variations": [
+    {
+      "id": 79,
+      "key": "off",
+      "name": null,
+      "description": "",
+      "color": "#153BA3",
+      "configs": {},
+      "order": 2,
+      "allowList": null
+    },
+    {
+      "id": 76,
+      "key": "defrule",
+      "name": null,
+      "description": "",
+      "color": "#4F7AF0",
+      "configs": {},
+      "order": 3,
+      "allowList": null
+    },
+    {
+      "id": 77,
+      "key": "on",
+      "name": null,
+      "description": "",
+      "color": "#F0C24F",
+      "configs": {},
+      "order": 1,
+      "allowList": null
+    },
+    {
+      "id": 78,
+      "key": "defvar",
+      "name": null,
+      "description": "",
+      "color": "#FFD66E",
+      "configs": {},
+      "order": 4,
+      "allowList": null
+    }
+  ],
+  "type": "string",
+  "state": "ACTIVE",
+  "offVariation": 78,
+  "rules": [
+    {
+      "id": 88,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 41,
+          "attributeId": 10,
+          "attribute": "setAttr",
+          "type": "set",
+          "value": "liono,tigera,chitera",
+          "op": "NHA",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 123,
+          "variationId": 77,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 1
+    },
+    {
+      "id": 85,
+      "isDefault": true,
+      "delete": false,
+      "conditions": [],
+      "splits": [
+        {
+          "id": 124,
+          "variationId": 76,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 0
+    },
+    {
+      "id": 87,
+      "isDefault": false,
+      "delete": false,
+      "conditions": [
+        {
+          "id": 40,
+          "attributeId": 10,
+          "attribute": "setAttr",
+          "type": "set",
+          "value": "leonardo,raphael,donatello",
+          "op": "NAO",
+          "delete": false
+        }
+      ],
+      "splits": [
+        {
+          "id": 122,
+          "variationId": 79,
+          "rolloutPercentage": 100,
+          "delete": false
+        }
+      ],
+      "priority": 2
+    }
+  ],
+  "enviornments": null,
+  "createdAt": 1610182774386,
+  "lastModifiedAt": 1610182774386,
+  "clientSideAccess": false,
+  "archived": false,
+  "modifier": null,
+  "prerequisiteFlags": {},
+  "targetUsers": null,
+  "lastAccessedAt": null
+}
