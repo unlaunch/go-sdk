@@ -70,6 +70,10 @@ func ConvertToInt64(attr interface{}) (int64, error) {
 	switch v := attr.(type) {
 	case int64:
 		return attr.(int64), nil
+	case int:
+		return int64(attr.(int)), nil
+	case int32:
+		return int64(attr.(int32)), nil
 	default:
 		fmt.Sprintf("%v", v)
 		return 0, errors.New("not int64")
