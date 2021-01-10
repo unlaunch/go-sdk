@@ -90,6 +90,7 @@ type TopLevelEnvelope struct {
 
 type UnlaunchFeature struct {
 	Feature 		string
-	Variation 		*Variation
+	Variation 		string
+	VariationConfiguration map[string]string
 	EvaluationReason string
 }

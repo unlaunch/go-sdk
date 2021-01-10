@@ -11,7 +11,10 @@ import (
 
 var tr = attributes2.NewTargetingRule()
 
-func Evaluate(feature *dtos.Feature, identity string, attributes *map[string]interface{}) (*dtos.UnlaunchFeature, error) {
+func Evaluate(
+	feature *dtos.Feature,
+	identity string,
+	attributes *map[string]interface{})(*dtos.UnlaunchFeature, error) {
 	result := new(dtos.UnlaunchFeature)
 	result.Feature = feature.Key
 	result.EvaluationReason = "this SDK is not yet complete"
@@ -22,18 +25,18 @@ func Evaluate(feature *dtos.Feature, identity string, attributes *map[string]int
 		if err != nil {
 			return nil, err
 		}
-		result.Variation = offVariation
+		result.Variation = offVariation.Key
 		return result, nil
 	} else if v := variationIfUserInAllowList(feature, identity); v != nil {
-		result.Variation = v
+		result.Variation = v.Key
 		result.EvaluationReason = "User is in Target Users List"
 		return result, nil
 	} else if v := matchTargetingRules(feature, identity, attributes); v != nil {
-		result.Variation = v
+		result.Variation = v.Key
 		result.EvaluationReason = "Targeting Rule Match"
 		return result, nil
 	} else if v := defaultRule(feature, identity, attributes); v != nil {
-		result.Variation = v
+		result.Variation = v.Key
 		result.EvaluationReason = "Default Rule Match"
 		return result, nil
 	} else {
