@@ -33,8 +33,8 @@ func TestWhen_NoAttributesArePassed_Then_DefaultRuleIsServed(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, nil)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -47,8 +47,8 @@ func TestWhen_StringEqualsMatch_Then_RightVariationIsReturned(t *testing.T) {
 	attributes["strAttr"] = "equals"
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -62,8 +62,8 @@ func TestWhen_StringNotEqualsMatch_Then_RightVariationIsReturned(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 func TestWhen_StringStartsWithMatch_Then_RightVariationIsReturned(t *testing.T) {
@@ -76,8 +76,8 @@ func TestWhen_StringStartsWithMatch_Then_RightVariationIsReturned(t *testing.T) 
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -94,16 +94,16 @@ func TestWhen_StringDoesNotStartsWith_Then_RightVariationIsReturned(t *testing.T
 
 	ulf, _ := engine.Evaluate(&responseDto, userId, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 
 	// Start with joker, get default
 	expectedVariation = "def"
 	attributes["strAttr"] = "joker is at the start"
 	ulf, _ = engine.Evaluate(&responseDto, userId, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -117,8 +117,8 @@ func TestWhen_StringEndsWithMatch_Then_RightVariationIsReturned(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -135,16 +135,16 @@ func TestWhen_StringDoesNotEndsWith_Then_RightVariationIsReturned(t *testing.T) 
 
 	ulf, _ := engine.Evaluate(&responseDto, userId, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 
 	// Start with joker, get default
 	expectedVariation = "def"
 	attributes["strAttr"] = "San Francisco"
 	ulf, _ = engine.Evaluate(&responseDto, userId, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -158,8 +158,8 @@ func TestWhen_StringContainsMatch_Then_RightVariationIsReturned(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -176,16 +176,16 @@ func TestWhen_StringNotContainsMatch_Then_RightVariationIsReturned(t *testing.T)
 
 	ulf, _ := engine.Evaluate(&responseDto, userId, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 
 	// If it contains cat, the default variation is returned
 	expectedVariation = "def"
 	attributes["strAttr"] = "his sentence contains the word cat."
 	ulf, _ = engine.Evaluate(&responseDto, userId, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -199,8 +199,8 @@ func TestWhen_AttributeNameMatchButTypeIsNotString_Then_NoPanic(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 

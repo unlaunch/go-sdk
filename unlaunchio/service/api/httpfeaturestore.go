@@ -1,10 +1,11 @@
-package store
+package api
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
+	"github.com/unlaunch/go-sdk/unlaunchio/service"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 	"sort"
@@ -67,7 +68,7 @@ func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
 
 	h.logger.Debug("responseDto ", responseDto)
 
-	// Store features in the store/map
+	// Store features in the service/map
 	temp := make(map[string]dtos.Feature)
 	for _, feature := range responseDto.Data.Features {
 		temp[feature.Key] = feature
@@ -103,7 +104,7 @@ func NewHTTPFeatureStore(
 	httpTimeout int,
 	pollingInterval int,
 	logger logger.Interface,
-) FeatureStore {
+) service.FeatureStore {
 	httpStore := &HttpFeatureStore{
 		httpClient:          util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
 		logger:              logger,

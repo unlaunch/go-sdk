@@ -28,13 +28,10 @@ func TestWhen_FlagIsDisabled_Then_DefaultVariationIsReturned(t *testing.T) {
 		t.Error("evaluation threw error ", err)
 	}
 
-	if ulf.Variation.Key != "OFF_DEFAULT" {
-		t.Error(fmt.Sprintf("variation should be 'OFF_DEFAULT'. It was '%s'", ulf.Variation.Key))
+	if ulf.Variation != "OFF_DEFAULT" {
+		t.Error(fmt.Sprintf("variation should be 'OFF_DEFAULT'. It was '%s'", ulf.Variation))
 	}
 
-	if ulf.Variation.Id != 17 {
-		t.Error("Variation Id was not 18")
-	}
 }
 
 func TestWhen_FlagIsEnabled_Then_DefaultRuleIsReturned(t *testing.T) {
@@ -52,13 +49,10 @@ func TestWhen_FlagIsEnabled_Then_DefaultRuleIsReturned(t *testing.T) {
 		t.Error("evaluation threw error ", err)
 	}
 
-	if ulf.Variation.Key != "ON_DEFAULT_RULE" {
-		t.Error(fmt.Sprintf("variation should be 'ON_DEFAULT_RULE'. It was '%s'", ulf.Variation.Key))
+	if ulf.Variation != "ON_DEFAULT_RULE" {
+		t.Error(fmt.Sprintf("variation should be 'ON_DEFAULT_RULE'. It was '%s'", ulf.Variation))
 	}
 
-	if ulf.Variation.Id != 18 {
-		t.Error("Variation Id was not 18")
-	}
 }
 
 func TestWhen_FlagIsEnabledAndUserIsInAllowList_Then_AllowListVariationIsReturned(t *testing.T) {
@@ -75,13 +69,10 @@ func TestWhen_FlagIsEnabledAndUserIsInAllowList_Then_AllowListVariationIsReturne
 	if err != nil {
 		t.Error("evaluation threw error ", err)
 	}
-	if ulf.Variation.Key != "off" {
-		t.Error(fmt.Sprintf("variation should be 'off'. It was '%s'", ulf.Variation.Key))
+	if ulf.Variation != "off" {
+		t.Error(fmt.Sprintf("variation should be 'off'. It was '%s'", ulf.Variation))
 	}
 
-	if ulf.Variation.Id != 17 {
-		t.Error("Variation Id was not 17")
-	}
 }
 
 func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t *testing.T) {
@@ -103,15 +94,15 @@ func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t 
 	for i := 0; i<10; i++ {
 		userId := "user-"+ strconv.Itoa(rand.Intn(1000))
 		ulf, _ := engine.Evaluate(&responseDto, userId, nil)
-		variation := ulf.Variation.Key
+		variation := ulf.Variation
 
 		// Evaluate using both ordered and (reversed) order data
 		// Result should be the same
 		ulf, _ = engine.Evaluate(&responseDtoReversed, userId, nil)
 
-		if variation != ulf.Variation.Key {
+		if variation != ulf.Variation {
 			t.Error(fmt.Sprintf("expected variation %s actual variation %s on the iteration #%d",
-				variation, ulf.Variation.Key, i+1))
+				variation, ulf.Variation, i+1))
 			return
 		}
 	}
@@ -134,9 +125,9 @@ func TestWhen_RollOutIsEnabled_Then_VariationIsAllocatedByBucketing(t *testing.T
 			t.Error("evaluation threw error ", err)
 		}
 
-		if ulf.Variation.Key == "on" {
+		if ulf.Variation == "on" {
 			countOn++
-		} else if ulf.Variation.Key == "off" {
+		} else if ulf.Variation == "off" {
 			countOff++
 		} else {
 			t.Error("Only on and off variation were expected.")

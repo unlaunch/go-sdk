@@ -39,8 +39,8 @@ func TestWhen_NumberGreaterThan(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -55,8 +55,8 @@ func TestWhen_NumberGreaterThanOrEquals(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 func TestWhen_NumberLessThan(t *testing.T) {
@@ -70,8 +70,8 @@ func TestWhen_NumberLessThan(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -86,7 +86,7 @@ func TestWhen_NumberLessThanOrEquals(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }

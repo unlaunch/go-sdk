@@ -34,8 +34,8 @@ func TestWhen_BooleanDefRule(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, nil)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -49,8 +49,8 @@ func TestWhen_BooleanEqualsTrueRuleMatch(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -64,8 +64,8 @@ func TestWhen_BooleanEqualsFalseRuleMatch(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -91,8 +91,8 @@ func TestWhen_BooleanDefRuleNotEqualsFile(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, nil)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -106,7 +106,7 @@ func TestWhen_BooleanNotEqualsTrue(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }

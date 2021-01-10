@@ -12,14 +12,13 @@ Using the SDK, you can easily build Java applications that can evaluate feature 
 ## Getting Started
 Here is a simple example.
 
-Run `go get github.com/unlaunch/go-sdk/` or `dep ensure -add go get github.com/unlaunch/go-sdk`
+Run `go get github.com/unlaunchIO/go-sdk/` or `dep ensure -add go get github.com/unlaunchIO/go-sdk`
 
 ```go
 package main
 
 import (
 	"fmt"
-	"time"
 	"github.com/unlaunch/go-sdk/unlaunchio/client"
 )
 
@@ -28,12 +27,12 @@ func main() {
 	factory, err := client.NewUnlaunchClientFactory("YOUR_SERVER_KEY", config)
 
 	if err != nil {
-		fmt.Printf("Unable to initialize Unlaunch Client because there was an error %s\n", err)
+		fmt.Printf("Error initializing Unlaunch client %s\n", err)
 		return
 	}
 
 	unlaunchClient := factory.Client()
-	if _ = unlaunchClient.BlockUntilReady(3); err != nil {
+	if err = unlaunchClient.BlockUntilReady(3); err != nil {
 		fmt.Printf("Unlaunch Client wasn't ready %s\n", err)
 	}
 
@@ -53,6 +52,9 @@ To run all tests
 ```shell
 go test ./...
 ```
+
+## Submitting issues
+If you run into any problems, bugs, or have any questions or feedback, please report them using the [issues feature](https://github.com/unlaunch/go-sdk/issues). We'll respond to all issues usually within 24 to 48 hours.
 
 ## Contributing
 Please see [CONTRIBUTING](CONTRIBUTING.md) to find how you can contribute.

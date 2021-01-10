@@ -1,4 +1,4 @@
-package store
+package service
 
 import "github.com/unlaunch/go-sdk/unlaunchio/dtos"
 

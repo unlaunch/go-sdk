@@ -35,8 +35,8 @@ func TestWhen_NoNumberAttributesArePassed_Then_DefaultRuleIsServed(t *testing.T)
 
 	ulf, _ := engine.Evaluate(&r, u, nil)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -49,8 +49,8 @@ func TestWhen_NumberEqualsRuleMatchForFloat32(t *testing.T) {
 	var n float32 = 1.0
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -63,8 +63,8 @@ func TestWhen_NumberEqualsRuleMatchForFloat64(t *testing.T) {
 	var n float64 = 1.0
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -77,8 +77,8 @@ func TestWhen_NumberEqualsRuleMatchForInt8(t *testing.T) {
 	var n int8 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -91,8 +91,8 @@ func TestWhen_NumberEqualsRuleMatchForInt16(t *testing.T) {
 	var n int16 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -105,8 +105,8 @@ func TestWhen_NumberEqualsRuleMatchForInt32(t *testing.T) {
 	var n int32 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -119,8 +119,8 @@ func TestWhen_NumberEqualsRuleMatchForInt64(t *testing.T) {
 	var n int64 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -133,8 +133,8 @@ func TestWhen_NumberEqualsRuleMatchForInt(t *testing.T) {
 	var n int = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -147,8 +147,8 @@ func TestWhen_NumberEqualsRuleMatchForUInt(t *testing.T) {
 	var n uint = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -161,8 +161,8 @@ func TestWhen_NumberEqualsRuleMatchForUInt8(t *testing.T) {
 	var n uint8 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -175,8 +175,8 @@ func TestWhen_NumberEqualsRuleMatchForUInt16(t *testing.T) {
 	var n uint16 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -189,8 +189,8 @@ func TestWhen_NumberEqualsRuleMatchForUInt32(t *testing.T) {
 	var n uint32 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 
@@ -203,7 +203,7 @@ func TestWhen_NumberEqualsRuleMatchForUInt64(t *testing.T) {
 	var n uint64 = 1
 	attributes["numberAttr"] = n
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }

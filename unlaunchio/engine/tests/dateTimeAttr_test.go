@@ -39,8 +39,8 @@ func TestWhen_DateTimeGreaterThanMatch(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
 func TestWhen_DateTimeLessThanMatch(t *testing.T) {
@@ -54,7 +54,7 @@ func TestWhen_DateTimeLessThanMatch(t *testing.T) {
 
 	ulf, _ := engine.Evaluate(&r, u, &attributes)
 
-	if ulf.Variation.Key != expectedVariation {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation.Key))
+	if ulf.Variation != expectedVariation {
+		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
@@ -9,9 +10,8 @@ import (
 	"time"
 )
 
-
 type HTTPClient struct {
-	host        string
+	host       string
 	httpClient *http.Client
 	headers    map[string]string
 	logger     logger.Interface
@@ -23,17 +23,17 @@ func NewHTTPClient(
 	host string,
 	timeout int,
 	logger logger.Interface,
-	) *HTTPClient {
+) *HTTPClient {
 
 	client := &http.Client{
 		Timeout: time.Duration(timeout) * time.Millisecond,
 	}
 
 	return &HTTPClient{
-		host: host,
+		host:       host,
 		httpClient: client,
-		logger: logger,
-		sdkKey: sdkKey,
+		logger:     logger,
+		sdkKey:     sdkKey,
 	}
 }
 
@@ -66,16 +66,50 @@ func (c *HTTPClient) Get(path string) ([]byte, error) {
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		return body, nil
 	} else {
-		c.logger.Error(fmt.Sprintf("[HTTP GET] status code: %d %s", resp.StatusCode, resp.Status))
+		c.logger.Error(fmt.Sprintf("[HTTP GET] status code: %d", resp.StatusCode))
 		return nil, &dtos.HTTPError{
 			Code: resp.StatusCode,
-			Msg: resp.Status,
+			Msg:  resp.Status,
 		}
 	}
 }
 
+func (c *HTTPClient) Post(path string, body []byte) error {
+	apiEndpoint := c.host + path
+	c.logger.Debug("[HTTP POST] ", apiEndpoint)
 
+	req, _ := http.NewRequest("POST", apiEndpoint, bytes.NewBuffer(body))
+	req.Close = true
 
-func (c *HTTPClient) Post(service string, body []byte, headers map[string]string) error {
-	return nil
+	req.Header.Add("X-Api-Key", c.sdkKey)
+	req.Header.Add("Content-Type", "application/json")
+
+	c.logger.Debug(fmt.Sprintf("Headers: %v", req.Header))
+
+	c.logger.Trace("REQ_BODY -->", string(body), "<--REQ_BODY")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		c.logger.Error("[HTTP POST] error: ", req.URL.String(), err.Error())
+		return err
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		c.logger.Error(err.Error())
+		return err
+	}
+
+	c.logger.Trace("RES_BODY -->", string(respBody), "<-- RES_BODY")
+
+	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		return nil
+	}
+
+	c.logger.Error(fmt.Sprintf("[HTTP POST] Possible error. Status Code: %d", resp.StatusCode))
+	return &dtos.HTTPError{
+		Code: resp.StatusCode,
+		Msg:  resp.Status,
+	}
 }

@@ -1,15 +1,15 @@
 package client
 
 import (
-	"github.com/unlaunch/go-sdk/unlaunchio/store"
+	"github.com/unlaunch/go-sdk/unlaunchio/service/api"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 )
 
 // UnlaunchFactory ...
 type UnlaunchFactory struct {
-	sdkKey string
-	cfg    *UnlaunchClientConfig
-	logger logger.Interface
+	sdkKey         string
+	cfg            *UnlaunchClientConfig
+	logger         logger.Interface
 }
 
 // NewUnlaunchClientFactory is a factory
@@ -38,7 +38,8 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		sdkKey:          f.sdkKey,
 		pollingInterval: f.cfg.pollingInterval,
 		httpTimeout:     f.cfg.httpTimeout,
-		FeatureStore:    store.NewHTTPFeatureStore(f.sdkKey, f.cfg.host, f.cfg.httpTimeout, f.cfg.pollingInterval, f.logger),
+		FeatureStore:    api.NewHTTPFeatureStore(f.sdkKey, f.cfg.host, f.cfg.httpTimeout, f.cfg.pollingInterval, f.logger),
+		eventsRecorder: api.NewHTTPEventsRecorder(f.sdkKey, f.cfg.host, "/api/v1/events", f.cfg.httpTimeout, f.logger),
 		logger:          f.logger,
 	}
 
