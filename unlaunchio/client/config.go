@@ -4,18 +4,22 @@ import "github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 
 // UnlaunchClientConfig ...
 type UnlaunchClientConfig struct {
-	pollingInterval int
-	httpTimeout     int
-	host 			string
-	loggerConfig    *logger.Options
+	PollingInterval      int
+	MetricsFlushInterval int
+	MetricsQueueSize     int
+	HTTPTimeout          int
+	Host                 string
+	LoggerConfig         *logger.Options
 }
 
 // DefaultConfig ...
 func DefaultConfig() *UnlaunchClientConfig {
 	return &UnlaunchClientConfig{
-		pollingInterval: 15000,
-		httpTimeout:     3000,
-		host:			"https://api.unlaunch.io",
-		loggerConfig:    nil,
+		PollingInterval:      15000,
+		HTTPTimeout:          3000,
+		Host:                 "https://api.unlaunch.io",
+		MetricsFlushInterval: 15000,
+		MetricsQueueSize:     1000,
+		LoggerConfig:         nil,
 	}
 }

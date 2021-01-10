@@ -1,11 +1,9 @@
-package api
+package service
 
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/service"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 	"sort"
@@ -13,20 +11,20 @@ import (
 	"time"
 )
 
-type HttpFeatureStore struct {
+type HTTPFeatureStore struct {
 	httpClient          *util.HTTPClient
 	logger              logger.Interface
 	features            map[string]dtos.Feature
 	initialSyncComplete bool
-
+	shutdown            chan bool
 }
 
-func (h *HttpFeatureStore) Stop()  {
-	stop <- true
+func (h *HTTPFeatureStore) Stop() {
+	h.logger.Debug("Sending shutdown signal to feature store")
+	h.shutdown <- true
 }
 
-
-func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
+func (h *HTTPFeatureStore) fetchFlags()  error {
 	if h.initialSyncComplete == false {
 		defer wg.Done()
 		h.initialSyncComplete = true
@@ -38,18 +36,14 @@ func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
 		h.logger.Error("error fetching flags ", err)
 	}
 
-	h.logger.Debug("responseDto ", string(res))
+	h.logger.Trace("responseDto ", string(res))
 
 	var responseDto dtos.TopLevelEnvelope
 	err = json.Unmarshal(res, &responseDto)
 
 	if err != nil {
-		h.logger.Error("Error parsing split changes JSON ", err)
-		return nil, err
-	}
-
-	for _, v := range responseDto.Data.Features[0].Variations {
-		fmt.Println(v)
+		h.logger.Error("Error parsing feature flag JSON response ", err)
+		return err
 	}
 
 	// Todo: Remove this when rules and rollouts are sorted on server
@@ -61,13 +55,6 @@ func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
 		}
 	}
 
-	fmt.Println("-")
-	for _, v := range responseDto.Data.Features[0].Variations {
-		fmt.Println(v)
-	}
-
-	h.logger.Debug("responseDto ", responseDto)
-
 	// Store features in the service/map
 	temp := make(map[string]dtos.Feature)
 	for _, feature := range responseDto.Data.Features {
@@ -76,10 +63,10 @@ func (h *HttpFeatureStore) fetchFlags() ([]byte, error) {
 	}
 	h.features = temp
 
-	return res, nil
+	return nil
 }
 
-func (h *HttpFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
+func (h *HTTPFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	if feature, ok := h.features[key]; ok {
 		return &feature, nil
 	} else {
@@ -87,7 +74,7 @@ func (h *HttpFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	}
 }
 
-func (h *HttpFeatureStore) Ready()  {
+func (h *HTTPFeatureStore) Ready() {
 	if h.initialSyncComplete {
 		return
 	}
@@ -95,8 +82,6 @@ func (h *HttpFeatureStore) Ready()  {
 }
 
 var wg sync.WaitGroup
-var stop chan bool
-
 
 func NewHTTPFeatureStore(
 	sdkKey string,
@@ -104,8 +89,8 @@ func NewHTTPFeatureStore(
 	httpTimeout int,
 	pollingInterval int,
 	logger logger.Interface,
-) service.FeatureStore {
-	httpStore := &HttpFeatureStore{
+) FeatureStore {
+	httpStore := &HTTPFeatureStore{
 		httpClient:          util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
 		logger:              logger,
 		initialSyncComplete: false,
@@ -113,7 +98,7 @@ func NewHTTPFeatureStore(
 	}
 
 	wg.Add(1)
-	stop = util.Schedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
+	httpStore.shutdown = util.Schedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
 
 	return httpStore
 }

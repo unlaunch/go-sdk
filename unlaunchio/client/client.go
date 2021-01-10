@@ -17,6 +17,7 @@ type UnlaunchClient struct {
 	httpTimeout     int
 	FeatureStore    service.FeatureStore
 	eventsRecorder  *api.EventsRecorder
+	eventsCountAggregator *api.EventsCountAggregator
 	logger          logger.Interface
 }
 
@@ -59,30 +60,29 @@ func (c *UnlaunchClient) evaluateFlag(
 		}
 	}()
 
-
-
 	ulf := processFlag(featureKey, identity, attributes, c)
 
-	event := &dtos.Event{
-		CreatedTime:  time.Now().UTC().Unix() * 1000,
-		Key:          featureKey,
-		Type: "IMPRESSION",
-		Properties:   nil,
-		Sdk:          "Go",
-		SdkVersion:   "0.0.1",
-		Impression:   dtos.Impression{
-			FlagKey:          featureKey,
-			UserId:           identity,
-			VariationKey:     ulf.Variation,
-			EvaluationReason: ulf.EvaluationReason,
-			MachineName:      "UNKNOWN",
-		},
+	if ulf.Variation != "" || ulf.Variation != "control" {
+
+
+		event := &dtos.Event{
+			CreatedTime:  time.Now().UTC().Unix() * 1000,
+			Key:          featureKey,
+			Type: "IMPRESSION",
+			Properties:   nil,
+			Sdk:          "Go",
+			SdkVersion:   "0.0.1",
+			Impression:   dtos.Impression{
+				FlagKey:          featureKey,
+				UserId:           identity,
+				VariationKey:     ulf.Variation,
+				EvaluationReason: ulf.EvaluationReason,
+				MachineName:      "UNKNOWN",
+			},
+		}
+
+		c.eventsRecorder.Record(event)
 	}
-
-	var events [1]*dtos.Event
-	events[0] = event
-
-	c.eventsRecorder.Record(events)
 
 	return ulf
 }
@@ -91,6 +91,11 @@ func (c *UnlaunchClient) BlockUntilReady(timeout uint32) error {
 	c.FeatureStore.Ready()
 	return nil
 }
+
+func (c *UnlaunchClient) Shutdown() {
+	c.FeatureStore.Stop()
+}
+
 
 func processFlag(
 	featureKey string,
@@ -116,7 +121,6 @@ func processFlag(
 			VariationConfiguration: nil,
 			EvaluationReason:       "identity (id) was empty string. You must provide a unique value per user",
 		}
-
 	}
 
 	feature, err := c.FeatureStore.GetFeature(featureKey)

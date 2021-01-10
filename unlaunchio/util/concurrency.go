@@ -2,7 +2,7 @@ package util
 
 import "time"
 
-func Schedule(what func() ([]byte, error), delay time.Duration) chan bool {
+func Schedule(what func() error, delay time.Duration) chan bool {
 	stop := make(chan bool)
 
 	go func() {
