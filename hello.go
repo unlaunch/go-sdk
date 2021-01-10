@@ -9,7 +9,6 @@ import (
 
 func main() {
 	config := client.DefaultConfig()
-	flagKey := "set-attr-type-3"
 	factory, err := client.NewUnlaunchClientFactory("prod-server-51028624-eb18-4bc7-986f-5a0de8084589", config)
 
 	if err != nil {
@@ -23,6 +22,7 @@ func main() {
 		fmt.Printf("Unlaunch Client isn't ready %s\n", err)
 	}
 
+	flagKey := "set-attr-type-3"
 	attributes := make(map[string]interface{})
 	attributes["boolAttr"] = true
 
