@@ -3,6 +3,7 @@ package client
 import (
 	"github.com/unlaunch/go-sdk/unlaunchio/service"
 	"github.com/unlaunch/go-sdk/unlaunchio/service/api"
+	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 )
 
@@ -36,6 +37,8 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 // Client ...
 func (f *UnlaunchFactory) Client() *UnlaunchClient {
 
+	// TODO: Create and pass HTTP client instead of sdkey key, host
+	// like eventsCount
 	eventsRecorder := api.NewHTTPEventsRecorder(
 		f.sdkKey,
 		f.cfg.Host,
@@ -45,6 +48,14 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		f.cfg.MetricsQueueSize,
 		"impressions",
 		f.logger)
+
+
+	eventsCounts := api.NewEventsCountAggregator(
+		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
+		"/api/v1/events",
+		f.cfg.MetricsFlushInterval,
+		f.logger)
+
 	return &UnlaunchClient{
 		sdkKey:          f.sdkKey,
 		pollingInterval: f.cfg.PollingInterval,
@@ -56,6 +67,7 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 			f.cfg.PollingInterval,
 			f.logger),
 		eventsRecorder: eventsRecorder,
+		eventsCountAggregator: eventsCounts,
 		logger: f.logger,
 	}
 

@@ -63,6 +63,7 @@ func (c *UnlaunchClient) evaluateFlag(
 	ulf := processFlag(featureKey, identity, attributes, c)
 
 	if ulf.Variation != "" || ulf.Variation != "control" {
+		c.eventsCountAggregator.Record(featureKey, ulf.Variation)
 
 
 		event := &dtos.Event{

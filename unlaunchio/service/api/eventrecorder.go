@@ -17,7 +17,6 @@ type EventsRecorder struct {
 	queue         *list.List
 	mutexQ        *sync.Mutex
 	queueSize     int
-	flushInterval int
 	name          string
 	shutdown      chan bool
 }
@@ -85,7 +84,6 @@ func NewHTTPEventsRecorder(
 		url:           url,
 		queue:         list.New(),
 		mutexQ:        &sync.Mutex{},
-		flushInterval: flushInterval,
 		queueSize:     queueSize,
 		name:          name,
 		httpClient:    util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
