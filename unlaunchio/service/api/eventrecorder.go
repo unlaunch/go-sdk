@@ -24,6 +24,7 @@ type EventsRecorder struct {
 const itemsToSendBatch = 100
 
 func (e *EventsRecorder) postMetrics() error {
+	e.logger.Debug("er RUNNING")
 	e.mutexQ.Lock()
 	defer e.mutexQ.Unlock()
 
@@ -52,10 +53,14 @@ func (e *EventsRecorder) postMetrics() error {
 }
 
 func (e *EventsRecorder) Shutdown() {
-	e.logger.Debug("Sending shutdown signal to ", e.name)
+	e.logger.Debug("Flushing and sending shutdown signal to ", e.name)
+	e.flush()
 	e.shutdown <- true
 }
 
+func (e *EventsRecorder) flush() {
+	e.postMetrics()
+}
 
 func (e *EventsRecorder) Record(event *dtos.Event) error {
 	if event == nil {

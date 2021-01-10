@@ -21,8 +21,13 @@ type EventsCountAggregator struct {
 }
 
 func (e *EventsCountAggregator) Shutdown() {
-	e.logger.Debug("Sending shutdown signal to count aggregator")
+	e.logger.Debug("Sending shutdown signal to count aggregator and flushing")
+	e.flush()
 	e.shutdown <- true
+}
+
+func (e *EventsCountAggregator) flush() {
+	e.postMetrics()
 }
 
 func (e *EventsCountAggregator) copyAndEmptyMap() map[string]int {

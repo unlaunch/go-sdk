@@ -95,6 +95,8 @@ func (c *UnlaunchClient) BlockUntilReady(timeout uint32) error {
 
 func (c *UnlaunchClient) Shutdown() {
 	c.FeatureStore.Stop()
+	c.eventsRecorder.Shutdown()
+	c.eventsCountAggregator.Shutdown()
 }
 
 

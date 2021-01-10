@@ -43,8 +43,8 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		f.sdkKey,
 		f.cfg.Host,
 		"/api/v1/impressions",
-		f.cfg.MetricsFlushInterval,
 		f.cfg.HTTPTimeout,
+		f.cfg.MetricsFlushInterval,
 		f.cfg.MetricsQueueSize,
 		"impressions",
 		f.logger)
