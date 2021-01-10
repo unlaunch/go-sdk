@@ -1,45 +1,55 @@
 package attributes
 
 import (
+	"github.com/unlaunch/go-sdk/unlaunchio/engine/datatypes/set"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"strings"
 )
 
 func setApply(val interface{}, userVal interface{}, op string) bool {
 
-	jsonValue, _ := util.GetString(val)
-	jsonValues := strings.Split(jsonValue, ",")
-	jsonMap := make(map[string]interface{})
-
-	for _, v := range jsonValues {
-		jsonMap[v] = nil
+	vals, _ := util.ConvertToString(val)
+	flagSet := set.NewSet()
+	for _, item := range strings.Split(vals, ",") {
+		flagSet.Add(strings.TrimSpace(item))
 	}
 
+	uValues, err := util.CovertToMap(userVal)
+	if err != nil {
+		// TODO log that user must pass map[string]interface{}
+		return false
+	}
 
-	userValuesMap, _ := util.GetSet(userVal)
-
+	userValuesSet := set.NewSet()
+	for k, _ := range uValues {
+		userValuesSet.Add(strings.TrimSpace(k))
+	}
 
 	switch op {
-	case "HA":
-		for _, val := range jsonValues {
-			if _, ok := userValuesMap[val]; ok {
-				return true
-			}
+	case "AO": // All of
+		return userValuesSet.IsSuperset(flagSet)
+	case "NAO":
+		return !userValuesSet.IsSuperset(flagSet)
+	case "HA": // Has any of
+		i := userValuesSet.Intersect(flagSet)
+		return i.Cardinality() > 0
+	case "NHA": // Not Has any of
+		i := userValuesSet.Intersect(flagSet)
+		return i.Cardinality() == 0
+	case "EQ": // Equals
+		return flagSet.Equal(userValuesSet)
+	case "NEQ": // Equals
+		return !flagSet.Equal(userValuesSet)
+	case "PO": // Part of
+		if userValuesSet.Cardinality() < 1 {
+			return false
 		}
-	case "AO":
-		for key, _ := range jsonMap {
-			if _, ok := userValuesMap[key]; !ok {
-				return false
-			}
+		return userValuesSet.IsSubset(flagSet)
+	case "NPO": // Not Part of
+		if userValuesSet.Cardinality() < 1 {
+			return false
 		}
-		return true
-	case "NHA":
-		for _, val := range jsonValues {
-			if _, ok := userValuesMap[val]; ok {
-				return false
-			}
-		}
-		return true
+		return !userValuesSet.IsSubset(flagSet)
 	default:
 		// Todo log invalid op warning
 		return false

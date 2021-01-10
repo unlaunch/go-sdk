@@ -7,7 +7,7 @@ import (
 
 func stringApply(val interface{}, userVal interface{}, op string) bool {
 	v := val.(string)
-	uv, err := util.GetString(userVal)
+	uv, err := util.ConvertToString(userVal)
 
 	if err != nil {
 		// TODO log warning that name matches but type is not bool

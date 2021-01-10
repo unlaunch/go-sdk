@@ -8,7 +8,7 @@ import (
 func numberApply(val interface{}, userVal interface{}, op string) bool {
 
 	v, _ := strconv.ParseFloat(val.(string), 64)
-	uv, err := util.GetFloat64(userVal)
+	uv, err := util.ConvertToFloat64(userVal)
 
 	if err != nil {
 		// TODO log warning that name matches but type is not bool

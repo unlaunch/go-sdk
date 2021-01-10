@@ -11,7 +11,7 @@ func dateOrDateTimeApply(val interface{}, userVal interface{}, op string, discar
 	v, _ := strconv.ParseInt(val.(string), 10, 64)
 	v = javaTimeToEpoc(v)
 
-	uv, err := util.GetInt64(userVal)
+	uv, err := util.ConvertToInt64(userVal)
 
 	if discardTime {
 		v = tsWithZeroTime(v)

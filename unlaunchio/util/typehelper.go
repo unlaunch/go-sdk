@@ -6,8 +6,8 @@ import (
 	"reflect"
 )
 
-// GetFloat64 There has to be better way to do this
-func GetFloat64(attr interface{}) (float64, error) {
+// ConvertToFloat64 There has to be better way to do this
+func ConvertToFloat64(attr interface{}) (float64, error) {
 	uVal := 0.0
 
 	// Todo: Move to util
@@ -45,8 +45,8 @@ func GetFloat64(attr interface{}) (float64, error) {
 	return uVal, nil
 }
 
-// GetBool
-func GetBool(attr interface{}) (bool, error) {
+// ConvertToBool
+func ConvertToBool(attr interface{}) (bool, error) {
 	switch v := attr.(type) {
 	case bool:
 		return attr.(bool), nil
@@ -56,7 +56,7 @@ func GetBool(attr interface{}) (bool, error) {
 	}
 }
 
-func GetString(attr interface{}) (string, error) {
+func ConvertToString(attr interface{}) (string, error) {
 	switch v := attr.(type) {
 	case string:
 		return attr.(string), nil
@@ -66,7 +66,7 @@ func GetString(attr interface{}) (string, error) {
 	}
 }
 
-func GetInt64(attr interface{}) (int64, error) {
+func ConvertToInt64(attr interface{}) (int64, error) {
 	switch v := attr.(type) {
 	case int64:
 		return attr.(int64), nil
@@ -77,7 +77,7 @@ func GetInt64(attr interface{}) (int64, error) {
 }
 
 
-func GetSet(attr interface{}) (map[string]interface{}, error) {
+func CovertToMap(attr interface{}) (map[string]interface{}, error) {
 	v := reflect.ValueOf(attr)
 	if v.Kind() == reflect.Map {
 		return attr.(map[string]interface{}), nil
