@@ -9,7 +9,7 @@ import (
 
 func main() {
 	config := client.DefaultConfig()
-	config.PollingInterval = 12000
+	config.PollingInterval = 2000
 	config.MetricsFlushInterval = 15000
 	factory, err := client.NewUnlaunchClientFactory("prod-server-51028624-eb18-4bc7-986f-5a0de8084589", config)
 
@@ -39,9 +39,9 @@ func main() {
 
 	time.Sleep(1 * time.Second)
 
-	unlaunchClient.Shutdown()
+	//unlaunchClient.Shutdown()
 
-	time.Sleep(5 * time.Second)
+	time.Sleep(6 * time.Second)
 	fmt.Println("bye")
 
 }

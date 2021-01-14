@@ -16,6 +16,7 @@ type HTTPClient struct {
 	headers    map[string]string
 	logger     logger.Interface
 	sdkKey     string
+	lastModifiedAt		string
 }
 
 func NewHTTPClient(
@@ -44,6 +45,8 @@ func (c *HTTPClient) Get(path string) ([]byte, error) {
 	req, _ := http.NewRequest("GET", apiEndpoint, nil)
 	req.Header.Add("X-Api-Key", c.sdkKey)
 	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("If-Modified-Since", c.lastModifiedAt)
+
 	resp, err := c.httpClient.Do(req)
 
 	if err != nil {
@@ -63,10 +66,14 @@ func (c *HTTPClient) Get(path string) ([]byte, error) {
 		return nil, err
 	}
 
+	c.logger.Debug(fmt.Sprintf("[HTTP GET] status code: %d", resp.StatusCode))
+
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
+		c.lastModifiedAt = resp.Header.Get("Last-Modified")
 		return body, nil
+	} else if resp.StatusCode == 304 {
+		return nil, nil
 	} else {
-		c.logger.Error(fmt.Sprintf("[HTTP GET] status code: %d", resp.StatusCode))
 		return nil, &dtos.HTTPError{
 			Code: resp.StatusCode,
 			Msg:  resp.Status,

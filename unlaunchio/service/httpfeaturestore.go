@@ -25,25 +25,33 @@ func (h *HTTPFeatureStore) Stop() {
 }
 
 func (h *HTTPFeatureStore) fetchFlags()  error {
-	if h.initialSyncComplete == false {
-		defer wg.Done()
-		h.initialSyncComplete = true
-	}
 
 	res, err := h.httpClient.Get("/api/v1/flags")
 
 	if err != nil {
 		h.logger.Error("error fetching flags ", err)
+		return err
 	}
 
-	h.logger.Trace("responseDto ", string(res))
+	if res == nil {
+		// No error and empty response means nothing changed
+		// most like due to 304; not modified
+		return nil
+	}
+
+	// h.logger.Trace("responseDto ", string(res))
 
 	var responseDto dtos.TopLevelEnvelope
 	err = json.Unmarshal(res, &responseDto)
 
 	if err != nil {
-		h.logger.Error("Error parsing feature flag JSON response ", err)
+		h.logger.Error("error parsing feature flag JSON response ", err)
 		return err
+	}
+
+	if h.initialSyncComplete == false {
+		defer wg.Done()
+		h.initialSyncComplete = true
 	}
 
 	// Todo: Remove this when rules and rollouts are sorted on server
@@ -63,6 +71,7 @@ func (h *HTTPFeatureStore) fetchFlags()  error {
 	}
 	h.features = temp
 
+	h.logger.Debug("Downloaded: ", len(h.features))
 	return nil
 }
 
