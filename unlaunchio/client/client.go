@@ -88,8 +88,8 @@ func (c *UnlaunchClient) evaluateFlag(
 	return ulf
 }
 
-func (c *UnlaunchClient) BlockUntilReady(timeout uint32) error {
-	c.FeatureStore.Ready()
+func (c *UnlaunchClient) BlockUntilReady(timeout time.Duration) error {
+	c.FeatureStore.Ready(timeout)
 	return nil
 }
 

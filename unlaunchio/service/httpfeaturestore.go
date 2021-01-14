@@ -7,7 +7,6 @@ import (
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 	"sort"
-	"sync"
 	"time"
 )
 
@@ -17,6 +16,7 @@ type HTTPFeatureStore struct {
 	features            map[string]dtos.Feature
 	initialSyncComplete bool
 	shutdown            chan bool
+	readyChannel 		chan bool
 }
 
 func (h *HTTPFeatureStore) Stop() {
@@ -50,7 +50,7 @@ func (h *HTTPFeatureStore) fetchFlags()  error {
 	}
 
 	if h.initialSyncComplete == false {
-		defer wg.Done()
+		h.readyChannel <- true
 		h.initialSyncComplete = true
 	}
 
@@ -83,14 +83,23 @@ func (h *HTTPFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	}
 }
 
-func (h *HTTPFeatureStore) Ready() {
+func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
 	if h.initialSyncComplete {
 		return
 	}
-	wg.Wait()
+
+	select {
+	case <- h.readyChannel:
+	case <-time.After(timeout):
+		h.logger.Error("The client wasn't ready in the required time")
+	}
+
+
+
+
 }
 
-var wg sync.WaitGroup
+
 
 func NewHTTPFeatureStore(
 	sdkKey string,
@@ -104,9 +113,10 @@ func NewHTTPFeatureStore(
 		logger:              logger,
 		initialSyncComplete: false,
 		features:            nil,
+		readyChannel: make(chan bool),
 	}
 
-	wg.Add(1)
+
 	httpStore.shutdown = util.Schedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
 
 	return httpStore
