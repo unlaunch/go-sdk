@@ -14,7 +14,7 @@ func TestAllOf_WhenEqualSets_ShouldMatch(t *testing.T) {
 	runApplyAndCheck(flagSet, userSet, "AO", true, t)
 }
 
-func TestAllOf_WhenFlagSetIsSuperset_ShouldMatch(t *testing.T) {
+func TestAllOf_WhenUserSetIsSuperset_ShouldMatch(t *testing.T) {
 	flagSet := "1, 2, 3"
 
 	userSet := getSetOfNumbersUpTo(4)
@@ -42,6 +42,7 @@ func TestAllOf_WhenUserSetIsNil_ShouldNotMatch(t *testing.T) {
 	flagSet := "1, 2, 3"
 
 	runApplyAndCheck(flagSet, nil, "AO", false, t)
+
 }
 
 

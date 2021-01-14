@@ -13,7 +13,7 @@ func TestAnyOf_WhenEqualSets_ShouldMatch(t *testing.T) {
 func TestAnyOf_WhenUserSetIsSuperSet_ShouldMatch(t *testing.T) {
 	flagSet := "1, 2, 3, 4"
 
-	userSet := getSetOfNumbersUpTo(10)
+	userSet := getSetOfNumbersUpTo(5)
 
 	runApplyAndCheck(flagSet, userSet, "HA", true, t)
 }

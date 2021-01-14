@@ -11,13 +11,13 @@ import (
 )
 
 type EventsCountAggregator struct {
-	logger logger.Interface
-	mutexM *sync.Mutex
-	store  map[string]int
-	url string
-	HTTPClient *util.HTTPClient
+	logger         logger.Interface
+	queueMu        *sync.Mutex
+	store          map[string]int
+	url            string
+	HTTPClient     *util.HTTPClient
 	eventsRecorder *EventsRecorder
-	shutdown chan bool
+	shutdown       chan bool
 }
 
 func (e *EventsCountAggregator) Shutdown() {
@@ -31,8 +31,8 @@ func (e *EventsCountAggregator) flush() {
 }
 
 func (e *EventsCountAggregator) copyAndEmptyMap() map[string]int {
-	e.mutexM.Lock()
-	defer e.mutexM.Unlock()
+	e.queueMu.Lock()
+	defer e.queueMu.Unlock()
 
 	r := make(map[string]int)
 	for k, v := range e.store {
@@ -84,8 +84,8 @@ func (e *EventsCountAggregator) Record(flagKey string, variationKey string) erro
 		return nil
 	}
 
-	e.mutexM.Lock()
-	defer e.mutexM.Unlock()
+	e.queueMu.Lock()
+	defer e.queueMu.Unlock()
 
 	e.store[flagKey + "," + variationKey]+= 1
 
@@ -94,11 +94,11 @@ func (e *EventsCountAggregator) Record(flagKey string, variationKey string) erro
 
 func NewEventsCountAggregator(HTTPClient *util.HTTPClient, url string, flushInterval int, logger logger.Interface) *EventsCountAggregator {
 	ec := &EventsCountAggregator {
-		logger: logger,
-		mutexM: &sync.Mutex{},
-		url:   url,
-		HTTPClient: HTTPClient,
-		store: make(map[string]int),
+		logger:         logger,
+		queueMu:        &sync.Mutex{},
+		url:            url,
+		HTTPClient:     HTTPClient,
+		store:          make(map[string]int),
 		eventsRecorder: nil,
 	}
 

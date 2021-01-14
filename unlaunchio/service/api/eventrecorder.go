@@ -11,22 +11,22 @@ import (
 )
 
 type EventsRecorder struct {
-	logger        logger.Interface
-	url           string
-	httpClient    *util.HTTPClient
-	queue         *list.List
-	mutexQ        *sync.Mutex
-	queueSize     int
-	name          string
-	shutdown      chan bool
+	logger     logger.Interface
+	url        string
+	httpClient *util.HTTPClient
+	queue      *list.List
+	queueMu    *sync.Mutex
+	queueSize  int
+	name       string
+	shutdown   chan bool
 }
 
 const itemsToSendBatch = 100
 
 func (e *EventsRecorder) postMetrics() error {
 	e.logger.Debug("er RUNNING")
-	e.mutexQ.Lock()
-	defer e.mutexQ.Unlock()
+	e.queueMu.Lock()
+	defer e.queueMu.Unlock()
 
 	if e.queue.Len() == 0 {
 		return nil
@@ -67,8 +67,8 @@ func (e *EventsRecorder) Record(event *dtos.Event) error {
 		return nil
 	}
 
-	e.mutexQ.Lock()
-	defer e.mutexQ.Unlock()
+	e.queueMu.Lock()
+	defer e.queueMu.Unlock()
 
 	e.queue.PushBack(event)
 
@@ -85,13 +85,13 @@ func NewHTTPEventsRecorder(
 	name string,
 	logger logger.Interface) *EventsRecorder {
 	er := &EventsRecorder{
-		logger:        logger,
-		url:           url,
-		queue:         list.New(),
-		mutexQ:        &sync.Mutex{},
-		queueSize:     queueSize,
-		name:          name,
-		httpClient:    util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
+		logger:     logger,
+		url:        url,
+		queue:      list.New(),
+		queueMu:    &sync.Mutex{},
+		queueSize:  queueSize,
+		name:       name,
+		httpClient: util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
 	}
 	er.shutdown = util.Schedule(er.postMetrics, time.Duration(flushInterval)*time.Millisecond)
 	return er
