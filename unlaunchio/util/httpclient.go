@@ -14,7 +14,7 @@ type HTTPClient struct {
 	host       string
 	httpClient *http.Client
 	headers    map[string]string
-	logger     logger.Interface
+	logger     logger.LoggerInterface
 	sdkKey     string
 	lastModifiedAt		string
 }
@@ -23,7 +23,7 @@ func NewHTTPClient(
 	sdkKey string,
 	host string,
 	timeout int,
-	logger logger.Interface,
+	logger logger.LoggerInterface,
 ) *HTTPClient {
 
 	client := &http.Client{

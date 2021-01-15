@@ -12,7 +12,7 @@ import (
 
 type HTTPFeatureStore struct {
 	httpClient          *util.HTTPClient
-	logger              logger.Interface
+	logger              logger.LoggerInterface
 	features            map[string]dtos.Feature
 	initialSyncComplete bool
 	shutdown            chan bool
@@ -39,7 +39,7 @@ func (h *HTTPFeatureStore) fetchFlags()  error {
 		return nil
 	}
 
-	// h.logger.Trace("responseDto ", string(res))
+	h.logger.Trace("responseDto ", string(res))
 
 	var responseDto dtos.TopLevelEnvelope
 	err = json.Unmarshal(res, &responseDto)
@@ -106,7 +106,7 @@ func NewHTTPFeatureStore(
 	host string,
 	httpTimeout int,
 	pollingInterval int,
-	logger logger.Interface,
+	logger logger.LoggerInterface,
 ) FeatureStore {
 	httpStore := &HTTPFeatureStore{
 		httpClient:          util.NewHTTPClient(sdkKey, host, httpTimeout, logger),

@@ -19,6 +19,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"github.com/unlaunch/go-sdk/unlaunchio/client"
 )
 
@@ -32,7 +33,7 @@ func main() {
 	}
 
 	unlaunchClient := factory.Client()
-	if err = unlaunchClient.BlockUntilReady(3); err != nil {
+	if err = unlaunchClient.BlockUntilReady(3 * time.Second); err != nil {
 		fmt.Printf("Unlaunch Client wasn't ready %s\n", err)
 	}
 

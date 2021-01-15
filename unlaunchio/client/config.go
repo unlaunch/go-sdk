@@ -1,6 +1,8 @@
 package client
 
-import "github.com/unlaunch/go-sdk/unlaunchio/util/logger"
+import (
+	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
+)
 
 // UnlaunchClientConfig ...
 type UnlaunchClientConfig struct {
@@ -9,7 +11,7 @@ type UnlaunchClientConfig struct {
 	MetricsQueueSize     int
 	HTTPTimeout          int
 	Host                 string
-	LoggerConfig         *logger.Options
+	LoggerConfig         *logger.LogOptions
 }
 
 // DefaultConfig ...
@@ -20,6 +22,9 @@ func DefaultConfig() *UnlaunchClientConfig {
 		Host:                 "https://api.unlaunch.io",
 		MetricsFlushInterval: 15000,
 		MetricsQueueSize:     1000,
-		LoggerConfig:         nil,
+		LoggerConfig:         &logger.LogOptions{
+			Level: "DEBUG",
+			Colorful: true,
+		},
 	}
 }
