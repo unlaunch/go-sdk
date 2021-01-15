@@ -11,7 +11,7 @@ import (
 )
 
 type EventsCountAggregator struct {
-	logger         logger.Interface
+	logger         logger.LoggerInterface
 	queueMu        *sync.Mutex
 	store          map[string]int
 	url            string
@@ -92,7 +92,7 @@ func (e *EventsCountAggregator) Record(flagKey string, variationKey string) erro
 	return nil
 }
 
-func NewEventsCountAggregator(HTTPClient *util.HTTPClient, url string, flushInterval int, logger logger.Interface) *EventsCountAggregator {
+func NewEventsCountAggregator(HTTPClient *util.HTTPClient, url string, flushInterval int, logger logger.LoggerInterface) *EventsCountAggregator {
 	ec := &EventsCountAggregator {
 		logger:         logger,
 		queueMu:        &sync.Mutex{},

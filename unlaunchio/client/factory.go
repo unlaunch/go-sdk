@@ -11,7 +11,7 @@ import (
 type UnlaunchFactory struct {
 	sdkKey string
 	cfg    *UnlaunchClientConfig
-	logger logger.Interface
+	logger logger.LoggerInterface
 }
 
 // NewUnlaunchClientFactory is a factory

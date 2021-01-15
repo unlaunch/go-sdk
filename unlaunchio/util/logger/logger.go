@@ -1,24 +1,23 @@
 package logger
 
 import (
-	"io"
+	"fmt"
 	"log"
-	"os"
 )
 
 // Options ...
 type Options struct {
-	CommonWriter io.Writer
-	ErrorWriter  io.Writer
+	BaseLogger *log.Logger
+	Level string
 }
 
 // Logger ...
 type Logger struct {
-	debugLogger   log.Logger
-	infoLogger    log.Logger
-	warningLogger log.Logger
-	errorLogger   log.Logger
-	traceLogger   log.Logger
+	debugLogger   *log.Logger
+	infoLogger    *log.Logger
+	warningLogger *log.Logger
+	errorLogger   *log.Logger
+	traceLogger   *log.Logger
 }
 
 // Trace ...
@@ -47,28 +46,23 @@ func (l *Logger) Error(msg ...interface{}) {
 }
 
 // NewLogger ...
-func NewLogger(options *Options) *Logger {
-	var errorWriter io.Writer
-	var commonWriter io.Writer
+func NewLogger(opt *Options) *LevelsLogger {
 
+	lvl := Level(opt.Level)
 
-	if options == nil || options.ErrorWriter == nil {
-		errorWriter = os.Stdout
-	} else {
-		errorWriter = options.ErrorWriter
+	opt.BaseLogger.Println()
+
+	opt.BaseLogger.SetPrefix(fmt.Sprintf("%s - unlaunch - ", opt.Level))
+	l := &Logger{
+		debugLogger:   opt.BaseLogger,
+		infoLogger:    opt.BaseLogger,
+		warningLogger: opt.BaseLogger,
+		errorLogger:   opt.BaseLogger,
+		traceLogger:   opt.BaseLogger,
 	}
 
-	if options == nil || options.CommonWriter == nil {
-		commonWriter = os.Stdout
-	} else {
-		commonWriter = options.CommonWriter
-	}
-
-	return &Logger{
-		debugLogger:   *log.New(commonWriter, "DEBUG - ", 1),
-		infoLogger:    *log.New(commonWriter, "INFO - ", 1),
-		warningLogger: *log.New(commonWriter, "WARNING - ", 1),
-		errorLogger:   *log.New(errorWriter, "ERROR - ", 1),
-		traceLogger:   *log.New(errorWriter, "TRACE - ", 1),
+	return &LevelsLogger{
+		delegate: l,
+		level: lvl,
 	}
 }

@@ -11,7 +11,7 @@ import (
 )
 
 type EventsRecorder struct {
-	logger     logger.Interface
+	logger     logger.LoggerInterface
 	url        string
 	httpClient *util.HTTPClient
 	queue      *list.List
@@ -83,7 +83,7 @@ func NewHTTPEventsRecorder(
 	flushInterval int,
 	queueSize int,
 	name string,
-	logger logger.Interface) *EventsRecorder {
+	logger logger.LoggerInterface) *EventsRecorder {
 	er := &EventsRecorder{
 		logger:     logger,
 		url:        url,

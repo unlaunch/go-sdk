@@ -18,7 +18,7 @@ type UnlaunchClient struct {
 	FeatureStore    service.FeatureStore
 	eventsRecorder  *api.EventsRecorder
 	eventsCountAggregator *api.EventsCountAggregator
-	logger          logger.Interface
+	logger          logger.LoggerInterface
 }
 
 // Variation ...
