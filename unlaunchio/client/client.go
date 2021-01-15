@@ -29,7 +29,7 @@ func (c *UnlaunchClient) Feature(
 	identity string,
 	attributes map[string]interface{},
 ) *dtos.UnlaunchFeature {
-	return c.evaluateFlag(featureKey, identity, attributes)
+	return c.processFlagEvaluation(featureKey, identity, attributes)
 }
 
 func (c *UnlaunchClient) IsShutdown() bool {
@@ -43,11 +43,11 @@ func (c *UnlaunchClient) Variation(
 	attributes map[string]interface{},
 ) string {
 
-	return c.evaluateFlag(featureKey, identity, attributes).Variation
+	return c.processFlagEvaluation(featureKey, identity, attributes).Variation
 }
 
 // Variation ...
-func (c *UnlaunchClient) evaluateFlag(
+func (c *UnlaunchClient) processFlagEvaluation(
 	featureKey string,
 	identity string,
 	attributes map[string]interface{},
@@ -66,11 +66,10 @@ func (c *UnlaunchClient) evaluateFlag(
 		}
 	}()
 
-	ulf := processFlag(featureKey, identity, attributes, c)
+	ulf := c.evaluateFlag(featureKey, identity, attributes)
 
 	if ulf.Variation != "" || ulf.Variation != "control" {
 		c.eventsCountAggregator.Record(featureKey, ulf.Variation)
-
 
 		event := &dtos.Event{
 			CreatedTime:  time.Now().UTC().Unix() * 1000,
@@ -119,11 +118,10 @@ func (c *UnlaunchClient) Shutdown() {
 }
 
 
-func processFlag(
+func (c *UnlaunchClient) evaluateFlag(
 	featureKey string,
 	identity string,
-	attributes map[string]interface{},
-	c *UnlaunchClient) *dtos.UnlaunchFeature {
+	attributes map[string]interface{}) *dtos.UnlaunchFeature {
 	if featureKey == "" {
 		c.logger.Error("feature key cannot be empty")
 		return &dtos.UnlaunchFeature{
@@ -141,6 +139,16 @@ func processFlag(
 			Variation:              "control",
 			VariationConfiguration: nil,
 			EvaluationReason:       "identity (id) was empty string. You must provide a unique value per user",
+		}
+	}
+
+	if !c.FeatureStore.IsReady() {
+		c.logger.Warn("the SDK is not ready. Returning the SDK default 'control' as variation which may not give the right result")
+		return &dtos.UnlaunchFeature{
+			Feature:                featureKey,
+			Variation:              "control",
+			VariationConfiguration: nil,
+			EvaluationReason:       "sdk was not ready",
 		}
 	}
 
