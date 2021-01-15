@@ -33,9 +33,9 @@ func (l *LevelsLogger) Error(is ...interface{}) {
 }
 
 // Warning forwards warning logging messages
-func (l *LevelsLogger) Warning(is ...interface{}) {
+func (l *LevelsLogger) Warn(is ...interface{}) {
 	if l.level >= LevelWarning {
-		l.delegate.Warning(is...)
+		l.delegate.Warn(is...)
 	}
 }
 
@@ -61,11 +61,11 @@ func (l *LevelsLogger) Trace(is ...interface{}) {
 }
 
 var levels map[string]int = map[string]int{
-	"ERROR":   LevelError,
-	"WARNING": LevelWarning,
-	"INFO":    LevelInfo,
-	"DEBUG":   LevelDebug,
-	"TRACE": LevelTrace,
+	"ERROR":  LevelError,
+	"WARN":   LevelWarning,
+	"INFO":   LevelInfo,
+	"DEBUG":  LevelDebug,
+	"TRACE":  LevelTrace,
 }
 
 // Level gets current level

@@ -11,7 +11,7 @@ type UnlaunchClientConfig struct {
 	MetricsQueueSize     int
 	HTTPTimeout          int
 	Host                 string
-	LoggerConfig         *logger.Options
+	LoggerConfig         *logger.LogOptions
 }
 
 // DefaultConfig ...
@@ -22,7 +22,7 @@ func DefaultConfig() *UnlaunchClientConfig {
 		Host:                 "https://api.unlaunch.io",
 		MetricsFlushInterval: 15000,
 		MetricsQueueSize:     1000,
-		LoggerConfig:         &logger.Options{
+		LoggerConfig:         &logger.LogOptions{
 			Level: "DEBUG",
 			Colorful: true,
 		},

@@ -11,7 +11,7 @@ func main() {
 	config := client.DefaultConfig()
 	config.PollingInterval = 2000
 	config.MetricsFlushInterval = 15000
-	factory, err := client.NewUnlaunchClientFactory("prod-serverg-51028624-eb18-4bc7-986f-5a0de8084589", config)
+	factory, err := client.NewUnlaunchClientFactory("prod-server-51028624-eb18-4bc7-986f-5a0de8084589", config)
 
 	if err != nil {
 		fmt.Printf("Unable to initialize Unlaunch Client because there was an error %s\n", err)

@@ -22,8 +22,8 @@ const (
 	YellowBold  = "\033[33;1m"
 )
 
-// Options ...
-type Options struct {
+// LogOptions ...
+type LogOptions struct {
 	ErrorWriter     io.Writer
 	WarningWriter   io.Writer
 	InfoWriter      io.Writer
@@ -58,7 +58,7 @@ func (l *Logger) Info(msg ...interface{}) {
 }
 
 // Warning ...
-func (l *Logger) Warning(msg ...interface{}) {
+func (l *Logger) Warn(msg ...interface{}) {
 	l.warningLogger.Println(msg...)
 }
 
@@ -68,7 +68,7 @@ func (l *Logger) Error(msg ...interface{}) {
 }
 
 // NewLogger ...
-func NewLogger(opt *Options) *LevelsLogger {
+func NewLogger(opt *LogOptions) *LevelsLogger {
 	opt = checkOptions(opt)
 
 	var (
@@ -105,11 +105,11 @@ func NewLogger(opt *Options) *LevelsLogger {
 }
 
 
-func checkOptions(opt *Options) *Options {
-	var res *Options
+func checkOptions(opt *LogOptions) *LogOptions {
+	var res *LogOptions
 
 	if opt == nil {
-		res = &Options{}
+		res = &LogOptions{}
 	} else {
 		res = opt
 	}
@@ -136,7 +136,7 @@ func checkOptions(opt *Options) *Options {
 
 
 	switch opt.Level {
-	case "ERROR", "WARNING", "INFO", "DEBUG", "TRACE":
+	case "ERROR", "WARN", "INFO", "DEBUG", "TRACE":
 	default:
 		res.Level = "ERROR"
 	}
