@@ -1,6 +1,7 @@
 package client
 
 import (
+	"errors"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"github.com/unlaunch/go-sdk/unlaunchio/service"
@@ -12,13 +13,14 @@ import (
 
 // UnlaunchClient Main Unlaunch Client
 type UnlaunchClient struct {
-	sdkKey          string
-	pollingInterval int
-	httpTimeout     int
-	FeatureStore    service.FeatureStore
-	eventsRecorder  *api.EventsRecorder
+	sdkKey                string
+	pollingInterval       int
+	httpTimeout           int
+	FeatureStore          service.FeatureStore
+	eventsRecorder        *api.EventsRecorder
 	eventsCountAggregator *api.EventsCountAggregator
-	logger          logger.LoggerInterface
+	logger                logger.LoggerInterface
+	shutdown              bool
 }
 
 // Variation ...
@@ -28,6 +30,10 @@ func (c *UnlaunchClient) Feature(
 	attributes map[string]interface{},
 ) *dtos.UnlaunchFeature {
 	return c.evaluateFlag(featureKey, identity, attributes)
+}
+
+func (c *UnlaunchClient) IsShutdown() bool {
+	return c.shutdown
 }
 
 // Variation ...
@@ -89,6 +95,18 @@ func (c *UnlaunchClient) evaluateFlag(
 }
 
 func (c *UnlaunchClient) BlockUntilReady(timeout time.Duration) error {
+	if c.FeatureStore.IsReady() {
+		return nil
+	}
+
+	if timeout <= 0 {
+		return errors.New("the timeout must be a positive")
+	}
+
+	if c.shutdown {
+		return errors.New("the client has been shutdown")
+	}
+
 	c.FeatureStore.Ready(timeout)
 	return nil
 }
@@ -97,6 +115,7 @@ func (c *UnlaunchClient) Shutdown() {
 	c.FeatureStore.Stop()
 	c.eventsRecorder.Shutdown()
 	c.eventsCountAggregator.Shutdown()
+	c.shutdown = true
 }
 
 
@@ -113,7 +132,6 @@ func processFlag(
 			VariationConfiguration: nil,
 			EvaluationReason:       "feature key was empty string. You must provide the key of the feature flag to evaluate",
 		}
-
 	}
 
 	if identity == "" {

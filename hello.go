@@ -24,13 +24,13 @@ func main() {
 		fmt.Printf("Unlaunch Client isn't ready %s\n", err)
 	}
 
-
 	flagKey := "set-attr-type-3"
 	attributes := make(map[string]interface{})
 	attributes["boolAttr"] = true
 
 	variation := unlaunchClient.Variation(flagKey, "user123", attributes)
 	fmt.Printf("The variation for feature is %s\n", variation)
+
 
 	go func() {
 		variation := unlaunchClient.Variation(flagKey, "user123631", nil)
@@ -40,9 +40,11 @@ func main() {
 
 	time.Sleep(1 * time.Second)
 
-	//unlaunchClient.Shutdown()
+	unlaunchClient.Shutdown()
 
-	time.Sleep(10 * time.Second)
+	fmt.Println(unlaunchClient.IsShutdown())
+
+	time.Sleep(5 * time.Second)
 	fmt.Println("bye")
 
 }

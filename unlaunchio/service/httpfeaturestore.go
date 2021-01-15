@@ -91,6 +91,16 @@ func (h *HTTPFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	}
 }
 
+func (h *HTTPFeatureStore) IsReady() bool {
+	if h.initialSyncComplete {
+		return true
+	} else {
+		return false
+	}
+
+}
+
+
 func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
 	if h.initialSyncComplete {
 		return
@@ -101,12 +111,7 @@ func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
 	case <-time.After(timeout):
 		h.logger.Error("The client wasn't ready in the required time")
 	}
-
-
-
-
 }
-
 
 
 func NewHTTPFeatureStore(
