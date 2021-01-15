@@ -1,5 +1,9 @@
 # Unlaunch Go SDK
 
+| main                                                                                                                | development                                                                                                                |
+|---------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| [![Build Status](https://travis-ci.com/unlaunch/go-sdk.svg?branch=main)](https://travis-ci.com/unlaunch/go-sdk)| [![Build Status](https://travis-ci.com/unlaunch/go-sdk.svg?branch=development)](https://travis-ci.com/unlaunch/go-sdk) |
+
 ## Overview
 The Unlaunch Go SDK provides a Go API to access Unlaunch feature flags and other features. 
 Using the SDK, you can easily build Java applications that can evaluate feature flags, dynamic configurations, and more.

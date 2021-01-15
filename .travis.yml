@@ -11,3 +11,6 @@ install:
 
 script:
   - go test -v -coverprofile=coverage.out $(go list ./... | grep -v /vendor/)
+
+notifications:
+  slack: crovate:QnF0NqS4HWq69w3HbnaGw777
