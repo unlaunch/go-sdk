@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
@@ -29,8 +30,15 @@ func (h *HTTPFeatureStore) fetchFlags()  error {
 	res, err := h.httpClient.Get("/api/v1/flags")
 
 	if err != nil {
-		h.logger.Error("error fetching flags ", err)
-		return err
+		if httpError, ok := err.(*dtos.HTTPError); ok {
+			if httpError.Code == 403 {
+				h.logger.Error(
+					fmt.Sprintf("The API key you provided was rejected by the server. %s", util.SDK_KEY_HELP_MSG))
+			}
+		} else {
+			h.logger.Error("error fetching flags ", err)
+			return err
+		}
 	}
 
 	if res == nil {

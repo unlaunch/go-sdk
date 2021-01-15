@@ -23,7 +23,7 @@ func DefaultConfig() *UnlaunchClientConfig {
 		MetricsFlushInterval: 15000,
 		MetricsQueueSize:     1000,
 		LoggerConfig:         &logger.LogOptions{
-			Level: "DEBUG",
+			Level: "INFO",
 			Colorful: true,
 		},
 	}

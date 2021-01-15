@@ -71,7 +71,7 @@ func (c *HTTPClient) Get(path string) ([]byte, error) {
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		c.lastModifiedAt = resp.Header.Get("Last-Modified")
 		return body, nil
-	} else if resp.StatusCode == 304 {
+	}  else if resp.StatusCode == 304 {
 		return nil, nil
 	} else {
 		return nil, &dtos.HTTPError{

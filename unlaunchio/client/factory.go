@@ -1,6 +1,7 @@
 package client
 
 import (
+	"errors"
 	"github.com/unlaunch/go-sdk/unlaunchio/service"
 	"github.com/unlaunch/go-sdk/unlaunchio/service/api"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
@@ -18,13 +19,12 @@ type UnlaunchFactory struct {
 func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*UnlaunchFactory, error) {
 
 	if SDKKey == "" {
-
+		return nil, errors.New("the SDK Key cannot be null")
 	}
 
 	if cfg == nil {
 		cfg = DefaultConfig()
 	}
-
 	logging := logger.NewLogger(cfg.LoggerConfig)
 
 	return &UnlaunchFactory{

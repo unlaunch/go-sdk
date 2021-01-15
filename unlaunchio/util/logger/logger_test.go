@@ -140,7 +140,7 @@ func TestTraceLevel(t *testing.T) {
 	logAtAllLevels(&logger)
 
 	shouldBeCalled := []string{"TRACE", "DEBUG", "ERROR", "WARN", "INFO"}
-	shouldNotBeCalled := []string{}
+	var shouldNotBeCalled []string
 
 	checkShouldBeCalled(delegate, shouldBeCalled, t)
 	checkShouldNotBeCalled(delegate, shouldNotBeCalled, t)
