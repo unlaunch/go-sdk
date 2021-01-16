@@ -20,7 +20,7 @@ type HTTPFeatureStore struct {
 	readyChannel 		chan bool
 }
 
-func (h *HTTPFeatureStore) Stop() {
+func (h *HTTPFeatureStore) Shutdown() {
 	h.logger.Debug("Sending shutdown signal to feature store")
 	h.shutdown <- true
 }

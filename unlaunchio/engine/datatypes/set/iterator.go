@@ -9,7 +9,7 @@ type Iterator struct {
 
 // Stop stops the Iterator, no further elements will be received on C, C will be closed.
 func (i *Iterator) Stop() {
-	// Allows for Stop() to be called multiple times
+	// Allows for Shutdown() to be called multiple times
 	// (close() panics when called on already closed channel)
 	defer func() {
 		recover()

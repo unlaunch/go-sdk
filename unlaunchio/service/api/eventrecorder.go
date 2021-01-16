@@ -10,7 +10,12 @@ import (
 	"time"
 )
 
-type EventsRecorder struct {
+type EventsRecorder interface {
+	Shutdown()
+	Record(event *dtos.Event) error
+}
+
+type SimpleEventsRecorder struct {
 	logger     logger.LoggerInterface
 	url        string
 	httpClient *util.HTTPClient
@@ -23,7 +28,7 @@ type EventsRecorder struct {
 
 const itemsToSendBatch = 100
 
-func (e *EventsRecorder) postMetrics() error {
+func (e *SimpleEventsRecorder) postMetrics() error {
 	e.logger.Debug("er RUNNING")
 	e.queueMu.Lock()
 	defer e.queueMu.Unlock()
@@ -52,17 +57,17 @@ func (e *EventsRecorder) postMetrics() error {
 	return nil
 }
 
-func (e *EventsRecorder) Shutdown() {
+func (e *SimpleEventsRecorder) Shutdown() {
 	e.logger.Debug("Flushing and sending shutdown signal to ", e.name)
 	e.flush()
 	e.shutdown <- true
 }
 
-func (e *EventsRecorder) flush() {
+func (e *SimpleEventsRecorder) flush() {
 	e.postMetrics()
 }
 
-func (e *EventsRecorder) Record(event *dtos.Event) error {
+func (e *SimpleEventsRecorder) Record(event *dtos.Event) error {
 	if event == nil {
 		return nil
 	}
@@ -83,8 +88,8 @@ func NewHTTPEventsRecorder(
 	flushInterval int,
 	queueSize int,
 	name string,
-	logger logger.LoggerInterface) *EventsRecorder {
-	er := &EventsRecorder{
+	logger logger.LoggerInterface) *SimpleEventsRecorder {
+	er := &SimpleEventsRecorder{
 		logger:     logger,
 		url:        url,
 		queue:      list.New(),

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"io/ioutil"
 	"math/rand"
 	"sort"
@@ -22,7 +21,7 @@ func TestWhen_FlagIsDisabled_Then_DefaultVariationIsReturned(t *testing.T) {
 		t.Error("Error parsing mock flag JSON ", err)
 	}
 
-	ulf, err := engine.Evaluate(&responseDto.Data.Features[0], "d", nil)
+	ulf, err := evaluator.Evaluate(&responseDto.Data.Features[0], "d", nil)
 
 	if err != nil {
 		t.Error("evaluation threw error ", err)
@@ -43,7 +42,7 @@ func TestWhen_FlagIsEnabled_Then_DefaultRuleIsReturned(t *testing.T) {
 		t.Error("Error parsing mock flag JSON ", err)
 	}
 
-	ulf, err := engine.Evaluate(&responseDto.Data.Features[0], "d", nil)
+	ulf, err := evaluator.Evaluate(&responseDto.Data.Features[0], "d", nil)
 
 	if err != nil {
 		t.Error("evaluation threw error ", err)
@@ -64,7 +63,7 @@ func TestWhen_FlagIsEnabledAndUserIsInAllowList_Then_AllowListVariationIsReturne
 		t.Error("Error parsing mock flag JSON ", err)
 	}
 
-	ulf, err := engine.Evaluate(&responseDto.Data.Features[0], "user123", nil)
+	ulf, err := evaluator.Evaluate(&responseDto.Data.Features[0], "user123", nil)
 
 	if err != nil {
 		t.Error("evaluation threw error ", err)
@@ -93,12 +92,12 @@ func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t 
 
 	for i := 0; i<10; i++ {
 		userId := "user-"+ strconv.Itoa(rand.Intn(1000))
-		ulf, _ := engine.Evaluate(&responseDto, userId, nil)
+		ulf, _ := evaluator.Evaluate(&responseDto, userId, nil)
 		variation := ulf.Variation
 
 		// Evaluate using both ordered and (reversed) order data
 		// Result should be the same
-		ulf, _ = engine.Evaluate(&responseDtoReversed, userId, nil)
+		ulf, _ = evaluator.Evaluate(&responseDtoReversed, userId, nil)
 
 		if variation != ulf.Variation {
 			t.Error(fmt.Sprintf("expected variation %s actual variation %s on the iteration #%d",
@@ -119,7 +118,7 @@ func TestWhen_RollOutIsEnabled_Then_VariationIsAllocatedByBucketing(t *testing.T
 
 	countOn, countOff := 0, 0
 	for i:= 0; i<50; i++ {
-		ulf, err := engine.Evaluate(&responseDto, "user-" + strconv.Itoa(i), nil)
+		ulf, err := evaluator.Evaluate(&responseDto, "user-" + strconv.Itoa(i), nil)
 
 		if err != nil {
 			t.Error("evaluation threw error ", err)

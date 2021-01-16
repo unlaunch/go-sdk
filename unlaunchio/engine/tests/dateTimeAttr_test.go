@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"io/ioutil"
 	"math/rand"
 	"sort"
@@ -37,7 +36,7 @@ func TestWhen_DateTimeGreaterThanMatch(t *testing.T) {
 	attributes["dateTimeAttr"] = time.Date(
 		2021, 1, 2, 22, 33, 0, 0, time.Local).Unix()
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -52,7 +51,7 @@ func TestWhen_DateTimeLessThanMatch(t *testing.T) {
 	attributes["dateTimeAttr"] = time.Date(
 		2020, 5, 7, 13, 35, 34, 899, time.UTC).Unix()
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))

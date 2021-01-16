@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"io/ioutil"
 	"math/rand"
 	"sort"
@@ -52,7 +51,7 @@ func TestWhen_DateEqualsMatch(t *testing.T) {
 	attributes["dateAttr"] = time.Date(
 		2021, 1, 2, 10, 12, 45, 1000, time.UTC).Unix()
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -67,7 +66,7 @@ func TestWhen_DateGreaterThanMatch(t *testing.T) {
 	attributes := make(map[string]interface{})
 	attributes["dateAttr"] = time.Now().UTC().Unix() // original time is Jan 3, 2021 UTC
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -83,7 +82,7 @@ func TestWhen_DateLessThanMatch(t *testing.T) {
 	attributes["dateAttr"] = time.Date(
 		2020, 12, 31, 9, 12, 45, 1000, time.UTC).Unix()
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -99,7 +98,7 @@ func TestWhen_DateLessThanEqualsMatch(t *testing.T) {
 	attributes["dateAttr"] = time.Date(
 		2021, 1, 14, 10, 12, 45, 1000, time.UTC).Unix()
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))

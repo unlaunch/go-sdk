@@ -11,7 +11,18 @@ import (
 
 var tr = attributes2.NewTargetingRule()
 
-func Evaluate(
+
+type Evaluator interface {
+	Evaluate(feature *dtos.Feature, identity string, attributes *map[string]interface{})(*dtos.UnlaunchFeature, error)
+}
+
+type SimpleEvaluator struct{}
+
+func NewEvaluator() Evaluator {
+	return &SimpleEvaluator{}
+}
+
+func (e *SimpleEvaluator) Evaluate(
 	feature *dtos.Feature,
 	identity string,
 	attributes *map[string]interface{})(*dtos.UnlaunchFeature, error) {
@@ -21,21 +32,21 @@ func Evaluate(
 
 	if feature.Enabled() == false {
 		result.EvaluationReason = "Flag disabled. Default Variation served"
-		offVariation, err := getOffVariation(feature)
+		offVariation, err := e.getOffVariation(feature)
 		if err != nil {
 			return nil, err
 		}
 		result.Variation = offVariation.Key
 		return result, nil
-	} else if v := variationIfUserInAllowList(feature, identity); v != nil {
+	} else if v := e.variationIfUserInAllowList(feature, identity); v != nil {
 		result.Variation = v.Key
 		result.EvaluationReason = "User is in Target Users List"
 		return result, nil
-	} else if v := matchTargetingRules(feature, identity, attributes); v != nil {
+	} else if v := e.matchTargetingRules(feature, identity, attributes); v != nil {
 		result.Variation = v.Key
 		result.EvaluationReason = "Targeting Rule Match"
 		return result, nil
-	} else if v := defaultRule(feature, identity, attributes); v != nil {
+	} else if v := e.defaultRule(feature, identity, attributes); v != nil {
 		result.Variation = v.Key
 		result.EvaluationReason = "Default Rule Match"
 		return result, nil
@@ -44,7 +55,7 @@ func Evaluate(
 	}
 }
 
-func getOffVariation(f *dtos.Feature) (*dtos.Variation, error) {
+func (e *SimpleEvaluator)getOffVariation(f *dtos.Feature) (*dtos.Variation, error) {
 	offVarId := f.OffVariation
 
 	for _, variation := range f.Variations {
@@ -58,7 +69,7 @@ func getOffVariation(f *dtos.Feature) (*dtos.Variation, error) {
 	)
 }
 
-func variationIfUserInAllowList(f *dtos.Feature, identity string) *dtos.Variation {
+func (e *SimpleEvaluator)variationIfUserInAllowList(f *dtos.Feature, identity string) *dtos.Variation {
 	for _, variation := range f.Variations {
 		if variation.AllowList != "" {
 
@@ -75,7 +86,7 @@ func variationIfUserInAllowList(f *dtos.Feature, identity string) *dtos.Variatio
 	return nil
 }
 
-func matchTargetingRules(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
+func (e *SimpleEvaluator)matchTargetingRules(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
 
 	if attributes == nil {
 		return nil
@@ -96,33 +107,33 @@ func matchTargetingRules(feature *dtos.Feature, identity string, attributes *map
 			}
 		}
 		if matched {
-			return getRuleVariation(&rule, feature, identity)
+			return e.getRuleVariation(&rule, feature, identity)
 		}
 	}
 
 	return nil
 }
 
-func defaultRule(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
+func (e *SimpleEvaluator)defaultRule(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
 	defaultRule := feature.DefaultRule()
-	return getRuleVariation(defaultRule, feature, identity)
+	return e.getRuleVariation(defaultRule, feature, identity)
 }
 
-func getRuleVariation(rule *dtos.Rule, feature *dtos.Feature, identity string) *dtos.Variation {
-	calculatedBucket := bucket(feature.Key + identity)
+func (e *SimpleEvaluator)getRuleVariation(rule *dtos.Rule, feature *dtos.Feature, identity string) *dtos.Variation {
+	calculatedBucket := e.bucket(feature.Key + identity)
 
 	// Return Default Rule if targeting rules don't match
 	if len(rule.Rollout) == 1 && rule.Rollout[0].RolloutPercentage == 100 {
-		return variationById(rule.Rollout[0].VariationId, feature)
+		return e.variationById(rule.Rollout[0].VariationId, feature)
 	} else {
-		vId, _ := foo(rule, calculatedBucket)
+		vId, _ := e.foo(rule, calculatedBucket)
 		return feature.VariationById(vId)
 	}
 
 	return nil
 }
 
-func variationById(id int, feature *dtos.Feature) *dtos.Variation {
+func (e *SimpleEvaluator)variationById(id int, feature *dtos.Feature) *dtos.Variation {
 	for _, variation := range feature.Variations {
 		if id == variation.Id {
 			return &variation
@@ -131,13 +142,13 @@ func variationById(id int, feature *dtos.Feature) *dtos.Variation {
 	return nil
 }
 
-func bucket(key string) int {
+func (e *SimpleEvaluator)bucket(key string) int {
 	var hashKey uint32
 	hashKey = Murmur32Hash([]byte(key), 0)
 	return int(math.Abs(float64(hashKey%100)) + 1)
 }
 
-func foo(rule *dtos.Rule, bucket int) (int, error) {
+func (e *SimpleEvaluator)foo(rule *dtos.Rule, bucket int) (int, error) {
 	var sum = 0
 	for _, rollout := range rule.Rollout {
 		sum += rollout.RolloutPercentage

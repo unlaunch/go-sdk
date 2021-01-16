@@ -134,8 +134,7 @@ func checkOptions(opt *LogOptions) *LogOptions {
 		res.TraceWriter = os.Stdout
 	}
 
-
-	switch opt.Level {
+	switch res.Level {
 	case "ERROR", "WARN", "INFO", "DEBUG", "TRACE":
 	default:
 		res.Level = "ERROR"

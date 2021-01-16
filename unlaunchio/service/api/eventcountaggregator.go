@@ -10,27 +10,32 @@ import (
 	"time"
 )
 
-type EventsCountAggregator struct {
+type EventsCountAggregator interface {
+	Shutdown()
+	Record(flagKey string, variationKey string) error
+}
+
+type SimpleEventsCountAggregator struct {
 	logger         logger.LoggerInterface
 	queueMu        *sync.Mutex
 	store          map[string]int
 	url            string
 	HTTPClient     *util.HTTPClient
-	eventsRecorder *EventsRecorder
+	eventsRecorder *SimpleEventsRecorder
 	shutdown       chan bool
 }
 
-func (e *EventsCountAggregator) Shutdown() {
+func (e *SimpleEventsCountAggregator) Shutdown() {
 	e.logger.Debug("Sending shutdown signal to count aggregator and flushing")
 	e.flush()
 	e.shutdown <- true
 }
 
-func (e *EventsCountAggregator) flush() {
+func (e *SimpleEventsCountAggregator) flush() {
 	e.postMetrics()
 }
 
-func (e *EventsCountAggregator) copyAndEmptyMap() map[string]int {
+func (e *SimpleEventsCountAggregator) copyAndEmptyMap() map[string]int {
 	e.queueMu.Lock()
 	defer e.queueMu.Unlock()
 
@@ -45,7 +50,7 @@ func (e *EventsCountAggregator) copyAndEmptyMap() map[string]int {
 	return r
 }
 
-func (e *EventsCountAggregator) postMetrics() error {
+func (e *SimpleEventsCountAggregator) postMetrics() error {
 	rawEvents := e.copyAndEmptyMap()
 
 	// nothing to do
@@ -79,7 +84,7 @@ func (e *EventsCountAggregator) postMetrics() error {
 	return nil
 }
 
-func (e *EventsCountAggregator) Record(flagKey string, variationKey string) error {
+func (e *SimpleEventsCountAggregator) Record(flagKey string, variationKey string) error {
 	if flagKey == "" || variationKey == "" {
 		return nil
 	}
@@ -92,8 +97,8 @@ func (e *EventsCountAggregator) Record(flagKey string, variationKey string) erro
 	return nil
 }
 
-func NewEventsCountAggregator(HTTPClient *util.HTTPClient, url string, flushInterval int, logger logger.LoggerInterface) *EventsCountAggregator {
-	ec := &EventsCountAggregator {
+func NewEventsCountAggregator(HTTPClient *util.HTTPClient, url string, flushInterval int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
+	ec := &SimpleEventsCountAggregator{
 		logger:         logger,
 		queueMu:        &sync.Mutex{},
 		url:            url,

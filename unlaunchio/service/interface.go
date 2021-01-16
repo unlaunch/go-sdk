@@ -8,6 +8,6 @@ import (
 type FeatureStore interface {
 	GetFeature(key string) (*dtos.Feature, error)
 	Ready(timeout time.Duration)
-	Stop()
+	Shutdown()
 	IsReady() bool
 }

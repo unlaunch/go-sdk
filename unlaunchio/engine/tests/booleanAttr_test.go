@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"io/ioutil"
 	"math/rand"
 	"sort"
@@ -32,7 +31,7 @@ func TestWhen_BooleanDefRule(t *testing.T) {
 
 	expectedVariation := "defrule"
 
-	ulf, _ := engine.Evaluate(&r, u, nil)
+	ulf, _ := evaluator.Evaluate(&r, u, nil)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -47,7 +46,7 @@ func TestWhen_BooleanEqualsTrueRuleMatch(t *testing.T) {
 	attributes := make(map[string]interface{})
 	attributes["boolAttr"] = true
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -62,7 +61,7 @@ func TestWhen_BooleanEqualsFalseRuleMatch(t *testing.T) {
 	attributes := make(map[string]interface{})
 	attributes["boolAttr"] = false
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -89,7 +88,7 @@ func TestWhen_BooleanDefRuleNotEqualsFile(t *testing.T) {
 
 	expectedVariation := "defrule"
 
-	ulf, _ := engine.Evaluate(&r, u, nil)
+	ulf, _ := evaluator.Evaluate(&r, u, nil)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -104,7 +103,7 @@ func TestWhen_BooleanNotEqualsTrue(t *testing.T) {
 	attributes := make(map[string]interface{})
 	attributes["boolAttr"] = false
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))

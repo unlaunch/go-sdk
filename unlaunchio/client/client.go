@@ -17,10 +17,11 @@ type UnlaunchClient struct {
 	pollingInterval       int
 	httpTimeout           int
 	FeatureStore          service.FeatureStore
-	eventsRecorder        *api.EventsRecorder
-	eventsCountAggregator *api.EventsCountAggregator
+	eventsRecorder        api.EventsRecorder
+	eventsCountAggregator api.EventsCountAggregator
 	logger                logger.LoggerInterface
 	shutdown              bool
+	evaluator             engine.Evaluator
 }
 
 // Variation ...
@@ -42,11 +43,10 @@ func (c *UnlaunchClient) Variation(
 	identity string,
 	attributes map[string]interface{},
 ) string {
-
 	return c.processFlagEvaluation(featureKey, identity, attributes).Variation
 }
 
-// Variation ...
+// processFlagEvaluation evaluates a flag and then emits metrics
 func (c *UnlaunchClient) processFlagEvaluation(
 	featureKey string,
 	identity string,
@@ -68,11 +68,14 @@ func (c *UnlaunchClient) processFlagEvaluation(
 
 	ulf := c.evaluateFlag(featureKey, identity, attributes)
 
-	if ulf.Variation != "" || ulf.Variation != "control" {
+	if ulf.Variation != "" && ulf.Variation != "control" {
+
+		// Record event
 		c.eventsCountAggregator.Record(featureKey, ulf.Variation)
 
-		event := &dtos.Event{
-			CreatedTime:  time.Now().UTC().Unix() * 1000,
+		// Record impression
+		c.eventsRecorder.Record(&dtos.Event{
+			CreatedTime:  time.Now().UTC().UnixNano() / int64(time.Millisecond), // java time
 			Key:          featureKey,
 			Type: "IMPRESSION",
 			Properties:   nil,
@@ -85,44 +88,20 @@ func (c *UnlaunchClient) processFlagEvaluation(
 				EvaluationReason: ulf.EvaluationReason,
 				MachineName:      "UNKNOWN",
 			},
-		}
-
-		c.eventsRecorder.Record(event)
+		})
+	} else {
+		c.logger.Warn("skipping count and impression recorders both variation was not valid")
 	}
 
 	return ulf
 }
-
-func (c *UnlaunchClient) BlockUntilReady(timeout time.Duration) error {
-	if c.FeatureStore.IsReady() {
-		return nil
-	}
-
-	if timeout <= 0 {
-		return errors.New("the timeout must be a positive")
-	}
-
-	if c.shutdown {
-		return errors.New("the client has been shutdown")
-	}
-
-	c.FeatureStore.Ready(timeout)
-	return nil
-}
-
-func (c *UnlaunchClient) Shutdown() {
-	c.FeatureStore.Stop()
-	c.eventsRecorder.Shutdown()
-	c.eventsCountAggregator.Shutdown()
-	c.shutdown = true
-}
-
 
 func (c *UnlaunchClient) evaluateFlag(
 	featureKey string,
 	identity string,
 	attributes map[string]interface{}) *dtos.UnlaunchFeature {
 	if featureKey == "" {
+
 		c.logger.Error("feature key cannot be empty")
 		return &dtos.UnlaunchFeature{
 			Feature:                "",
@@ -154,7 +133,7 @@ func (c *UnlaunchClient) evaluateFlag(
 
 	feature, err := c.FeatureStore.GetFeature(featureKey)
 
-	if err != nil {
+	if err != nil || feature == nil {
 		c.logger.Error("error retrieving flag: ", err)
 		return &dtos.UnlaunchFeature{
 			Feature:                featureKey,
@@ -164,7 +143,7 @@ func (c *UnlaunchClient) evaluateFlag(
 		}
 	}
 
-	ulFeature, err := engine.Evaluate(feature, identity, &attributes)
+	ulFeature, err := c.evaluator.Evaluate(feature, identity, &attributes)
 
 	if err != nil {
 		c.logger.Error("error evaluating flag: ", err)
@@ -180,3 +159,30 @@ func (c *UnlaunchClient) evaluateFlag(
 
 	return ulFeature
 }
+
+func (c *UnlaunchClient) BlockUntilReady(timeout time.Duration) error {
+	if c.FeatureStore.IsReady() {
+		return nil
+	}
+
+	if timeout <= 0 {
+		return errors.New("the timeout must be a positive")
+	}
+
+	if c.shutdown {
+		return errors.New("the client has been shutdown")
+	}
+
+	c.FeatureStore.Ready(timeout)
+	return nil
+}
+
+func (c *UnlaunchClient) Shutdown() {
+	if !c.shutdown {
+		c.FeatureStore.Shutdown()
+		c.eventsRecorder.Shutdown()
+		c.eventsCountAggregator.Shutdown()
+		c.shutdown = true
+	}
+}
+

@@ -2,6 +2,7 @@ package client
 
 import (
 	"errors"
+	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"github.com/unlaunch/go-sdk/unlaunchio/service"
 	"github.com/unlaunch/go-sdk/unlaunchio/service/api"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
@@ -25,6 +26,7 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 	if cfg == nil {
 		cfg = DefaultConfig()
 	}
+
 	logging := logger.NewLogger(cfg.LoggerConfig)
 
 	return &UnlaunchFactory{
@@ -69,6 +71,7 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		eventsRecorder: eventsRecorder,
 		eventsCountAggregator: eventsCounts,
 		logger: f.logger,
+		evaluator: engine.NewEvaluator(),
 	}
 
 }

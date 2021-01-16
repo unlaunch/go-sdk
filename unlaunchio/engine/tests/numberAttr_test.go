@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"io/ioutil"
 	"math/rand"
 	"sort"
@@ -37,7 +36,7 @@ func TestWhen_NumberGreaterThan(t *testing.T) {
 	n := 101
 	attributes["numberAttr"] = n
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -53,7 +52,7 @@ func TestWhen_NumberGreaterThanOrEquals(t *testing.T) {
 	n := 50
 	attributes["numberAttr"] = n
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -68,7 +67,7 @@ func TestWhen_NumberLessThan(t *testing.T) {
 	n := -101
 	attributes["numberAttr"] = n
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -84,7 +83,7 @@ func TestWhen_NumberLessThanOrEquals(t *testing.T) {
 	n := -51
 	attributes["numberAttr"] = n
 
-	ulf, _ := engine.Evaluate(&r, u, &attributes)
+	ulf, _ := evaluator.Evaluate(&r, u, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
