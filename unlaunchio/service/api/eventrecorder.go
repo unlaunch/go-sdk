@@ -18,7 +18,7 @@ type EventsRecorder interface {
 type SimpleEventsRecorder struct {
 	logger       logger.LoggerInterface
 	url          string
-	httpClient   *util.SimpleHTTPClient
+	httpClient   util.HTTPClient
 	queue        *list.List
 	queueMu      *sync.Mutex
 	maxQueueSize int
@@ -101,7 +101,7 @@ func (e *SimpleEventsRecorder) Record(event *dtos.Event) error {
 }
 
 func NewHTTPEventsRecorder(
-	httpClient *util.SimpleHTTPClient,
+	httpClient util.HTTPClient,
 	url string,
 	flushInterval int,
 	maxQueueSize int,
@@ -116,6 +116,6 @@ func NewHTTPEventsRecorder(
 		maxQueueSize: maxQueueSize,
 		httpClient: httpClient,
 	}
-	er.shutdown = util.RunImmediatelyAndSchedule(er.postMetrics, time.Duration(flushInterval)*time.Millisecond)
+	er.shutdown = util.Schedule(er.postMetrics, time.Duration(flushInterval)*time.Millisecond)
 	return er
 }

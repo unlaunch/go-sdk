@@ -14,13 +14,11 @@ type mockHTTPClient struct {}
 var mockHTTPClientCalls = make(map[string]int) // to record function calls
 var eventsList = make([]*dtos.Event, 10)
 func (h *mockHTTPClient) Get(path string) ([]byte, error) {
-	mockHTTPClientCalls["Get"] = mockHTTPClientCalls["Get"] + 1
 	return nil, nil
 }
 
 func (h *mockHTTPClient) Post(path string, body []byte) error {
 	_ = json.Unmarshal(body, &eventsList)
-
 	mockHTTPClientCalls["Post"] = mockHTTPClientCalls["Post"] + 1
 	return nil
 }
