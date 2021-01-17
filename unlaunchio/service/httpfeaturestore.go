@@ -12,21 +12,21 @@ import (
 )
 
 type HTTPFeatureStore struct {
-	httpClient          *util.HTTPClient
+	httpClient          util.HTTPClient
 	logger              logger.LoggerInterface
 	features            map[string]dtos.Feature
 	initialSyncComplete bool
-	shutdown            chan bool
-	readyChannel 		chan bool
+	shutdownCh          chan bool
 }
 
+
+
 func (h *HTTPFeatureStore) Shutdown() {
-	h.logger.Debug("Sending shutdown signal to feature store")
-	h.shutdown <- true
+	h.logger.Debug("Sending shutdownCh signal to feature store")
+	h.shutdownCh <- true
 }
 
 func (h *HTTPFeatureStore) fetchFlags()  error {
-
 	res, err := h.httpClient.Get("/api/v1/flags")
 
 	if err != nil {
@@ -58,7 +58,6 @@ func (h *HTTPFeatureStore) fetchFlags()  error {
 	}
 
 	if h.initialSyncComplete == false {
-		h.readyChannel <- true
 		h.initialSyncComplete = true
 	}
 
@@ -97,40 +96,38 @@ func (h *HTTPFeatureStore) IsReady() bool {
 	} else {
 		return false
 	}
-
 }
 
 
 func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
+	// TODO Find a better way to do this
 	if h.initialSyncComplete {
 		return
 	}
 
-	select {
-	case <- h.readyChannel:
-	case <-time.After(timeout):
-		h.logger.Error("The client wasn't ready in the required time")
+	deadline := time.Now().Add(timeout)
+
+	for {
+		if h.initialSyncComplete || time.Now().After(deadline) {
+			return
+		}
+
+		time.Sleep(100 * time.Millisecond)
 	}
 }
 
-
 func NewHTTPFeatureStore(
-	sdkKey string,
-	host string,
-	httpTimeout int,
+	httpClient util.HTTPClient,
 	pollingInterval int,
-	logger logger.LoggerInterface,
-) FeatureStore {
+	logger logger.LoggerInterface) FeatureStore {
 	httpStore := &HTTPFeatureStore{
-		httpClient:          util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
+		httpClient:          httpClient,
 		logger:              logger,
 		initialSyncComplete: false,
 		features:            nil,
-		readyChannel: make(chan bool),
 	}
 
-
-	httpStore.shutdown = util.Schedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
+	httpStore.shutdownCh = util.Schedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
 
 	return httpStore
 }

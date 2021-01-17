@@ -20,7 +20,7 @@ type SimpleEventsCountAggregator struct {
 	queueMu        *sync.Mutex
 	store          map[string]int
 	url            string
-	HTTPClient     *util.HTTPClient
+	HTTPClient     *util.SimpleHTTPClient
 	eventsRecorder *SimpleEventsRecorder
 	shutdown       chan bool
 }
@@ -97,7 +97,7 @@ func (e *SimpleEventsCountAggregator) Record(flagKey string, variationKey string
 	return nil
 }
 
-func NewEventsCountAggregator(HTTPClient *util.HTTPClient, url string, flushInterval int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
+func NewEventsCountAggregator(HTTPClient *util.SimpleHTTPClient, url string, flushInterval int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
 	ec := &SimpleEventsCountAggregator{
 		logger:         logger,
 		queueMu:        &sync.Mutex{},

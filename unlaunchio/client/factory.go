@@ -58,14 +58,14 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		f.cfg.MetricsFlushInterval,
 		f.logger)
 
+	hc := util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger)
+
 	return &UnlaunchClient{
 		sdkKey:          f.sdkKey,
 		pollingInterval: f.cfg.PollingInterval,
 		httpTimeout:     f.cfg.HTTPTimeout,
 		FeatureStore: service.NewHTTPFeatureStore(
-			f.sdkKey,
-			f.cfg.Host,
-			f.cfg.HTTPTimeout,
+			hc,
 			f.cfg.PollingInterval,
 			f.logger),
 		eventsRecorder: eventsRecorder,

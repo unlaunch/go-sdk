@@ -28,3 +28,31 @@ func DefaultConfig() *UnlaunchClientConfig {
 		},
 	}
 }
+
+func defaultProductionConfig() *UnlaunchClientConfig {
+	return &UnlaunchClientConfig{
+		PollingInterval:      30000,
+		HTTPTimeout:          4000,
+		Host:                 "https://api.unlaunch.io",
+		MetricsFlushInterval: 30000,
+		MetricsQueueSize:     100,
+		LoggerConfig:         &logger.LogOptions{
+			Level: "INFO",
+			Colorful: true,
+		},
+	}
+}
+
+func defaultNonProductionConfig() *UnlaunchClientConfig {
+	return &UnlaunchClientConfig{
+		PollingInterval:      15000,
+		HTTPTimeout:          4000,
+		Host:                 "https://api.unlaunch.io",
+		MetricsFlushInterval: 15000,
+		MetricsQueueSize:     5,
+		LoggerConfig:         &logger.LogOptions{
+			Level: "INFO",
+			Colorful: true,
+		},
+	}
+}

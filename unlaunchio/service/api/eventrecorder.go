@@ -18,7 +18,7 @@ type EventsRecorder interface {
 type SimpleEventsRecorder struct {
 	logger     logger.LoggerInterface
 	url        string
-	httpClient *util.HTTPClient
+	httpClient *util.SimpleHTTPClient
 	queue      *list.List
 	queueMu    *sync.Mutex
 	queueSize  int

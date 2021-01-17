@@ -1,6 +1,8 @@
 package util
 
-import "time"
+import (
+	"time"
+)
 
 func Schedule(what func() error, delay time.Duration) chan bool {
 	stop := make(chan bool)

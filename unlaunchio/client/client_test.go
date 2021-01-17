@@ -15,6 +15,7 @@ const (
 	feature2_error    = "feature2_error"
 )
 
+// Create mock Evaluator that returns variations or errors based on flag key
 type mockEvaluator struct{}
 func (e *mockEvaluator) Evaluate(
 	feature *dtos.Feature,
@@ -37,19 +38,18 @@ func (e *mockEvaluator) Evaluate(
 	}
 }
 
-var mockEventsRecorderRecordCalls = make(map[string]int)
-var mockEventsRecorderCalls = make(map[string]bool)
+var mockEventsRecorderCalls = make(map[string]bool) // to record function calls
 type mockEventsRecorder struct{}
 func (e *mockEventsRecorder) Shutdown() {
 	mockEventsRecorderCalls["Shutdown"] = true
 }
 func (e *mockEventsRecorder) Record(event *dtos.Event) error {
-	mockEventsRecorderRecordCalls[event.Impression.FlagKey] = 1
+	mockEventsRecorderCalls[event.Impression.FlagKey] = true
 	return nil
 }
 
-var mockEventsCountAggregatorRecordCalls = make(map[string]string)
-var mockEventsCountAggregatorCalls = make(map[string]bool)
+var mockEventsCountAggregatorRecordCalls = make(map[string]string) // to record "Record()" calls with variation key
+var mockEventsCountAggregatorCalls = make(map[string]bool) // to record function calls
 type mockEventsCountAggregator struct{}
 func (e *mockEventsCountAggregator) Shutdown() {
 	mockEventsCountAggregatorCalls["Shutdown"] = true
@@ -59,7 +59,7 @@ func (e *mockEventsCountAggregator) Record(flagKey string, variationKey string) 
 	return nil
 }
 
-var mockFeatureStoreCalls = make(map[string]bool)
+var mockFeatureStoreCalls = make(map[string]bool) // to record function calls
 type mockFeatureStore struct {
 	ready bool
 }
@@ -86,11 +86,6 @@ func (e *mockFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	default:
 		return nil, nil
 	}
-
-
-
-
-
 }
 func (e *mockFeatureStore) Ready(timeout time.Duration) {
 	return
@@ -122,7 +117,6 @@ func clientWithMocks() *UnlaunchClient {
 func reset() {
 	mfs.ready = true // reset
 	mockEventsCountAggregatorRecordCalls = make(map[string]string)
-	mockEventsRecorderRecordCalls = make(map[string]int)
 	mockFeatureStoreCalls = make(map[string]bool)
 	mockEventsCountAggregatorCalls = make(map[string]bool)
 	mockEventsRecorderCalls = make(map[string]bool)
@@ -171,7 +165,7 @@ func TestWhen_FeatureIsInStore_Then_VariationIsReturned(t *testing.T) {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "on", v))
 	}
 
-	if mockEventsRecorderRecordCalls[feature1_on] != 1 {
+	if !mockEventsRecorderCalls[feature1_on] {
 		t.Error("event recorder should have been called")
 	}
 
@@ -201,7 +195,7 @@ func TestWhen_FeatureIsInStore_Then_UnlaunchFeatureIsReturned(t *testing.T) {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", feature1_on, v.Feature))
 	}
 
-	if mockEventsRecorderRecordCalls[feature1_on] != 1 {
+	if !mockEventsRecorderCalls[feature1_on] {
 		t.Error("event recorder should have been called")
 	}
 
@@ -221,7 +215,7 @@ func TestWhen_SDKIsNotReady_Then_ControlIsReturned(t *testing.T) {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "on", v))
 	}
 
-	if mockEventsRecorderRecordCalls[feature1_on] != 0 {
+	if mockEventsRecorderCalls[feature1_on] {
 		t.Error("event recorder shouldn't have been called")
 	}
 
@@ -240,7 +234,7 @@ func TestWhen_FeatureStoreReturnsError_Then_ControlIsReturned(t *testing.T) {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "on", v))
 	}
 
-	if mockEventsRecorderRecordCalls[feature1_on] != 0 {
+	if mockEventsRecorderCalls[feature1_on] {
 		t.Error("event recorder shouldn't have been called")
 	}
 

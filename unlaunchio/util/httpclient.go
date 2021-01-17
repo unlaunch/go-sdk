@@ -10,7 +10,12 @@ import (
 	"time"
 )
 
-type HTTPClient struct {
+type HTTPClient interface {
+	Get(path string) ([]byte, error)
+	Post(path string, body []byte) error
+}
+
+type SimpleHTTPClient struct {
 	host       string
 	httpClient *http.Client
 	headers    map[string]string
@@ -24,13 +29,13 @@ func NewHTTPClient(
 	host string,
 	timeout int,
 	logger logger.LoggerInterface,
-) *HTTPClient {
+) *SimpleHTTPClient {
 
 	client := &http.Client{
 		Timeout: time.Duration(timeout) * time.Millisecond,
 	}
 
-	return &HTTPClient{
+	return &SimpleHTTPClient{
 		host:       host,
 		httpClient: client,
 		logger:     logger,
@@ -38,7 +43,7 @@ func NewHTTPClient(
 	}
 }
 
-func (c *HTTPClient) Get(path string) ([]byte, error) {
+func (c *SimpleHTTPClient) Get(path string) ([]byte, error) {
 	apiEndpoint := c.host + path
 	c.logger.Debug("[HTTP GET] ", apiEndpoint)
 
@@ -81,7 +86,7 @@ func (c *HTTPClient) Get(path string) ([]byte, error) {
 	}
 }
 
-func (c *HTTPClient) Post(path string, body []byte) error {
+func (c *SimpleHTTPClient) Post(path string, body []byte) error {
 	apiEndpoint := c.host + path
 	c.logger.Debug("[HTTP POST] ", apiEndpoint)
 
