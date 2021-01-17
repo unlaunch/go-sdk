@@ -79,25 +79,24 @@ func TestWhen_RollOutIsEnabledForAUser_Then_VariationSameAssignedConsistently(t 
 	var responseDto dtos.Feature
 	json.Unmarshal(mockedDisabledFlag, &responseDto)
 
-		sort.Sort(dtos.ByRulePriority(responseDto.Rules))
-		for _, rule := range responseDto.Rules {
-			sort.Sort(dtos.ByVariationId(rule.Rollout))
-		}
-
+	sort.Sort(dtos.ByRulePriority(responseDto.Rules))
+	for _, rule := range responseDto.Rules {
+		sort.Sort(dtos.ByVariationID(rule.Rollout))
+	}
 
 	// This is the same flag as above but splits are unordered
 	var mockedDisabledFlagReversed, _ = ioutil.ReadFile("../../testdata/flag1WithDefaultRuleRolloutReversedOrder.json")
 	var responseDtoReversed dtos.Feature
 	json.Unmarshal(mockedDisabledFlagReversed, &responseDtoReversed)
 
-	for i := 0; i<10; i++ {
-		userId := "user-"+ strconv.Itoa(rand.Intn(1000))
-		ulf, _ := evaluator.Evaluate(&responseDto, userId, nil)
+	for i := 0; i < 10; i++ {
+		userID := "user-" + strconv.Itoa(rand.Intn(1000))
+		ulf, _ := evaluator.Evaluate(&responseDto, userID, nil)
 		variation := ulf.Variation
 
 		// Evaluate using both ordered and (reversed) order data
 		// Result should be the same
-		ulf, _ = evaluator.Evaluate(&responseDtoReversed, userId, nil)
+		ulf, _ = evaluator.Evaluate(&responseDtoReversed, userID, nil)
 
 		if variation != ulf.Variation {
 			t.Error(fmt.Sprintf("expected variation %s actual variation %s on the iteration #%d",
@@ -117,8 +116,8 @@ func TestWhen_RollOutIsEnabled_Then_VariationIsAllocatedByBucketing(t *testing.T
 	}
 
 	countOn, countOff := 0, 0
-	for i:= 0; i<50; i++ {
-		ulf, err := evaluator.Evaluate(&responseDto, "user-" + strconv.Itoa(i), nil)
+	for i := 0; i < 50; i++ {
+		ulf, err := evaluator.Evaluate(&responseDto, "user-"+strconv.Itoa(i), nil)
 
 		if err != nil {
 			t.Error("evaluation threw error ", err)
@@ -137,4 +136,3 @@ func TestWhen_RollOutIsEnabled_Then_VariationIsAllocatedByBucketing(t *testing.T
 		t.Error(fmt.Sprintf("Variation bucketing distribution was not even. on: %d, off: %d", countOn, countOff))
 	}
 }
-

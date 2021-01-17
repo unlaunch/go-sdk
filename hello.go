@@ -2,15 +2,15 @@ package main
 
 import (
 	"fmt"
+	"github.com/unlaunch/go-sdk/unlaunchio/client"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 	"time"
-	"github.com/unlaunch/go-sdk/unlaunchio/client"
 )
 
 func main() {
 	config := client.DefaultConfig()
 	config.LoggerConfig = &logger.LogOptions{
-		Level: "TRACE",
+		Level:    "TRACE",
 		Colorful: true,
 	}
 	config.PollingInterval = 2000
@@ -36,7 +36,6 @@ func main() {
 
 	variation := unlaunchClient.Variation(flagKey, "user123", attributes)
 	fmt.Printf("The variation for feature is %s\n", variation)
-
 
 	go func() {
 		feature := unlaunchClient.Feature(flagKey, "user123631", nil)

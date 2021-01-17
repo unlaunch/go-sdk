@@ -13,18 +13,17 @@ import (
 
 var mockedFlagNum, _ = ioutil.ReadFile("../../testdata/attributes/number.json")
 
-
 func initializeNum() (dtos.Feature, string) {
 	var responseDtoNum dtos.Feature
 	json.Unmarshal(mockedFlagNum, &responseDtoNum)
 	sort.Sort(dtos.ByRulePriority(responseDtoNum.Rules))
 	for _, rule := range responseDtoNum.Rules {
-		sort.Sort(dtos.ByVariationId(rule.Rollout))
+		sort.Sort(dtos.ByVariationID(rule.Rollout))
 	}
 
-	userId := "user-"+ strconv.Itoa(rand.Intn(1000))
+	userID := "user-" + strconv.Itoa(rand.Intn(1000))
 
-	return responseDtoNum, userId
+	return responseDtoNum, userID
 }
 
 func TestWhen_NoNumberAttributesArePassed_Then_DefaultRuleIsServed(t *testing.T) {

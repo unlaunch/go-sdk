@@ -62,7 +62,7 @@ func TestErrorLevel(t *testing.T) {
 
 	logger := LevelsLogger{
 		delegate: delegate,
-		level: Level("ERROR"),
+		level:    Level("ERROR"),
 	}
 
 	logAtAllLevels(&logger)
@@ -80,7 +80,7 @@ func TestWarnLevel(t *testing.T) {
 
 	logger := LevelsLogger{
 		delegate: delegate,
-		level: Level("WARN"),
+		level:    Level("WARN"),
 	}
 
 	logAtAllLevels(&logger)
@@ -98,7 +98,7 @@ func TestInfoLevel(t *testing.T) {
 
 	logger := LevelsLogger{
 		delegate: delegate,
-		level: Level("INFO"),
+		level:    Level("INFO"),
 	}
 
 	logAtAllLevels(&logger)
@@ -116,7 +116,7 @@ func TestDebugLevel(t *testing.T) {
 
 	logger := LevelsLogger{
 		delegate: delegate,
-		level: Level("DEBUG"),
+		level:    Level("DEBUG"),
 	}
 
 	logAtAllLevels(&logger)
@@ -134,7 +134,7 @@ func TestTraceLevel(t *testing.T) {
 
 	logger := LevelsLogger{
 		delegate: delegate,
-		level: Level("TRACE"),
+		level:    Level("TRACE"),
 	}
 
 	logAtAllLevels(&logger)
@@ -145,4 +145,3 @@ func TestTraceLevel(t *testing.T) {
 	checkShouldBeCalled(delegate, shouldBeCalled, t)
 	checkShouldNotBeCalled(delegate, shouldNotBeCalled, t)
 }
-

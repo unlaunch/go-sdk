@@ -12,16 +12,15 @@ import (
 
 var tr = attributes2.NewTargetingRule()
 
-
 type Evaluator interface {
-	Evaluate(feature *dtos.Feature, identity string, attributes *map[string]interface{})(*dtos.UnlaunchFeature, error)
+	Evaluate(feature *dtos.Feature, identity string, attributes *map[string]interface{}) (*dtos.UnlaunchFeature, error)
 }
 
-type SimpleEvaluator struct{
-	logger	logger.LoggerInterface
+type SimpleEvaluator struct {
+	logger logger.Interface
 }
 
-func NewEvaluator(logger logger.LoggerInterface) Evaluator {
+func NewEvaluator(logger logger.Interface) Evaluator {
 	return &SimpleEvaluator{
 		logger: logger,
 	}
@@ -30,7 +29,7 @@ func NewEvaluator(logger logger.LoggerInterface) Evaluator {
 func (e *SimpleEvaluator) Evaluate(
 	feature *dtos.Feature,
 	identity string,
-	attributes *map[string]interface{})(*dtos.UnlaunchFeature, error) {
+	attributes *map[string]interface{}) (*dtos.UnlaunchFeature, error) {
 	result := new(dtos.UnlaunchFeature)
 	result.Feature = feature.Key
 	result.EvaluationReason = "this SDK is not yet complete"
@@ -65,21 +64,21 @@ func (e *SimpleEvaluator) Evaluate(
 	}
 }
 
-func (e *SimpleEvaluator)getOffVariation(f *dtos.Feature) (*dtos.Variation, error) {
-	offVarId := f.OffVariation
+func (e *SimpleEvaluator) getOffVariation(f *dtos.Feature) (*dtos.Variation, error) {
+	offVarID := f.OffVariation
 
 	for _, variation := range f.Variations {
-		if offVarId == variation.Id {
+		if offVarID == variation.ID {
 			return &variation, nil
 		}
 	}
 
 	return &dtos.Variation{}, errors.New(
-		fmt.Sprintf("error - offVariation %d was not found", offVarId),
+		fmt.Sprintf("error - offVariation %d was not found", offVarID),
 	)
 }
 
-func (e *SimpleEvaluator)variationIfUserInAllowList(f *dtos.Feature, identity string) *dtos.Variation {
+func (e *SimpleEvaluator) variationIfUserInAllowList(f *dtos.Feature, identity string) *dtos.Variation {
 	for _, variation := range f.Variations {
 		if variation.AllowList != "" {
 
@@ -96,7 +95,7 @@ func (e *SimpleEvaluator)variationIfUserInAllowList(f *dtos.Feature, identity st
 	return nil
 }
 
-func (e *SimpleEvaluator)matchTargetingRules(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
+func (e *SimpleEvaluator) matchTargetingRules(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
 
 	if attributes == nil {
 		return nil
@@ -124,47 +123,45 @@ func (e *SimpleEvaluator)matchTargetingRules(feature *dtos.Feature, identity str
 	return nil
 }
 
-func (e *SimpleEvaluator)defaultRule(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
+func (e *SimpleEvaluator) defaultRule(feature *dtos.Feature, identity string, attributes *map[string]interface{}) *dtos.Variation {
 	defaultRule := feature.DefaultRule()
 	return e.getRuleVariation(defaultRule, feature, identity)
 }
 
-func (e *SimpleEvaluator)getRuleVariation(rule *dtos.Rule, feature *dtos.Feature, identity string) *dtos.Variation {
+func (e *SimpleEvaluator) getRuleVariation(rule *dtos.Rule, feature *dtos.Feature, identity string) *dtos.Variation {
 	calculatedBucket := e.bucket(feature.Key + identity)
 
 	// Return Default Rule if targeting rules don't match
 	if len(rule.Rollout) == 1 && rule.Rollout[0].RolloutPercentage == 100 {
-		return e.variationById(rule.Rollout[0].VariationId, feature)
-	} else {
-		vId, _ := e.foo(rule, calculatedBucket)
-		return feature.VariationById(vId)
+		return e.variationByID(rule.Rollout[0].VariationID, feature)
 	}
 
-	return nil
+	vID, _ := e.foo(rule, calculatedBucket)
+	return feature.VariationByID(vID)
 }
 
-func (e *SimpleEvaluator)variationById(id int, feature *dtos.Feature) *dtos.Variation {
+func (e *SimpleEvaluator) variationByID(id int, feature *dtos.Feature) *dtos.Variation {
 	for _, variation := range feature.Variations {
-		if id == variation.Id {
+		if id == variation.ID {
 			return &variation
 		}
 	}
 	return nil
 }
 
-func (e *SimpleEvaluator)bucket(key string) int {
+func (e *SimpleEvaluator) bucket(key string) int {
 	var hashKey uint32
 	hashKey = Murmur32Hash([]byte(key), 0)
 	return int(math.Abs(float64(hashKey%100)) + 1)
 }
 
-func (e *SimpleEvaluator)foo(rule *dtos.Rule, bucket int) (int, error) {
+func (e *SimpleEvaluator) foo(rule *dtos.Rule, bucket int) (int, error) {
 	var sum = 0
 	for _, rollout := range rule.Rollout {
 		sum += rollout.RolloutPercentage
 
 		if bucket <= sum {
-			return rollout.VariationId, nil
+			return rollout.VariationID, nil
 		}
 	}
 

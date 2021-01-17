@@ -17,15 +17,15 @@ var evaluator = engine.SimpleEvaluator{}
 func initialize() (dtos.Feature, string) {
 	var mockedFlag, _ = ioutil.ReadFile("../../testdata/attributes/string.json")
 	var responseDto dtos.Feature
-	var userId = "user-"+ strconv.Itoa(rand.Intn(1000))
+	var userID = "user-" + strconv.Itoa(rand.Intn(1000))
 
 	json.Unmarshal(mockedFlag, &responseDto)
 	sort.Sort(dtos.ByRulePriority(responseDto.Rules))
 	for _, rule := range responseDto.Rules {
-		sort.Sort(dtos.ByVariationId(rule.Rollout))
+		sort.Sort(dtos.ByVariationID(rule.Rollout))
 	}
 
-	return responseDto, userId
+	return responseDto, userID
 }
 
 func TestWhen_NoAttributesArePassed_Then_DefaultRuleIsServed(t *testing.T) {
@@ -86,7 +86,7 @@ func TestWhen_StringStartsWithMatch_Then_RightVariationIsReturned(t *testing.T) 
 func TestWhen_StringDoesNotStartsWith_Then_RightVariationIsReturned(t *testing.T) {
 	var mockedFlagSpecial, _ = ioutil.ReadFile("../../testdata/attributes/string_doesnotStartsWith.json")
 	var responseDto dtos.Feature
-	var userId = "user-"+ strconv.Itoa(rand.Intn(1000))
+	var userID = "user-" + strconv.Itoa(rand.Intn(1000))
 	json.Unmarshal(mockedFlagSpecial, &responseDto)
 
 	expectedVariation := "gte"
@@ -94,7 +94,7 @@ func TestWhen_StringDoesNotStartsWith_Then_RightVariationIsReturned(t *testing.T
 	attributes := make(map[string]interface{})
 	attributes["strAttr"] = "doesnot start with joker"
 
-	ulf, _ := evaluator.Evaluate(&responseDto, userId, &attributes)
+	ulf, _ := evaluator.Evaluate(&responseDto, userID, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -103,7 +103,7 @@ func TestWhen_StringDoesNotStartsWith_Then_RightVariationIsReturned(t *testing.T
 	// Start with joker, get default
 	expectedVariation = "def"
 	attributes["strAttr"] = "joker is at the start"
-	ulf, _ = evaluator.Evaluate(&responseDto, userId, &attributes)
+	ulf, _ = evaluator.Evaluate(&responseDto, userID, &attributes)
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
@@ -127,7 +127,7 @@ func TestWhen_StringEndsWithMatch_Then_RightVariationIsReturned(t *testing.T) {
 func TestWhen_StringDoesNotEndsWith_Then_RightVariationIsReturned(t *testing.T) {
 	var mockedFlagSpecial, _ = ioutil.ReadFile("../../testdata/attributes/string_doesNotEndsWith.json")
 	var responseDto dtos.Feature
-	var userId = "user-"+ strconv.Itoa(rand.Intn(1000))
+	var userID = "user-" + strconv.Itoa(rand.Intn(1000))
 	json.Unmarshal(mockedFlagSpecial, &responseDto)
 
 	expectedVariation := "lte"
@@ -135,7 +135,7 @@ func TestWhen_StringDoesNotEndsWith_Then_RightVariationIsReturned(t *testing.T) 
 	attributes := make(map[string]interface{})
 	attributes["strAttr"] = "new york"
 
-	ulf, _ := evaluator.Evaluate(&responseDto, userId, &attributes)
+	ulf, _ := evaluator.Evaluate(&responseDto, userID, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -144,7 +144,7 @@ func TestWhen_StringDoesNotEndsWith_Then_RightVariationIsReturned(t *testing.T) 
 	// Start with joker, get default
 	expectedVariation = "def"
 	attributes["strAttr"] = "San Francisco"
-	ulf, _ = evaluator.Evaluate(&responseDto, userId, &attributes)
+	ulf, _ = evaluator.Evaluate(&responseDto, userID, &attributes)
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
@@ -168,7 +168,7 @@ func TestWhen_StringContainsMatch_Then_RightVariationIsReturned(t *testing.T) {
 func TestWhen_StringNotContainsMatch_Then_RightVariationIsReturned(t *testing.T) {
 	var mockedFlagSpecial, _ = ioutil.ReadFile("../../testdata/attributes/string_notcontains.json")
 	var responseDto dtos.Feature
-	var userId = "user-"+ strconv.Itoa(rand.Intn(1000))
+	var userID = "user-" + strconv.Itoa(rand.Intn(1000))
 	json.Unmarshal(mockedFlagSpecial, &responseDto)
 
 	expectedVariation := "lte"
@@ -176,7 +176,7 @@ func TestWhen_StringNotContainsMatch_Then_RightVariationIsReturned(t *testing.T)
 	attributes := make(map[string]interface{})
 	attributes["strAttr"] = "this sentence does not contain the word c-a-t"
 
-	ulf, _ := evaluator.Evaluate(&responseDto, userId, &attributes)
+	ulf, _ := evaluator.Evaluate(&responseDto, userID, &attributes)
 
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
@@ -185,7 +185,7 @@ func TestWhen_StringNotContainsMatch_Then_RightVariationIsReturned(t *testing.T)
 	// If it contains cat, the default variation is returned
 	expectedVariation = "def"
 	attributes["strAttr"] = "his sentence contains the word cat."
-	ulf, _ = evaluator.Evaluate(&responseDto, userId, &attributes)
+	ulf, _ = evaluator.Evaluate(&responseDto, userID, &attributes)
 	if ulf.Variation != expectedVariation {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
@@ -205,6 +205,3 @@ func TestWhen_AttributeNameMatchButTypeIsNotString_Then_NoPanic(t *testing.T) {
 		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", expectedVariation, ulf.Variation))
 	}
 }
-
-
-

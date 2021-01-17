@@ -14,11 +14,8 @@ import (
 type UnlaunchFactory struct {
 	sdkKey string
 	cfg    *UnlaunchClientConfig
-	logger logger.LoggerInterface
+	logger logger.Interface
 }
-
-
-
 
 // NewUnlaunchClientFactory is a factory
 func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*UnlaunchFactory, error) {
@@ -57,7 +54,6 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		"impressions",
 		f.logger)
 
-
 	eventsCounts := api.NewEventsCountAggregator(
 		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
 		"/api/v1/events",
@@ -75,10 +71,10 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 			hc,
 			f.cfg.PollingInterval,
 			f.logger),
-		eventsRecorder: eventsRecorder,
+		eventsRecorder:        eventsRecorder,
 		eventsCountAggregator: eventsCounts,
-		logger: f.logger,
-		evaluator: engine.NewEvaluator(f.logger),
+		logger:                f.logger,
+		evaluator:             engine.NewEvaluator(f.logger),
 	}
 
 }

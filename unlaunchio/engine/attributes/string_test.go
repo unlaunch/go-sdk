@@ -3,7 +3,7 @@ package attributes
 import "testing"
 
 func TestStringOperators(t *testing.T) {
-	flagString:= "ahiman"
+	flagString := "ahiman"
 
 	if !stringApply(flagString, "ahiman", "EQ") {
 		t.Errorf("string equal should match")
@@ -52,6 +52,5 @@ func TestStringOperators(t *testing.T) {
 	if stringApply(flagString, "", "EW") {
 		t.Errorf("empty string shouldn't match")
 	}
-
 
 }

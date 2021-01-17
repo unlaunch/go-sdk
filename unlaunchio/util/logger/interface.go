@@ -1,7 +1,7 @@
 package logger
 
-// LoggerInterface ...
-type LoggerInterface interface {
+// Interface ...
+type Interface interface {
 	Trace(msg ...interface{})
 	Debug(msg ...interface{})
 	Info(msg ...interface{})

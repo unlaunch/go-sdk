@@ -35,23 +35,20 @@ func TestDateAndDateTimeOperators(t *testing.T) {
 	}
 
 	// Subtract ~15 years
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix() - 473412761 , "LT", true) {
+	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LT", true) {
 		t.Errorf("less than date should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix() - 473412761, "LT", false) {
+	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LT", false) {
 		t.Errorf("less than datetime should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix() - 473412761, "LTE", true) {
+	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LTE", true) {
 		t.Errorf("less than or equals date should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix() - 473412761, "LTE", false) {
+	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LTE", false) {
 		t.Errorf("less than or equals datetime should match")
 	}
 
-
-
 }
-

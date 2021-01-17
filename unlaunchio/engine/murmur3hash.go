@@ -20,19 +20,19 @@ import "hash"
 import "unsafe"
 
 const (
-	c1	uint32 = 0xcc9e2d51
-	c2	uint32 = 0x1b873593
-	r1	uint32 = 15
-	r2	uint32 = 13
-	m	uint32 = 5
-	n	uint32 = 0xe6546b64
+	c1 uint32 = 0xcc9e2d51
+	c2 uint32 = 0x1b873593
+	r1 uint32 = 15
+	r2 uint32 = 13
+	m  uint32 = 5
+	n  uint32 = 0xe6546b64
 )
 
 type Digest struct {
-	hash	uint32
-	seed	uint32
-	clen	int
-	tail	[]byte
+	hash uint32
+	seed uint32
+	clen int
+	tail []byte
 }
 
 // The size of an murmur3 32 bit hash in bytes.
@@ -81,7 +81,7 @@ func (d *Digest) murmur332Blocks() {
 		k = (k << r1) | (k >> (32 - r1))
 		k *= c2
 		d.hash ^= k
-		d.hash = ((d.hash << r2) | (d.hash >> (32 - r2))) * m + n
+		d.hash = ((d.hash<<r2)|(d.hash>>(32-r2)))*m + n
 	}
 	d.tail = d.tail[nblocks*4:]
 }
@@ -89,7 +89,8 @@ func (d *Digest) murmur332Blocks() {
 func (d *Digest) murmur332Tail() {
 	hash := d.hash
 	k1 := uint32(0)
-	l := len(d.tail) & 3; switch (l) {
+	l := len(d.tail) & 3
+	switch l {
 	case 3:
 		k1 ^= uint32(d.tail[2]) << 16
 		fallthrough
@@ -115,7 +116,6 @@ func (d *Digest) murmur332Tail() {
 	hash ^= hash >> 16
 	d.hash = hash
 }
-
 
 // Accept a byte stream p used for calculating the hash. For now this call is lazy and the actual hash calculations take place in Sum() and Sum32().
 func (d *Digest) Write(p []byte) (nn int, err error) {
@@ -152,10 +152,12 @@ func Murmur32Hash(data []byte, seed uint32) uint32 {
 		k = (k << r1) | (k >> (32 - r1))
 		k *= c2
 		hash ^= k
-		hash = ((hash << r2) | (hash >> (32 - r2))) * m + n
+		hash = ((hash<<r2)|(hash>>(32-r2)))*m + n
 	}
 
-	l := nblocks * 4; k1 := uint32(0); switch (len(data) & 3) {
+	l := nblocks * 4
+	k1 := uint32(0)
+	switch len(data) & 3 {
 	case 3:
 		k1 ^= uint32(data[l+2]) << 16
 		fallthrough

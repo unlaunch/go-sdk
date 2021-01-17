@@ -50,4 +50,3 @@ func tsWithZeroTime(ts int64) int64 {
 	rounded := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 	return rounded.Unix()
 }
-

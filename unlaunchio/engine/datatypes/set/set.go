@@ -3,8 +3,9 @@ package set
 // Set is the primary interface provided by the mapset package.  It
 // represents an unordered set of data and a large number of
 // operations that can be applied to that set.
-
 // From: https://github.com/deckarep/golang-set
+
+// Set ...
 type Set interface {
 	// Adds an element to the set. Returns whether
 	// the item was added.

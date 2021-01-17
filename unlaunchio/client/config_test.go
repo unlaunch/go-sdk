@@ -44,10 +44,10 @@ func TestWhen_NullConfigIsPassedForNonProdSDKKey_Then_ValuesAreInitializedToReas
 
 func TestWhen_InvalidValuesArePassed_Then_TheyAreResetToEnvironmentDefaults(t *testing.T) {
 	cfg := &UnlaunchClientConfig{
-		PollingInterval:      1000,    // too aggressive; will be reset
-		MetricsFlushInterval: 120000,  // ok
-		MetricsQueueSize:     1,       // too aggressive; will be reset
-		HTTPTimeout:          1000,    // ok
+		PollingInterval:      1000,   // too aggressive; will be reset
+		MetricsFlushInterval: 120000, // ok
+		MetricsQueueSize:     1,      // too aggressive; will be reset
+		HTTPTimeout:          1000,   // ok
 	}
 
 	f, _ := NewUnlaunchClientFactory("prod-server-abc", cfg)
@@ -59,7 +59,6 @@ func TestWhen_InvalidValuesArePassed_Then_TheyAreResetToEnvironmentDefaults(t *t
 	if f.cfg.MetricsFlushInterval != 120000 {
 		t.Error("unexpected config value")
 	}
-
 
 	if f.cfg.MetricsQueueSize != prodConfigMinValues.minMetricsQueueSize {
 		t.Error("unexpected config value")

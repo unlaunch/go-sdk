@@ -22,35 +22,35 @@ func DefaultConfig() *UnlaunchClientConfig {
 		Host:                 "https://api.unlaunch.io",
 		MetricsFlushInterval: 15000,
 		MetricsQueueSize:     100,
-		LoggerConfig:         &logger.LogOptions{
-			Level: "INFO",
+		LoggerConfig: &logger.LogOptions{
+			Level:    "INFO",
 			Colorful: true,
 		},
 	}
 }
 
 type configMinimumValues struct {
-	minPollingInterval int
-	minHttpTimeout int
+	minPollingInterval      int
+	minHTTPTimeout          int
 	minMetricsFlushInterval int
-	minMetricsQueueSize int
-	host string
+	minMetricsQueueSize     int
+	host                    string
 }
 
 var prodConfigMinValues = &configMinimumValues{
-	minPollingInterval: 60000,
-	minHttpTimeout: 1000,
+	minPollingInterval:      60000,
+	minHTTPTimeout:          1000,
 	minMetricsFlushInterval: 45000,
-	minMetricsQueueSize: 500,
-	host: "https://api.unlaunch.io",
+	minMetricsQueueSize:     500,
+	host:                    "https://api.unlaunch.io",
 }
 
 var debugConfigMinValues = &configMinimumValues{
-	minPollingInterval: 15000,
-	minHttpTimeout: 1000,
+	minPollingInterval:      15000,
+	minHTTPTimeout:          1000,
 	minMetricsFlushInterval: 15000,
-	minMetricsQueueSize: 10,
-	host: "https://api.unlaunch.io",
+	minMetricsQueueSize:     10,
+	host:                    "https://api.unlaunch.io",
 }
 
 func normalizeConfigValues(cfg *UnlaunchClientConfig, m *configMinimumValues) *UnlaunchClientConfig {
@@ -66,8 +66,8 @@ func normalizeConfigValues(cfg *UnlaunchClientConfig, m *configMinimumValues) *U
 		res.PollingInterval = m.minPollingInterval
 	}
 
-	if res.HTTPTimeout < m.minHttpTimeout {
-		res.HTTPTimeout = m.minHttpTimeout
+	if res.HTTPTimeout < m.minHTTPTimeout {
+		res.HTTPTimeout = m.minHTTPTimeout
 	}
 
 	if res.MetricsFlushInterval < m.minMetricsFlushInterval {
@@ -84,7 +84,7 @@ func normalizeConfigValues(cfg *UnlaunchClientConfig, m *configMinimumValues) *U
 
 	if res.LoggerConfig == nil {
 		res.LoggerConfig = &logger.LogOptions{
-			Level: "INFO",
+			Level:    "INFO",
 			Colorful: true,
 		}
 	}

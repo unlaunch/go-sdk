@@ -19,12 +19,12 @@ type UnlaunchClient struct {
 	FeatureStore          service.FeatureStore
 	eventsRecorder        api.EventsRecorder
 	eventsCountAggregator api.EventsCountAggregator
-	logger                logger.LoggerInterface
+	logger                logger.Interface
 	shutdown              bool
 	evaluator             engine.Evaluator
 }
 
-// Variation ...
+// Feature ...
 func (c *UnlaunchClient) Feature(
 	featureKey string,
 	identity string,
@@ -75,15 +75,15 @@ func (c *UnlaunchClient) processFlagEvaluation(
 
 		// Record impression
 		c.eventsRecorder.Record(&dtos.Event{
-			CreatedTime:  time.Now().UTC().UnixNano() / int64(time.Millisecond), // java time
-			Key:          featureKey,
-			Type: "IMPRESSION",
-			Properties:   nil,
-			Sdk:          "Go",
-			SdkVersion:   "0.0.1",
-			Impression:   dtos.Impression{
+			CreatedTime: time.Now().UTC().UnixNano() / int64(time.Millisecond), // java time
+			Key:         featureKey,
+			Type:        "IMPRESSION",
+			Properties:  nil,
+			Sdk:         "Go",
+			SdkVersion:  "0.0.1",
+			Impression: dtos.Impression{
 				FlagKey:          featureKey,
-				UserId:           identity,
+				UserID:           identity,
 				VariationKey:     ulf.Variation,
 				EvaluationReason: ulf.EvaluationReason,
 				MachineName:      "UNKNOWN",
@@ -185,4 +185,3 @@ func (c *UnlaunchClient) Shutdown() {
 		c.shutdown = true
 	}
 }
-

@@ -15,14 +15,13 @@ const (
 	// LevelDebug log level
 	LevelDebug
 
-	// LevelVerbose log level
+	// LevelTrace log level
 	LevelTrace
 )
-
-
+// LevelsLogger encapsulates logger and applies log levels
 type LevelsLogger struct {
 	level    int
-	delegate LoggerInterface
+	delegate Interface
 }
 
 // Error forwards error logging messages
@@ -32,7 +31,7 @@ func (l *LevelsLogger) Error(is ...interface{}) {
 	}
 }
 
-// Warning forwards warning logging messages
+// Warn forwards warning logging messages
 func (l *LevelsLogger) Warn(is ...interface{}) {
 	if l.level >= LevelWarning {
 		l.delegate.Warn(is...)
@@ -53,7 +52,7 @@ func (l *LevelsLogger) Debug(is ...interface{}) {
 	}
 }
 
-// Verbose forwards verbose logging messages
+// Trace forwards verbose logging messages
 func (l *LevelsLogger) Trace(is ...interface{}) {
 	if l.level >= LevelTrace {
 		l.delegate.Trace(is...)
@@ -61,11 +60,11 @@ func (l *LevelsLogger) Trace(is ...interface{}) {
 }
 
 var levels map[string]int = map[string]int{
-	"ERROR":  LevelError,
-	"WARN":   LevelWarning,
-	"INFO":   LevelInfo,
-	"DEBUG":  LevelDebug,
-	"TRACE":  LevelTrace,
+	"ERROR": LevelError,
+	"WARN":  LevelWarning,
+	"INFO":  LevelInfo,
+	"DEBUG": LevelDebug,
+	"TRACE": LevelTrace,
 }
 
 // Level gets current level

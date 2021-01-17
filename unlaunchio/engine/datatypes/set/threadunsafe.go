@@ -313,4 +313,3 @@ func (set *threadUnsafeSet) UnmarshalJSON(b []byte) error {
 
 	return nil
 }
-

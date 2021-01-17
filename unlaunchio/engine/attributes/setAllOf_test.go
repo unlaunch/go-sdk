@@ -45,7 +45,6 @@ func TestAllOf_WhenUserSetIsNil_ShouldNotMatch(t *testing.T) {
 
 }
 
-
 func runApplyAndCheck(set1 string, set2 map[string]interface{}, op string, expected bool, t *testing.T) {
 	b := setApply(set1, set2, op)
 
@@ -58,7 +57,7 @@ func getSetOfNumbersUpTo(n int) map[string]interface{} {
 	setnums := make(map[string]interface{})
 
 	var i int64
-	for i = 1; i<= int64(n); i++ {
+	for i = 1; i <= int64(n); i++ {
 		setnums[strconv.FormatInt(i, 32)] = nil
 	}
 

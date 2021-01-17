@@ -56,4 +56,3 @@ func TestAnyOf_WhenUserSetIsEmptyOrNil_ShouldNotMatch(t *testing.T) {
 	runApplyAndCheck(flagSet, userSet, "HA", false, t)
 	runApplyAndCheck(flagSet, nil, "HA", false, t)
 }
-

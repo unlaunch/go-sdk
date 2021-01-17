@@ -2,8 +2,8 @@ package dtos
 
 // HTTPError ...
 type HTTPError struct {
-	Code    int
-	Msg string
+	Code int
+	Msg  string
 }
 
 // Error to implement Go error interface

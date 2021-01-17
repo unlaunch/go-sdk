@@ -18,7 +18,6 @@ func TestEquals_WhenUserSetIsSuperset_ShouldNotMatch(t *testing.T) {
 	runApplyAndCheck(flagSet, userSet, "EQ", false, t)
 }
 
-
 func TestEquals_WhenUserSetIsSubset_ShouldNotMatch(t *testing.T) {
 	flagSet := "1, 2, 3, 4"
 

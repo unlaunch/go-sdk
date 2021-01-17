@@ -35,4 +35,3 @@ func stringApply(val interface{}, userVal interface{}, op string) bool {
 	// Todo log invalid op warning
 	return false
 }
-

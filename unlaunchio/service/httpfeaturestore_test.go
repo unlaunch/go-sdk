@@ -8,21 +8,21 @@ import (
 )
 
 type mockHTTPClient struct {
-	validJsonReturnedOnGet bool
+	returnValidJSON bool
 }
+
 var mockHTTPClientCalls = make(map[string]bool) // to record function calls
 func (h *mockHTTPClient) Get(path string) ([]byte, error) {
 	mockHTTPClientCalls["Get"] = true
 
-	if h.validJsonReturnedOnGet {
+	if h.returnValidJSON {
 		return []byte("{}"), nil
-	} else {
-		return nil, nil
 	}
 
+	return nil, nil
 }
 
-func (h *mockHTTPClient) Post(path string, body []byte) error{
+func (h *mockHTTPClient) Post(path string, body []byte) error {
 	mockHTTPClientCalls["Post"] = true
 	return nil
 }
@@ -62,7 +62,7 @@ func TestWhen_DataIsNotReturned_Then_FeatureStoreIsNotReady(t *testing.T) {
 func TestWhen_DataIsReturned_Then_FeatureStoreIsReady(t *testing.T) {
 	reset()
 	h := &mockHTTPClient{}
-	h.validJsonReturnedOnGet = true
+	h.returnValidJSON = true
 
 	fs := NewHTTPFeatureStore(h, 100000000, logger.NewLogger(nil))
 
@@ -74,9 +74,7 @@ func TestWhen_DataIsReturned_Then_FeatureStoreIsReady(t *testing.T) {
 
 }
 
-
-
-func getHTTPFeatureStore() FeatureStore{
+func getHTTPFeatureStore() FeatureStore {
 	h := NewHTTPFeatureStore(
 		&mockHTTPClient{},
 		900,

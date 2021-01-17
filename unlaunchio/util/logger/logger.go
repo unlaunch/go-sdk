@@ -25,13 +25,13 @@ const (
 
 // LogOptions ...
 type LogOptions struct {
-	ErrorWriter     io.Writer
-	WarningWriter   io.Writer
-	InfoWriter      io.Writer
-	DebugWriter     io.Writer
-	TraceWriter     io.Writer
-	Level 			string
-	Colorful		bool
+	ErrorWriter   io.Writer
+	WarningWriter io.Writer
+	InfoWriter    io.Writer
+	DebugWriter   io.Writer
+	TraceWriter   io.Writer
+	Level         string
+	Colorful      bool
 }
 
 // Logger ...
@@ -58,7 +58,7 @@ func (l *Logger) Info(msg ...interface{}) {
 	l.infoLogger.Println(msg...)
 }
 
-// Warning ...
+// Warn ...
 func (l *Logger) Warn(msg ...interface{}) {
 	l.warningLogger.Println(msg...)
 }
@@ -73,11 +73,11 @@ func NewLogger(opt *LogOptions) *LevelsLogger {
 	opt = normalizeOptions(opt)
 
 	var (
-		debugPrefix 	= "DEBUG - unlaunch - "
-		infoPrefix		= "INFO - unlaunch - "
-		warnPrefix		= "WARN - unlaunch - "
-		errorPrefix		= "ERROR - unlaunch - "
-		tracePrefix		= "TRACE - unlaunch - "
+		debugPrefix = "DEBUG - unlaunch - "
+		infoPrefix  = "INFO - unlaunch - "
+		warnPrefix  = "WARN - unlaunch - "
+		errorPrefix = "ERROR - unlaunch - "
+		tracePrefix = "TRACE - unlaunch - "
 	)
 
 	if opt.Colorful {
@@ -89,7 +89,7 @@ func NewLogger(opt *LogOptions) *LevelsLogger {
 
 	}
 
-	flags := log.Ldate|log.Ltime|log.Lmicroseconds|log.Lmsgprefix
+	flags := log.Ldate | log.Ltime | log.Lmicroseconds | log.Lmsgprefix
 
 	l := &Logger{
 		debugLogger:   log.New(opt.DebugWriter, debugPrefix, flags),
@@ -101,10 +101,9 @@ func NewLogger(opt *LogOptions) *LevelsLogger {
 
 	return &LevelsLogger{
 		delegate: l,
-		level: Level(opt.Level),
+		level:    Level(opt.Level),
 	}
 }
-
 
 func normalizeOptions(opt *LogOptions) *LogOptions {
 	var res *LogOptions

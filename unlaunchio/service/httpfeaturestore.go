@@ -13,27 +13,25 @@ import (
 
 type HTTPFeatureStore struct {
 	httpClient          util.HTTPClient
-	logger              logger.LoggerInterface
+	logger              logger.Interface
 	features            map[string]dtos.Feature
 	initialSyncComplete bool
 	shutdownCh          chan bool
 }
-
-
 
 func (h *HTTPFeatureStore) Shutdown() {
 	h.logger.Debug("Sending shutdownCh signal to feature store")
 	h.shutdownCh <- true
 }
 
-func (h *HTTPFeatureStore) fetchFlags()  error {
+func (h *HTTPFeatureStore) fetchFlags() error {
 	res, err := h.httpClient.Get("/api/v1/flags")
 
 	if err != nil {
 		if httpError, ok := err.(*dtos.HTTPError); ok {
 			if httpError.Code == 403 {
 				h.logger.Error(
-					fmt.Sprintf("The API key you provided was rejected by the server. %s", util.SDK_KEY_HELP_MSG))
+					fmt.Sprintf("The API key you provided was rejected by the server. %s", util.SDKKeyHelpMessage))
 			}
 		} else {
 			h.logger.Error("error fetching flags ", err)
@@ -66,7 +64,7 @@ func (h *HTTPFeatureStore) fetchFlags()  error {
 		sort.Sort(dtos.ByRulePriority(feature.Rules))
 
 		for _, rule := range feature.Rules {
-			sort.Sort(dtos.ByVariationId(rule.Rollout))
+			sort.Sort(dtos.ByVariationID(rule.Rollout))
 		}
 	}
 
@@ -85,9 +83,8 @@ func (h *HTTPFeatureStore) fetchFlags()  error {
 func (h *HTTPFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	if feature, ok := h.features[key]; ok {
 		return &feature, nil
-	} else {
-		return nil, errors.New("flag was not found in local storage")
 	}
+	return nil, errors.New("flag was not found in local storage")
 }
 
 func (h *HTTPFeatureStore) IsReady() bool {
@@ -97,7 +94,6 @@ func (h *HTTPFeatureStore) IsReady() bool {
 		return false
 	}
 }
-
 
 func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
 	// TODO Find a better way to do this
@@ -119,7 +115,7 @@ func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
 func NewHTTPFeatureStore(
 	httpClient util.HTTPClient,
 	pollingInterval int,
-	logger logger.LoggerInterface) FeatureStore {
+	logger logger.Interface) FeatureStore {
 	httpStore := &HTTPFeatureStore{
 		httpClient:          httpClient,
 		logger:              logger,

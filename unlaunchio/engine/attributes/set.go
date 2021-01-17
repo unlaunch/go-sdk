@@ -21,7 +21,7 @@ func setApply(val interface{}, userVal interface{}, op string) bool {
 	}
 
 	userValuesSet := set.NewSet()
-	for k, _ := range uValues {
+	for k := range uValues {
 		userValuesSet.Add(strings.TrimSpace(k))
 	}
 

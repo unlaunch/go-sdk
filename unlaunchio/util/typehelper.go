@@ -13,7 +13,7 @@ func ConvertToFloat64(attr interface{}) (float64, error) {
 	// Todo: Move to util
 	switch v := attr.(type) {
 	case float64:
-		uVal =attr.(float64)
+		uVal = attr.(float64)
 	case float32:
 		uVal = float64(attr.(float32))
 	case int8:
@@ -45,7 +45,7 @@ func ConvertToFloat64(attr interface{}) (float64, error) {
 	return uVal, nil
 }
 
-// ConvertToBool
+// ConvertToBool converts to bool
 func ConvertToBool(attr interface{}) (bool, error) {
 	switch v := attr.(type) {
 	case bool:
@@ -56,6 +56,7 @@ func ConvertToBool(attr interface{}) (bool, error) {
 	}
 }
 
+// ConvertToString converts to string
 func ConvertToString(attr interface{}) (string, error) {
 	switch v := attr.(type) {
 	case string:
@@ -66,6 +67,7 @@ func ConvertToString(attr interface{}) (string, error) {
 	}
 }
 
+// ConvertToInt64 converts a valid numeric value to int64
 func ConvertToInt64(attr interface{}) (int64, error) {
 	switch v := attr.(type) {
 	case int64:
@@ -80,7 +82,6 @@ func ConvertToInt64(attr interface{}) (int64, error) {
 	}
 }
 
-
 func CovertToMap(attr interface{}) (map[string]interface{}, error) {
 	v := reflect.ValueOf(attr)
 	if v.Kind() == reflect.Map {
@@ -88,6 +89,5 @@ func CovertToMap(attr interface{}) (map[string]interface{}, error) {
 	}
 
 	return nil, errors.New("not map")
-
 
 }

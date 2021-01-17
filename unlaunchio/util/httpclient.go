@@ -15,27 +15,28 @@ type HTTPClient interface {
 	Post(path string, body []byte) error
 }
 
-type SimpleHTTPClient struct {
-	host       string
-	httpClient *http.Client
-	headers    map[string]string
-	logger     logger.LoggerInterface
-	sdkKey     string
-	lastModifiedAt		string
+type simpleHTTPClient struct {
+	host           string
+	httpClient     *http.Client
+	headers        map[string]string
+	logger         logger.Interface
+	sdkKey         string
+	lastModifiedAt string
 }
 
+// NewHTTPClient returns a new http client
 func NewHTTPClient(
 	sdkKey string,
 	host string,
 	timeout int,
-	logger logger.LoggerInterface,
-) *SimpleHTTPClient {
+	logger logger.Interface,
+) HTTPClient {
 
 	client := &http.Client{
 		Timeout: time.Duration(timeout) * time.Millisecond,
 	}
 
-	return &SimpleHTTPClient{
+	return &simpleHTTPClient{
 		host:       host,
 		httpClient: client,
 		logger:     logger,
@@ -43,7 +44,7 @@ func NewHTTPClient(
 	}
 }
 
-func (c *SimpleHTTPClient) Get(path string) ([]byte, error) {
+func (c *simpleHTTPClient) Get(path string) ([]byte, error) {
 	apiEndpoint := c.host + path
 	c.logger.Debug("[HTTP GET] ", apiEndpoint)
 
@@ -76,7 +77,7 @@ func (c *SimpleHTTPClient) Get(path string) ([]byte, error) {
 	if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 		c.lastModifiedAt = resp.Header.Get("Last-Modified")
 		return body, nil
-	}  else if resp.StatusCode == 304 {
+	} else if resp.StatusCode == 304 {
 		return nil, nil
 	} else {
 		return nil, &dtos.HTTPError{
@@ -86,7 +87,7 @@ func (c *SimpleHTTPClient) Get(path string) ([]byte, error) {
 	}
 }
 
-func (c *SimpleHTTPClient) Post(path string, body []byte) error {
+func (c *simpleHTTPClient) Post(path string, body []byte) error {
 	apiEndpoint := c.host + path
 	c.logger.Debug("[HTTP POST] ", apiEndpoint)
 

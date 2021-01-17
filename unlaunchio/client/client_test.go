@@ -2,7 +2,6 @@ package client
 
 import (
 	"errors"
-	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 	"testing"
@@ -11,26 +10,27 @@ import (
 
 const (
 	featureNotInStore = "feature-not-in-store"
-	feature1_on       = "feature1_on"
-	feature2_error    = "feature2_error"
+	feature1On        = "feature1On"
+	feature2Error     = "feature2Error"
 )
 
 // Create mock Evaluator that returns variations or errors based on flag key
 type mockEvaluator struct{}
+
 func (e *mockEvaluator) Evaluate(
 	feature *dtos.Feature,
 	identity string,
-	attributes *map[string]interface{})(*dtos.UnlaunchFeature, error) {
+	attributes *map[string]interface{}) (*dtos.UnlaunchFeature, error) {
 
 	switch feature.Key {
-	case feature1_on:
+	case feature1On:
 		return &dtos.UnlaunchFeature{
-			Feature:                "feature1_on",
+			Feature:                "feature1On",
 			Variation:              "on",
 			VariationConfiguration: nil,
 			EvaluationReason:       "test 1",
 		}, nil
-	case feature2_error:
+	case feature2Error:
 		return nil, errors.New("ignore")
 
 	default:
@@ -40,6 +40,7 @@ func (e *mockEvaluator) Evaluate(
 
 var mockEventsRecorderCalls = make(map[string]bool) // to record function calls
 type mockEventsRecorder struct{}
+
 func (e *mockEventsRecorder) Shutdown() {
 	mockEventsRecorderCalls["Shutdown"] = true
 }
@@ -49,8 +50,9 @@ func (e *mockEventsRecorder) Record(event *dtos.Event) error {
 }
 
 var mockEventsCountAggregatorRecordCalls = make(map[string]string) // to record "Record()" calls with variation key
-var mockEventsCountAggregatorCalls = make(map[string]bool) // to record function calls
+var mockEventsCountAggregatorCalls = make(map[string]bool)         // to record function calls
 type mockEventsCountAggregator struct{}
+
 func (e *mockEventsCountAggregator) Shutdown() {
 	mockEventsCountAggregatorCalls["Shutdown"] = true
 }
@@ -63,20 +65,21 @@ var mockFeatureStoreCalls = make(map[string]bool) // to record function calls
 type mockFeatureStore struct {
 	ready bool
 }
+
 func (e *mockFeatureStore) GetFeature(key string) (*dtos.Feature, error) {
 	switch key {
-	case feature1_on:
+	case feature1On:
 		return &dtos.Feature{
-			Key:          feature1_on,
+			Key:          feature1On,
 			Name:         "",
 			State:        "",
 			Variations:   nil,
 			OffVariation: 0,
 			Rules:        nil,
 		}, nil
-	case feature2_error:
+	case feature2Error:
 		return &dtos.Feature{
-			Key:          feature2_error,
+			Key:          feature2Error,
 			Name:         "",
 			State:        "",
 			Variations:   nil,
@@ -98,18 +101,19 @@ func (e *mockFeatureStore) IsReady() bool {
 }
 
 var mfs = &mockFeatureStore{}
+
 func clientWithMocks() *UnlaunchClient {
 	mfs.ready = true
 
 	return &UnlaunchClient{
-		sdkKey:          "prod-server-abc",
-		pollingInterval: 2000,
-		httpTimeout:     3000,
-		FeatureStore: mfs,
-		eventsRecorder: &mockEventsRecorder{},
+		sdkKey:                "prod-server-abc",
+		pollingInterval:       2000,
+		httpTimeout:           3000,
+		FeatureStore:          mfs,
+		eventsRecorder:        &mockEventsRecorder{},
 		eventsCountAggregator: &mockEventsCountAggregator{},
-		logger: logger.NewLogger(nil),
-		evaluator: &mockEvaluator{},
+		logger:                logger.NewLogger(nil),
+		evaluator:             &mockEvaluator{},
 	}
 }
 
@@ -129,7 +133,7 @@ func TestWhen_FeatureKeyIsEmpty_Then_ControlIsReturned(t *testing.T) {
 	v := c.Variation("", "u123", nil)
 
 	if v != "control" {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "control", v))
+		t.Errorf("Expected '%s'. Got '%s'", "control", v)
 	}
 }
 
@@ -137,10 +141,10 @@ func TestWhen_IdentityIsEmpty_Then_ControlIsReturned(t *testing.T) {
 	reset()
 	c := clientWithMocks()
 
-	v := c.Variation(feature1_on, "", nil)
+	v := c.Variation(feature1On, "", nil)
 
 	if v != "control" {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "control", v))
+		t.Errorf("Expected '%s'. Got '%s'", "control", v)
 	}
 }
 
@@ -151,7 +155,7 @@ func TestWhen_FeatureNotInStore_Then_ControlIsReturned(t *testing.T) {
 	v := c.Variation(featureNotInStore, "u123", nil)
 
 	if v != "control" {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "control", v))
+		t.Errorf("Expected '%s'. Got '%s'", "control", v)
 	}
 }
 
@@ -159,17 +163,17 @@ func TestWhen_FeatureIsInStore_Then_VariationIsReturned(t *testing.T) {
 	reset()
 	c := clientWithMocks()
 
-	v := c.Variation(feature1_on, "u123", nil)
+	v := c.Variation(feature1On, "u123", nil)
 
 	if v != "on" {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "on", v))
+		t.Errorf("Expected '%s'. Got '%s'", "on", v)
 	}
 
-	if !mockEventsRecorderCalls[feature1_on] {
+	if !mockEventsRecorderCalls[feature1On] {
 		t.Error("event recorder should have been called")
 	}
 
-	if mockEventsCountAggregatorRecordCalls[feature1_on] != "on" {
+	if mockEventsCountAggregatorRecordCalls[feature1On] != "on" {
 		t.Error("event count recorder should have been called")
 	}
 }
@@ -185,21 +189,21 @@ func TestWhen_FeatureIsInStore_Then_UnlaunchFeatureIsReturned(t *testing.T) {
 	reset()
 	c := clientWithMocks()
 
-	v := c.Feature(feature1_on, "u123", nil)
+	v := c.Feature(feature1On, "u123", nil)
 
 	if v.Variation != "on" {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "on", v))
+		t.Errorf("Expected '%s'. Got '%s'", "on", v)
 	}
 
-	if v.Feature != feature1_on {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", feature1_on, v.Feature))
+	if v.Feature != feature1On {
+		t.Errorf("Expected '%s'. Got '%s'", feature1On, v.Feature)
 	}
 
-	if !mockEventsRecorderCalls[feature1_on] {
+	if !mockEventsRecorderCalls[feature1On] {
 		t.Error("event recorder should have been called")
 	}
 
-	if mockEventsCountAggregatorRecordCalls[feature1_on] != "on" {
+	if mockEventsCountAggregatorRecordCalls[feature1On] != "on" {
 		t.Error("event count recorder should have been called")
 	}
 }
@@ -209,17 +213,17 @@ func TestWhen_SDKIsNotReady_Then_ControlIsReturned(t *testing.T) {
 	c := clientWithMocks()
 	mfs.ready = false
 
-	v := c.Variation(feature1_on, "u123", nil)
+	v := c.Variation(feature1On, "u123", nil)
 
 	if v != "control" {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "on", v))
+		t.Errorf("Expected '%s'. Got '%s'", "on", v)
 	}
 
-	if mockEventsRecorderCalls[feature1_on] {
+	if mockEventsRecorderCalls[feature1On] {
 		t.Error("event recorder shouldn't have been called")
 	}
 
-	if mockEventsCountAggregatorRecordCalls[feature1_on] != "" {
+	if mockEventsCountAggregatorRecordCalls[feature1On] != "" {
 		t.Error("event count recorder shouldn't have been called")
 	}
 }
@@ -228,17 +232,17 @@ func TestWhen_FeatureStoreReturnsError_Then_ControlIsReturned(t *testing.T) {
 	reset()
 	c := clientWithMocks()
 
-	v := c.Variation(feature2_error, "u123", nil)
+	v := c.Variation(feature2Error, "u123", nil)
 
 	if v != "control" {
-		t.Error(fmt.Sprintf("Expected '%s'. Got '%s'", "on", v))
+		t.Errorf("Expected '%s'. Got '%s'", "on", v)
 	}
 
-	if mockEventsRecorderCalls[feature1_on] {
+	if mockEventsRecorderCalls[feature1On] {
 		t.Error("event recorder shouldn't have been called")
 	}
 
-	if mockEventsCountAggregatorRecordCalls[feature1_on] != "" {
+	if mockEventsCountAggregatorRecordCalls[feature1On] != "" {
 		t.Error("event count recorder shouldn't have been called")
 	}
 }

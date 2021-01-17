@@ -19,12 +19,12 @@ func initializeDateAttrFile1() (dtos.Feature, string) {
 	json.Unmarshal(mockedFlagNum, &responseDto)
 	sort.Sort(dtos.ByRulePriority(responseDto.Rules))
 	for _, rule := range responseDto.Rules {
-		sort.Sort(dtos.ByVariationId(rule.Rollout))
+		sort.Sort(dtos.ByVariationID(rule.Rollout))
 	}
 
-	userId := "user-"+ strconv.Itoa(rand.Intn(1000))
+	userID := "user-" + strconv.Itoa(rand.Intn(1000))
 
-	return responseDto, userId
+	return responseDto, userID
 }
 
 func initializeDateAttrFile2() (dtos.Feature, string) {
@@ -34,12 +34,12 @@ func initializeDateAttrFile2() (dtos.Feature, string) {
 	json.Unmarshal(mockedFlagNum, &responseDto)
 	sort.Sort(dtos.ByRulePriority(responseDto.Rules))
 	for _, rule := range responseDto.Rules {
-		sort.Sort(dtos.ByVariationId(rule.Rollout))
+		sort.Sort(dtos.ByVariationID(rule.Rollout))
 	}
 
-	userId := "user-"+ strconv.Itoa(rand.Intn(1000))
+	userID := "user-" + strconv.Itoa(rand.Intn(1000))
 
-	return responseDto, userId
+	return responseDto, userID
 }
 
 func TestWhen_DateEqualsMatch(t *testing.T) {

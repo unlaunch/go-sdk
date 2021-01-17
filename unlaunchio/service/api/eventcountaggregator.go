@@ -16,7 +16,7 @@ type EventsCountAggregator interface {
 }
 
 type SimpleEventsCountAggregator struct {
-	logger         logger.LoggerInterface
+	logger         logger.Interface
 	queueMu        *sync.Mutex
 	queue          map[string]int
 	maxQueueSize   int
@@ -69,12 +69,12 @@ func (e *SimpleEventsCountAggregator) postMetrics() error {
 		p[varKey] = v
 
 		event := &dtos.Event{
-			CreatedTime:  time.Now().UTC().Unix() * 1000,
-			Key:          f,
-			Type: "VARIATIONS_COUNT_EVENT",
-			Properties:   p,
-			Sdk:          "Go",
-			SdkVersion:   "0.0.1",
+			CreatedTime: time.Now().UTC().Unix() * 1000,
+			Key:         f,
+			Type:        "VARIATIONS_COUNT_EVENT",
+			Properties:  p,
+			Sdk:         "Go",
+			SdkVersion:  "0.0.1",
 		}
 
 		eventsList = append(eventsList, event)
@@ -93,26 +93,26 @@ func (e *SimpleEventsCountAggregator) Record(flagKey string, variationKey string
 	e.queueMu.Lock()
 
 	defer func() {
-		s  := len(e.queue)
+		s := len(e.queue)
 		e.queueMu.Unlock()
 		if s > e.maxQueueSize {
 			e.flush()
 		}
 	}()
 
-	e.queue[flagKey + "," + variationKey]+= 1
+	e.queue[flagKey+","+variationKey]++
 
 	return nil
 }
 
-func NewEventsCountAggregator(HTTPClient util.HTTPClient, url string, flushInterval int, maxQueueSize int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
+func NewEventsCountAggregator(HTTPClient util.HTTPClient, url string, flushInterval int, maxQueueSize int, logger logger.Interface) *SimpleEventsCountAggregator {
 	ec := &SimpleEventsCountAggregator{
 		logger:         logger,
 		queueMu:        &sync.Mutex{},
 		url:            url,
 		HTTPClient:     HTTPClient,
 		queue:          make(map[string]int),
-		maxQueueSize: maxQueueSize,
+		maxQueueSize:   maxQueueSize,
 		eventsRecorder: nil,
 	}
 

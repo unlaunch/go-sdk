@@ -33,4 +33,3 @@ func TestNumberOperators(t *testing.T) {
 		t.Errorf("nil should return false")
 	}
 }
-

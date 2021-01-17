@@ -35,7 +35,7 @@ func Schedule(what func() error, delay time.Duration) chan bool {
 	go func() {
 		for {
 			select {
-			case <- ticker.C:
+			case <-ticker.C:
 				what()
 			case <-stop:
 				ticker.Stop()
