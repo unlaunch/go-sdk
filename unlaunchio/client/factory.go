@@ -17,58 +17,7 @@ type UnlaunchFactory struct {
 	logger logger.LoggerInterface
 }
 
-type configMinimumValues struct {
-	minPollingInterval int
-	minHttpTimeout int
-	minMetricsFlushInterval int
-	minMetricsQueueSize int
-}
 
-
-var prodConfigMinValues = &configMinimumValues{
-	minPollingInterval: 6000,
-	minHttpTimeout: 1000,
-	minMetricsFlushInterval: 45000,
-	minMetricsQueueSize: 500,
-}
-
-var debugConfigMinValues = &configMinimumValues{
-	minPollingInterval: 15000,
-	minHttpTimeout: 1000,
-	minMetricsFlushInterval: 15000,
-	minMetricsQueueSize: 10,
-}
-
-
-func normalizeConfig(cfg *UnlaunchClientConfig, m *configMinimumValues) *UnlaunchClientConfig {
-	var res *UnlaunchClientConfig
-
-	if cfg == nil {
-		res = &UnlaunchClientConfig{}
-	} else {
-		res = cfg
-	}
-
-	if cfg.PollingInterval < m.minPollingInterval {
-		res.PollingInterval = m.minPollingInterval
-	}
-
-	if cfg.HTTPTimeout < 1000 {
-		res.HTTPTimeout = m.minHttpTimeout
-	}
-
-	if cfg.MetricsFlushInterval < m.minMetricsFlushInterval {
-		res.MetricsFlushInterval = m.minMetricsFlushInterval
-	}
-
-	if cfg.MetricsQueueSize < m.minMetricsQueueSize {
-		res.MetricsQueueSize = m.minMetricsQueueSize
-	}
-
-	res.LoggerConfig = cfg.LoggerConfig
-
-	return res
-}
 
 
 // NewUnlaunchClientFactory is a factory
@@ -78,16 +27,11 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 		return nil, errors.New("the SDK Key cannot be null")
 	}
 
-
-	if cfg == nil {
-		cfg = DefaultConfig()
-	}
-
 	var c *UnlaunchClientConfig
 	if strings.HasPrefix(SDKKey, "prod") {
-		c = normalizeConfig(cfg, prodConfigMinValues)
+		c = normalizeConfigValues(cfg, prodConfigMinValues)
 	} else {
-		c = normalizeConfig(cfg, debugConfigMinValues)
+		c = normalizeConfigValues(cfg, debugConfigMinValues)
 	}
 
 	logging := logger.NewLogger(c.LoggerConfig)

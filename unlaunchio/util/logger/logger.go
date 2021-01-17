@@ -69,7 +69,7 @@ func (l *Logger) Error(msg ...interface{}) {
 
 // NewLogger ...
 func NewLogger(opt *LogOptions) *LevelsLogger {
-	opt = checkOptions(opt)
+	opt = normalizeOptions(opt)
 
 	var (
 		debugPrefix 	= "DEBUG - unlaunch - "
@@ -105,7 +105,7 @@ func NewLogger(opt *LogOptions) *LevelsLogger {
 }
 
 
-func checkOptions(opt *LogOptions) *LogOptions {
+func normalizeOptions(opt *LogOptions) *LogOptions {
 	var res *LogOptions
 
 	if opt == nil {
