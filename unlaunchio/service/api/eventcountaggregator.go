@@ -21,7 +21,7 @@ type SimpleEventsCountAggregator struct {
 	queue          map[string]int
 	maxQueueSize   int
 	url            string
-	HTTPClient     *util.SimpleHTTPClient
+	HTTPClient     util.HTTPClient
 	eventsRecorder *SimpleEventsRecorder
 	shutdown       chan bool
 }
@@ -59,7 +59,7 @@ func (e *SimpleEventsCountAggregator) postMetrics() error {
 		return nil
 	}
 
-	eventsList := make([]*dtos.Event, len(rawEvents))
+	eventsList := make([]*dtos.Event, 0)
 	for k, v := range rawEvents {
 		d := strings.Split(k, ",")
 		f := d[0]
@@ -105,7 +105,7 @@ func (e *SimpleEventsCountAggregator) Record(flagKey string, variationKey string
 	return nil
 }
 
-func NewEventsCountAggregator(HTTPClient *util.SimpleHTTPClient, url string, flushInterval int, maxQueueSize int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
+func NewEventsCountAggregator(HTTPClient util.HTTPClient, url string, flushInterval int, maxQueueSize int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
 	ec := &SimpleEventsCountAggregator{
 		logger:         logger,
 		queueMu:        &sync.Mutex{},

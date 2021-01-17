@@ -127,7 +127,7 @@ func NewHTTPFeatureStore(
 		features:            nil,
 	}
 
-	httpStore.shutdownCh = util.Schedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
+	httpStore.shutdownCh = util.RunImmediatelyAndSchedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
 
 	return httpStore
 }

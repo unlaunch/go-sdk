@@ -48,11 +48,10 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 
 	// TODO: Create and pass HTTP client instead of sdkey key, host
 	// like eventsCount
+
 	eventsRecorder := api.NewHTTPEventsRecorder(
-		f.sdkKey,
-		f.cfg.Host,
+		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
 		"/api/v1/impressions",
-		f.cfg.HTTPTimeout,
 		f.cfg.MetricsFlushInterval,
 		f.cfg.MetricsQueueSize,
 		"impressions",

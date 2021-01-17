@@ -28,26 +28,41 @@ type SimpleEventsRecorder struct {
 
 const itemsToSendInBatch = 500
 
-func (e *SimpleEventsRecorder) postMetrics() error {
+func (e *SimpleEventsRecorder) copyAndEmptyQueue() *list.List {
 	e.queueMu.Lock()
 	defer e.queueMu.Unlock()
 
-	if e.queue.Len() == 0 {
+	if e.queue.Len() <= 0 {
+		return nil
+	}
+
+	r := e.queue
+
+	// empty out the original list so we don't double count
+	e.queue = list.New()
+
+	return r
+}
+
+func (e *SimpleEventsRecorder) postMetrics() error {
+	r := e.copyAndEmptyQueue()
+
+	if r == nil || r.Len() == 0 {
 		return nil
 	}
 
 	var total int
 
-	if e.queue.Len() >= itemsToSendInBatch {
+	if r.Len() >= itemsToSendInBatch {
 		total = itemsToSendInBatch
 	} else {
-		total = e.queue.Len()
+		total = r.Len()
 	}
 
 	result := make([]*dtos.Event, total)
 
 	for i := 0; i < total; i++ {
-		result[i] = e.queue.Remove(e.queue.Front()).(*dtos.Event)
+		result[i] = r.Remove(r.Front()).(*dtos.Event)
 	}
 
 	data, _ := json.Marshal(result)
@@ -86,10 +101,8 @@ func (e *SimpleEventsRecorder) Record(event *dtos.Event) error {
 }
 
 func NewHTTPEventsRecorder(
-	sdkKey string,
-	host string,
+	httpClient *util.SimpleHTTPClient,
 	url string,
-	httpTimeout int,
 	flushInterval int,
 	maxQueueSize int,
 	name string,
@@ -101,8 +114,8 @@ func NewHTTPEventsRecorder(
 		queueMu:    &sync.Mutex{},
 		name:       name,
 		maxQueueSize: maxQueueSize,
-		httpClient: util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
+		httpClient: httpClient,
 	}
-	er.shutdown = util.Schedule(er.postMetrics, time.Duration(flushInterval)*time.Millisecond)
+	er.shutdown = util.RunImmediatelyAndSchedule(er.postMetrics, time.Duration(flushInterval)*time.Millisecond)
 	return er
 }
