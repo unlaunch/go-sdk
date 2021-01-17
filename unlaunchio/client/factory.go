@@ -78,7 +78,7 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		eventsRecorder: eventsRecorder,
 		eventsCountAggregator: eventsCounts,
 		logger: f.logger,
-		evaluator: engine.NewEvaluator(),
+		evaluator: engine.NewEvaluator(f.logger),
 	}
 
 }

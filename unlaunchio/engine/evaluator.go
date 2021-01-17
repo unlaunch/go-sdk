@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	attributes2 "github.com/unlaunch/go-sdk/unlaunchio/engine/attributes"
+	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 	"math"
 	"strings"
 )
@@ -16,10 +17,14 @@ type Evaluator interface {
 	Evaluate(feature *dtos.Feature, identity string, attributes *map[string]interface{})(*dtos.UnlaunchFeature, error)
 }
 
-type SimpleEvaluator struct{}
+type SimpleEvaluator struct{
+	logger	logger.LoggerInterface
+}
 
-func NewEvaluator() Evaluator {
-	return &SimpleEvaluator{}
+func NewEvaluator(logger logger.LoggerInterface) Evaluator {
+	return &SimpleEvaluator{
+		logger: logger,
+	}
 }
 
 func (e *SimpleEvaluator) Evaluate(
@@ -31,23 +36,28 @@ func (e *SimpleEvaluator) Evaluate(
 	result.EvaluationReason = "this SDK is not yet complete"
 
 	if feature.Enabled() == false {
-		result.EvaluationReason = "Flag disabled. Default Variation served"
 		offVariation, err := e.getOffVariation(feature)
 		if err != nil {
+			e.logger.Error("unexpected error.", e)
 			return nil, err
 		}
+		result.EvaluationReason = "Flag disabled. Default Variation served"
 		result.Variation = offVariation.Key
+		result.VariationConfiguration = offVariation.Properties
 		return result, nil
 	} else if v := e.variationIfUserInAllowList(feature, identity); v != nil {
 		result.Variation = v.Key
+		result.VariationConfiguration = v.Properties
 		result.EvaluationReason = "User is in Target Users List"
 		return result, nil
 	} else if v := e.matchTargetingRules(feature, identity, attributes); v != nil {
 		result.Variation = v.Key
+		result.VariationConfiguration = v.Properties
 		result.EvaluationReason = "Targeting Rule Match"
 		return result, nil
 	} else if v := e.defaultRule(feature, identity, attributes); v != nil {
 		result.Variation = v.Key
+		result.VariationConfiguration = v.Properties
 		result.EvaluationReason = "Default Rule Match"
 		return result, nil
 	} else {

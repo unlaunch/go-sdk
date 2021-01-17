@@ -35,13 +35,13 @@ func (f *Feature) VariationById(id int) *Variation {
 		}
 	}
 	return nil
-
 }
 
 type Variation struct {
 	Id 			int
 	Key 		string
 	AllowList 	string
+	Properties	map[string]string `json:"configs"`
 }
 
 type Rollout struct {

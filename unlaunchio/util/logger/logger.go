@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -137,6 +138,7 @@ func normalizeOptions(opt *LogOptions) *LogOptions {
 	switch res.Level {
 	case "ERROR", "WARN", "INFO", "DEBUG", "TRACE":
 	default:
+		fmt.Println(fmt.Sprintf("Unlaunch - %s is not valid log level. Choose from one of [ERROR, WARN, INFO, DEBUG, TRACE]. Defaulting to ERROR", res.Level))
 		res.Level = "ERROR"
 	}
 

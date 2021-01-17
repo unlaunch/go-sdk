@@ -29,7 +29,6 @@ type SimpleEventsRecorder struct {
 const itemsToSendBatch = 100
 
 func (e *SimpleEventsRecorder) postMetrics() error {
-	e.logger.Debug("er RUNNING")
 	e.queueMu.Lock()
 	defer e.queueMu.Unlock()
 
