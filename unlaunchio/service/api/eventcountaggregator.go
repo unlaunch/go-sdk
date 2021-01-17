@@ -18,7 +18,8 @@ type EventsCountAggregator interface {
 type SimpleEventsCountAggregator struct {
 	logger         logger.LoggerInterface
 	queueMu        *sync.Mutex
-	store          map[string]int
+	queue          map[string]int
+	maxQueueSize   int
 	url            string
 	HTTPClient     *util.SimpleHTTPClient
 	eventsRecorder *SimpleEventsRecorder
@@ -35,30 +36,30 @@ func (e *SimpleEventsCountAggregator) flush() {
 	e.postMetrics()
 }
 
-func (e *SimpleEventsCountAggregator) copyAndEmptyMap() map[string]int {
+func (e *SimpleEventsCountAggregator) copyAndEmptyQueue() map[string]int {
 	e.queueMu.Lock()
 	defer e.queueMu.Unlock()
 
 	r := make(map[string]int)
-	for k, v := range e.store {
+	for k, v := range e.queue {
 		r[k] = v
 	}
 
 	// empty out the original map so we don't double count
-	e.store = make(map[string]int)
+	e.queue = make(map[string]int)
 
 	return r
 }
 
 func (e *SimpleEventsCountAggregator) postMetrics() error {
-	rawEvents := e.copyAndEmptyMap()
+	rawEvents := e.copyAndEmptyQueue()
 
 	// nothing to do
 	if len(rawEvents) == 0 {
 		return nil
 	}
 
-	eventsList := make([]*dtos.Event, len(e.store))
+	eventsList := make([]*dtos.Event, len(rawEvents))
 	for k, v := range rawEvents {
 		d := strings.Split(k, ",")
 		f := d[0]
@@ -90,20 +91,28 @@ func (e *SimpleEventsCountAggregator) Record(flagKey string, variationKey string
 	}
 
 	e.queueMu.Lock()
-	defer e.queueMu.Unlock()
 
-	e.store[flagKey + "," + variationKey]+= 1
+	defer func() {
+		s  := len(e.queue)
+		e.queueMu.Unlock()
+		if s > e.maxQueueSize {
+			e.flush()
+		}
+	}()
+
+	e.queue[flagKey + "," + variationKey]+= 1
 
 	return nil
 }
 
-func NewEventsCountAggregator(HTTPClient *util.SimpleHTTPClient, url string, flushInterval int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
+func NewEventsCountAggregator(HTTPClient *util.SimpleHTTPClient, url string, flushInterval int, maxQueueSize int, logger logger.LoggerInterface) *SimpleEventsCountAggregator {
 	ec := &SimpleEventsCountAggregator{
 		logger:         logger,
 		queueMu:        &sync.Mutex{},
 		url:            url,
 		HTTPClient:     HTTPClient,
-		store:          make(map[string]int),
+		queue:          make(map[string]int),
+		maxQueueSize: maxQueueSize,
 		eventsRecorder: nil,
 	}
 

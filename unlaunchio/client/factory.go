@@ -63,6 +63,7 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
 		"/api/v1/events",
 		f.cfg.MetricsFlushInterval,
+		f.cfg.MetricsQueueSize,
 		f.logger)
 
 	hc := util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger)

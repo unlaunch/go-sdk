@@ -16,17 +16,17 @@ type EventsRecorder interface {
 }
 
 type SimpleEventsRecorder struct {
-	logger     logger.LoggerInterface
-	url        string
-	httpClient *util.SimpleHTTPClient
-	queue      *list.List
-	queueMu    *sync.Mutex
-	queueSize  int
-	name       string
-	shutdown   chan bool
+	logger       logger.LoggerInterface
+	url          string
+	httpClient   *util.SimpleHTTPClient
+	queue        *list.List
+	queueMu      *sync.Mutex
+	maxQueueSize int
+	name         string
+	shutdown     chan bool
 }
 
-const itemsToSendBatch = 100
+const itemsToSendInBatch = 500
 
 func (e *SimpleEventsRecorder) postMetrics() error {
 	e.queueMu.Lock()
@@ -38,8 +38,8 @@ func (e *SimpleEventsRecorder) postMetrics() error {
 
 	var total int
 
-	if e.queue.Len() >= itemsToSendBatch {
-		total = itemsToSendBatch
+	if e.queue.Len() >= itemsToSendInBatch {
+		total = itemsToSendInBatch
 	} else {
 		total = e.queue.Len()
 	}
@@ -72,7 +72,13 @@ func (e *SimpleEventsRecorder) Record(event *dtos.Event) error {
 	}
 
 	e.queueMu.Lock()
-	defer e.queueMu.Unlock()
+	defer func() {
+		s  := e.queue.Len()
+		e.queueMu.Unlock()
+		if s > e.maxQueueSize {
+			e.flush()
+		}
+	}()
 
 	e.queue.PushBack(event)
 
@@ -85,7 +91,7 @@ func NewHTTPEventsRecorder(
 	url string,
 	httpTimeout int,
 	flushInterval int,
-	queueSize int,
+	maxQueueSize int,
 	name string,
 	logger logger.LoggerInterface) *SimpleEventsRecorder {
 	er := &SimpleEventsRecorder{
@@ -93,8 +99,8 @@ func NewHTTPEventsRecorder(
 		url:        url,
 		queue:      list.New(),
 		queueMu:    &sync.Mutex{},
-		queueSize:  queueSize,
 		name:       name,
+		maxQueueSize: maxQueueSize,
 		httpClient: util.NewHTTPClient(sdkKey, host, httpTimeout, logger),
 	}
 	er.shutdown = util.Schedule(er.postMetrics, time.Duration(flushInterval)*time.Millisecond)
