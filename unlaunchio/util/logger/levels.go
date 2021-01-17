@@ -18,6 +18,7 @@ const (
 	// LevelTrace log level
 	LevelTrace
 )
+
 // LevelsLogger encapsulates logger and applies log levels
 type LevelsLogger struct {
 	level    int

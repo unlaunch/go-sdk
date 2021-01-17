@@ -1,8 +1,8 @@
 # Unlaunch Go SDK
 
-| main                                                                                                                | development                                                                                                                |
-|---------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
-| [![Build Status](https://travis-ci.com/unlaunch/go-sdk.svg?branch=main)](https://travis-ci.com/unlaunch/go-sdk)| [![Build Status](https://travis-ci.com/unlaunch/go-sdk.svg?branch=development)](https://travis-ci.com/unlaunch/go-sdk) |
+| main                                                                                                                | development                                                                                                                | Go Report Card |
+|---------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|----------------|
+| [![Build Status](https://travis-ci.com/unlaunch/go-sdk.svg?branch=main)](https://travis-ci.com/unlaunch/go-sdk)| [![Build Status](https://travis-ci.com/unlaunch/go-sdk.svg?branch=development)](https://travis-ci.com/unlaunch/go-sdk) | [![Go Report Card](https://goreportcard.com/badge/github.com/unlaunch/go-sdk)](https://goreportcard.com/report/github.com/unlaunch/go-sdk) |
 
 ## Overview
 The Unlaunch Go SDK provides a Go API to access Unlaunch feature flags and other features. 
@@ -12,11 +12,13 @@ Using the SDK, you can easily build Java applications that can evaluate feature 
 
 - To create feature flags to use with Java SDK, login to your Unlaunch Console at [https://app.unlaunch.io](https://app.unlaunch.io)
 - [Official Guide](https://docs.unlaunch.io/docs/sdks/go-sdk)
+- [Documentation](https://pkg.go.dev/github.com/unlaunch/go-sdk#section-documentation)
+- [Example Project](https://github.com/unlaunch/hello-go)
 
 ## Getting Started
 Here is a simple example.
 
-Run `go get github.com/unlaunchIO/go-sdk/` or `dep ensure -add go get github.com/unlaunchIO/go-sdk`
+Run `go get github.com/unlaunch/go-sdk` add it to your `go.mod` file.
 
 ```go
 package main
