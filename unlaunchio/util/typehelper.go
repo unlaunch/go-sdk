@@ -89,5 +89,12 @@ func CovertToMap(attr interface{}) (map[string]interface{}, error) {
 	}
 
 	return nil, errors.New("not map")
+}
 
+func JavaMillsToUnixTime(ts int64) int64 {
+	return ts / 1000
+}
+
+func UnixTimeToJavaMillis(ts int64) int64 {
+	return ts * 1000
 }

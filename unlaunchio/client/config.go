@@ -22,7 +22,7 @@ func DefaultConfig() *UnlaunchClientConfig {
 		PollingInterval:      60 * time.Second,
 		HTTPTimeout:          10 * time.Second,
 		Host:                 "https://api.unlaunch.io",
-		MetricsFlushInterval: 40 * time.Second,
+		MetricsFlushInterval: 45 * time.Second,
 		MetricsQueueSize:     500,
 		OfflineMode:          false,
 		LoggerConfig: 		  nil,
@@ -40,7 +40,7 @@ type configValues struct {
 // config minimums
 var minValues = &configValues{
 	pollingInterval:      15 * time.Second,
-	httpTimeout:          10 * time.Second,
+	httpTimeout:          1 * time.Second,
 	metricsFlushInterval: 10 * time.Second,
 	metricsQueueSize:     10,
 	host:                 "https://api.unlaunch.io",

@@ -9,7 +9,7 @@ import (
 func dateOrDateTimeApply(val interface{}, userVal interface{}, op string, discardTime bool) bool {
 	// This is the value in Java
 	v, _ := strconv.ParseInt(val.(string), 10, 64)
-	v = javaTimeToEpoc(v)
+	v = util.JavaMillsToUnixTime(v)
 
 	uv, err := util.ConvertToInt64(userVal)
 
@@ -41,9 +41,7 @@ func dateOrDateTimeApply(val interface{}, userVal interface{}, op string, discar
 	}
 }
 
-func javaTimeToEpoc(ts int64) int64 {
-	return ts / 1000
-}
+
 
 func tsWithZeroTime(ts int64) int64 {
 	t := time.Unix(ts, 0).UTC() // seconds to time

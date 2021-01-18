@@ -1,54 +1,94 @@
 package attributes
 
 import (
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 )
 
-func TestDateAndDateTimeOperators(t *testing.T) {
+func TestDateOperators(t *testing.T) {
 
 	// Flag always contain datetime in Java milliseconds since epoch
-	flagDateTime := "1232071462000" // Aug 16, 2009
+	dateAug152009 := "1250298753000" // August 15, 2009 1:25:33 AM
+	dateAug162009 := "1250423999000" // Aug 16, 2009
+	dateAug172009 := "1250472333000" // August 17, 2009 1:25:33 AM
 
-	if !dateOrDateTimeApply(flagDateTime, 1232071462, "EQ", true) {
-		t.Errorf("equal dates should match")
+	var v int64
+
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug162009, "000"), 10, 64)
+	if !dateOrDateTimeApply(dateAug162009, v, "EQ", true) {
+		t.Errorf("EQ dates should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, 1232071462, "EQ", false) {
-		t.Errorf("equal datetime should match")
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug172009, "000"), 10, 64)
+	if !dateOrDateTimeApply(dateAug162009, v, "GT", true) {
+		t.Errorf("GT than date should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix(), "GT", true) {
-		t.Errorf("greater than date should match")
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug152009, "000"), 10, 64)
+	if !dateOrDateTimeApply(dateAug162009, v, "LT", true) {
+		t.Errorf("LT date should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix(), "GT", false) {
-		t.Errorf("greater than datetime should match")
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug162009, "000"), 10, 64)
+	if !dateOrDateTimeApply(dateAug162009, v, "GTE", true) {
+		t.Errorf("GTE date should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix(), "GTE", true) {
-		t.Errorf("greater than date should match")
+	if !dateOrDateTimeApply(dateAug162009, time.Now().UTC().Unix(), "GTE", true) {
+		t.Errorf("GTE date should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix(), "GTE", false) {
-		t.Errorf("greater than or equals datetime should match")
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug162009, "000"), 10, 64)
+	if !dateOrDateTimeApply(dateAug162009, v, "LTE", true) {
+		t.Errorf("LTE equal date should match")
 	}
 
-	// Subtract ~15 years
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LT", true) {
-		t.Errorf("less than date should match")
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug152009, "000"), 10, 64)
+	if !dateOrDateTimeApply(dateAug162009, v, "LTE", true) {
+		t.Errorf("LTE date should match")
+	}
+}
+
+func TestDateTimeOperators(t *testing.T) {
+	// Some times
+	time0 := "1250298753000" // August 15, 2009 1:12:33 AM
+	time1 := "1250299113000" // August 15, 2009 1:18:33 AM
+	time2 := "1250299533000" // August 15, 2009 1:25:33 AM
+
+	var v int64
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time1, "000"), 10, 64)
+	if !dateOrDateTimeApply(time1, v, "EQ", false) {
+		t.Errorf("EQ datetime should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LT", false) {
-		t.Errorf("less than datetime should match")
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time2, "000"), 10, 64)
+	if !dateOrDateTimeApply(time1, v, "GT", false) {
+		t.Errorf("GT datetime should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LTE", true) {
-		t.Errorf("less than or equals date should match")
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time0, "000"), 10, 64)
+	if !dateOrDateTimeApply(time1, v, "LT", false) {
+		t.Errorf("LT datetime should match")
 	}
 
-	if !dateOrDateTimeApply(flagDateTime, time.Now().UTC().Unix()-473412761, "LTE", false) {
-		t.Errorf("less than or equals datetime should match")
+	if !dateOrDateTimeApply(time1, time.Now().UTC().Unix(), "GTE", false) {
+		t.Errorf("GTE datetime should match")
 	}
 
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time1, "000"), 10, 64)
+	if !dateOrDateTimeApply(time1, v, "GTE", false) {
+		t.Errorf("GTE equal datetime should match")
+	}
+
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time1, "000"), 10, 64)
+	if !dateOrDateTimeApply(time1, v, "LTE", false) {
+		t.Errorf("LTE equal datetime should match")
+	}
+
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time0, "000"), 10, 64)
+	if !dateOrDateTimeApply(time1, v, "LTE", false) {
+		t.Errorf("LTE datetime should match")
+	}
 }
