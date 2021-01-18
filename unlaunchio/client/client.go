@@ -11,11 +11,8 @@ import (
 	"time"
 )
 
-// UnlaunchClient Main Unlaunch Client
+// UnlaunchClient is the main interface for interacting with Unlaunch
 type UnlaunchClient struct {
-	sdkKey                string
-	pollingInterval       int
-	httpTimeout           int
 	FeatureStore          service.FeatureStore
 	eventsRecorder        api.EventsRecorder
 	eventsCountAggregator api.EventsCountAggregator
@@ -37,7 +34,8 @@ func (c *UnlaunchClient) IsShutdown() bool {
 	return c.shutdown
 }
 
-// Variation ...
+// Variation evaluates and returns the variation (variation key) for this feature. Variations are defined using the
+// Unlaunch console at https://app.unlaunch.io
 func (c *UnlaunchClient) Variation(
 	featureKey string,
 	identity string,
@@ -160,7 +158,8 @@ func (c *UnlaunchClient) evaluateFlag(
 	return ulFeature
 }
 
-func (c *UnlaunchClient) BlockUntilReady(timeout time.Duration) error {
+// AwaitUntilReady blocks until the client initialization is done or timeout occurs, whichever comes first
+func (c *UnlaunchClient) AwaitUntilReady(timeout time.Duration) error {
 	if c.FeatureStore.IsReady() {
 		return nil
 	}
@@ -177,6 +176,7 @@ func (c *UnlaunchClient) BlockUntilReady(timeout time.Duration) error {
 	return nil
 }
 
+// Shutdown shuts down the client, and all associated go routines
 func (c *UnlaunchClient) Shutdown() {
 	if !c.shutdown {
 		c.FeatureStore.Shutdown()

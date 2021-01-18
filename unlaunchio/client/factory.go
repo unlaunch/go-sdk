@@ -25,11 +25,8 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 	}
 
 	var c *UnlaunchClientConfig
-	if strings.HasPrefix(SDKKey, "prod") {
-		c = normalizeConfigValues(cfg, prodConfigMinValues)
-	} else {
-		c = normalizeConfigValues(cfg, debugConfigMinValues)
-	}
+	c = normalizeConfigValues(cfg, strings.HasPrefix(SDKKey, "prod"))
+
 
 	logging := logger.NewLogger(c.LoggerConfig)
 
@@ -64,9 +61,6 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 	hc := util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger)
 
 	return &UnlaunchClient{
-		sdkKey:          f.sdkKey,
-		pollingInterval: f.cfg.PollingInterval,
-		httpTimeout:     f.cfg.HTTPTimeout,
 		FeatureStore: service.NewHTTPFeatureStore(
 			hc,
 			f.cfg.PollingInterval,

@@ -1,6 +1,6 @@
 package logger
 
-// Interface ...
+// Interface that loggers must implement
 type Interface interface {
 	Trace(msg ...interface{})
 	Debug(msg ...interface{})

@@ -105,7 +105,7 @@ func (e *SimpleEventsCountAggregator) Record(flagKey string, variationKey string
 	return nil
 }
 
-func NewEventsCountAggregator(HTTPClient util.HTTPClient, url string, flushInterval int, maxQueueSize int, logger logger.Interface) *SimpleEventsCountAggregator {
+func NewEventsCountAggregator(HTTPClient util.HTTPClient, url string, flushInterval time.Duration, maxQueueSize int, logger logger.Interface) *SimpleEventsCountAggregator {
 	ec := &SimpleEventsCountAggregator{
 		logger:         logger,
 		queueMu:        &sync.Mutex{},
@@ -116,6 +116,6 @@ func NewEventsCountAggregator(HTTPClient util.HTTPClient, url string, flushInter
 		eventsRecorder: nil,
 	}
 
-	ec.shutdown = util.Schedule(ec.postMetrics, time.Duration(flushInterval)*time.Millisecond)
+	ec.shutdown = util.Schedule(ec.postMetrics, flushInterval)
 	return ec
 }

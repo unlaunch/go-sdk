@@ -27,7 +27,7 @@ func (h *mockHTTPClient) Post(path string, body []byte) error {
 
 func TestWhen_FlushIntervalIsHit_Then_AggregatedCountsArePosted(t *testing.T) {
 	reset()
-	flushInterval := 500 // this relies on timing; don't change
+	flushInterval :=  500 * time.Millisecond // this relies on timing; don't change
 	ce := NewEventsCountAggregator(&mockHTTPClient{}, "bs", flushInterval, util.MaxInt, logger.NewLogger(nil))
 
 	// Send 10 events, All of same type
@@ -54,7 +54,7 @@ func TestWhen_FlushIntervalIsHit_Then_AggregatedCountsArePosted(t *testing.T) {
 
 func TestWhen_FlushIntervalIsHit_Then_AggregatedCountsArePosted_OnePerFlag(t *testing.T) {
 	reset()
-	flushInterval := 500 // this relies on timing; don't change
+	flushInterval :=  500 * time.Millisecond // this relies on timing; don't change
 	ce := NewEventsCountAggregator(&mockHTTPClient{}, "bs", flushInterval, util.MaxInt, logger.NewLogger(nil))
 
 	// Send 10 events for different flags

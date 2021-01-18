@@ -39,7 +39,7 @@ func main() {
 	}
 
 	unlaunchClient := factory.Client()
-	if err = unlaunchClient.BlockUntilReady(3 * time.Second); err != nil {
+	if err = unlaunchClient.AwaitUntilReady(3 * time.Second); err != nil {
 		fmt.Printf("Unlaunch Client wasn't ready %s\n", err)
 	}
 
@@ -52,13 +52,16 @@ func main() {
 	}
 }
 ```
-## How to use
+## Build Instructions
 
 To run all tests
 
 ```shell
 go test ./...
 ```
+
+## How to Publish
+Create a new tag on GitHub in the following format vx.y.z e.g. v0.0.1
 
 ## Submitting issues
 If you run into any problems, bugs, or have any questions or feedback, please report them using the [issues feature](https://github.com/unlaunch/go-sdk/issues). We'll respond to all issues usually within 24 to 48 hours.

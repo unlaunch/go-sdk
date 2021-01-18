@@ -106,9 +106,6 @@ func clientWithMocks() *UnlaunchClient {
 	mfs.ready = true
 
 	return &UnlaunchClient{
-		sdkKey:                "prod-server-abc",
-		pollingInterval:       2000,
-		httpTimeout:           3000,
 		FeatureStore:          mfs,
 		eventsRecorder:        &mockEventsRecorder{},
 		eventsCountAggregator: &mockEventsCountAggregator{},
@@ -182,7 +179,7 @@ func TestWhen_ClientIsReady_BlockUntilReadyFunctionReturnsImmediately(t *testing
 	reset()
 	c := clientWithMocks()
 
-	c.BlockUntilReady(50 * time.Hour)
+	c.AwaitUntilReady(50 * time.Hour)
 }
 
 func TestWhen_FeatureIsInStore_Then_UnlaunchFeatureIsReturned(t *testing.T) {

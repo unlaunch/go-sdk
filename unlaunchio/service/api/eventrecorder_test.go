@@ -11,7 +11,7 @@ import (
 
 func TestWhen_FlushIntervalIsHit_Then_ImpressionsArePosted(t *testing.T) {
 	reset()
-	flushInterval := 500 // this relies on timing; don't change
+	flushInterval :=  500 * time.Millisecond // this relies on timing; don't change
 
 	he := NewHTTPEventsRecorder(&mockHTTPClient{}, "bs", flushInterval, util.MaxInt, "impression", logger.NewLogger(nil))
 

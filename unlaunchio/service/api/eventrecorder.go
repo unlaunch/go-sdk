@@ -103,7 +103,7 @@ func (e *SimpleEventsRecorder) Record(event *dtos.Event) error {
 func NewHTTPEventsRecorder(
 	httpClient util.HTTPClient,
 	url string,
-	flushInterval int,
+	flushInterval time.Duration,
 	maxQueueSize int,
 	name string,
 	logger logger.Interface) *SimpleEventsRecorder {
@@ -116,6 +116,6 @@ func NewHTTPEventsRecorder(
 		maxQueueSize: maxQueueSize,
 		httpClient:   httpClient,
 	}
-	er.shutdown = util.Schedule(er.postMetrics, time.Duration(flushInterval)*time.Millisecond)
+	er.shutdown = util.Schedule(er.postMetrics, flushInterval)
 	return er
 }

@@ -114,7 +114,7 @@ func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
 
 func NewHTTPFeatureStore(
 	httpClient util.HTTPClient,
-	pollingInterval int,
+	pollingInterval time.Duration,
 	logger logger.Interface) FeatureStore {
 	httpStore := &HTTPFeatureStore{
 		httpClient:          httpClient,
@@ -123,7 +123,7 @@ func NewHTTPFeatureStore(
 		features:            nil,
 	}
 
-	httpStore.shutdownCh = util.RunImmediatelyAndSchedule(httpStore.fetchFlags, time.Duration(pollingInterval)*time.Millisecond)
+	httpStore.shutdownCh = util.RunImmediatelyAndSchedule(httpStore.fetchFlags, pollingInterval)
 
 	return httpStore
 }

@@ -2,92 +2,92 @@ package client
 
 import (
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
+	"time"
 )
 
-// UnlaunchClientConfig ...
+// UnlaunchClientConfig contains configuration parameters to fine-tune the client
 type UnlaunchClientConfig struct {
-	PollingInterval      int
-	MetricsFlushInterval int
+	PollingInterval      time.Duration
+	MetricsFlushInterval time.Duration
 	MetricsQueueSize     int
-	HTTPTimeout          int
+	HTTPTimeout          time.Duration
 	Host                 string
+	OfflineMode          bool
 	LoggerConfig         *logger.LogOptions
 }
 
 // DefaultConfig for our users. Not used anywhere internally
 func DefaultConfig() *UnlaunchClientConfig {
 	return &UnlaunchClientConfig{
-		PollingInterval:      15000,
-		HTTPTimeout:          3000,
+		PollingInterval:      60 * time.Second,
+		HTTPTimeout:          10 * time.Second,
 		Host:                 "https://api.unlaunch.io",
-		MetricsFlushInterval: 15000,
-		MetricsQueueSize:     100,
-		LoggerConfig: &logger.LogOptions{
-			Level:    "INFO",
-			Colorful: true,
-		},
+		MetricsFlushInterval: 40 * time.Second,
+		MetricsQueueSize:     500,
+		OfflineMode:          false,
+		LoggerConfig: 		  nil,
 	}
 }
 
-type configMinimumValues struct {
-	minPollingInterval      int
-	minHTTPTimeout          int
-	minMetricsFlushInterval int
-	minMetricsQueueSize     int
-	host                    string
+type configValues struct {
+	pollingInterval      time.Duration
+	httpTimeout          time.Duration
+	metricsFlushInterval time.Duration
+	metricsQueueSize     int
+	host                 string
 }
 
-var prodConfigMinValues = &configMinimumValues{
-	minPollingInterval:      60000,
-	minHTTPTimeout:          1000,
-	minMetricsFlushInterval: 45000,
-	minMetricsQueueSize:     500,
-	host:                    "https://api.unlaunch.io",
+// config minimums
+var minValues = &configValues{
+	pollingInterval:      15 * time.Second,
+	httpTimeout:          10 * time.Second,
+	metricsFlushInterval: 10 * time.Second,
+	metricsQueueSize:     10,
+	host:                 "https://api.unlaunch.io",
 }
 
-var debugConfigMinValues = &configMinimumValues{
-	minPollingInterval:      15000,
-	minHTTPTimeout:          1000,
-	minMetricsFlushInterval: 15000,
-	minMetricsQueueSize:     10,
-	host:                    "https://api.unlaunch.io",
-}
-
-func normalizeConfigValues(cfg *UnlaunchClientConfig, m *configMinimumValues) *UnlaunchClientConfig {
+func normalizeConfigValues(cfg *UnlaunchClientConfig, prod bool) *UnlaunchClientConfig {
 	var res *UnlaunchClientConfig
 
 	if cfg == nil {
-		res = &UnlaunchClientConfig{}
+		if prod {
+			return DefaultConfig()
+		} else {
+			return &UnlaunchClientConfig{
+				PollingInterval:      15 * time.Second,
+				HTTPTimeout:          10 * time.Second,
+				Host:                 "https://api.unlaunch.io",
+				MetricsFlushInterval: 15 * time.Second,
+				MetricsQueueSize:     20,
+				OfflineMode:          false,
+				LoggerConfig: 		  nil,
+			}
+		}
 	} else {
 		res = cfg
 	}
 
-	if res.PollingInterval < m.minPollingInterval {
-		res.PollingInterval = m.minPollingInterval
+	// make sure that no setting is set below its minimum value or is wrong
+	if res.PollingInterval  < minValues.pollingInterval {
+			res.PollingInterval = minValues.pollingInterval
 	}
 
-	if res.HTTPTimeout < m.minHTTPTimeout {
-		res.HTTPTimeout = m.minHTTPTimeout
+	if res.HTTPTimeout < minValues.httpTimeout {
+		res.HTTPTimeout = minValues.httpTimeout
 	}
 
-	if res.MetricsFlushInterval < m.minMetricsFlushInterval {
-		res.MetricsFlushInterval = m.minMetricsFlushInterval
+	if res.MetricsFlushInterval < minValues.metricsFlushInterval {
+		res.MetricsFlushInterval = minValues.metricsFlushInterval
 	}
 
-	if res.MetricsQueueSize < m.minMetricsQueueSize {
-		res.MetricsQueueSize = m.minMetricsQueueSize
+	if res.MetricsQueueSize < minValues.metricsQueueSize {
+		res.MetricsQueueSize = minValues.metricsQueueSize
 	}
 
 	if res.Host == "" {
 		res.Host = "https://api.unlaunch.io"
 	}
 
-	if res.LoggerConfig == nil {
-		res.LoggerConfig = &logger.LogOptions{
-			Level:    "INFO",
-			Colorful: true,
-		}
-	}
 
 	return res
 }

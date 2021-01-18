@@ -110,6 +110,7 @@ func normalizeOptions(opt *LogOptions) *LogOptions {
 
 	if opt == nil {
 		res = &LogOptions{}
+		res.Colorful = true
 	} else {
 		res = opt
 	}
@@ -133,6 +134,7 @@ func normalizeOptions(opt *LogOptions) *LogOptions {
 	if res.TraceWriter == nil {
 		res.TraceWriter = os.Stdout
 	}
+
 
 	switch res.Level {
 	case "ERROR", "WARN", "INFO", "DEBUG", "TRACE":

@@ -28,12 +28,12 @@ type simpleHTTPClient struct {
 func NewHTTPClient(
 	sdkKey string,
 	host string,
-	timeout int,
+	timeout time.Duration,
 	logger logger.Interface,
 ) HTTPClient {
 
 	client := &http.Client{
-		Timeout: time.Duration(timeout) * time.Millisecond,
+		Timeout: timeout,
 	}
 
 	return &simpleHTTPClient{

@@ -1,66 +1,58 @@
 package client
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestWhen_NullConfigIsPassedForProdSDKKey_Then_ValuesAreInitializedToReasonableDefaults(t *testing.T) {
 	f, _ := NewUnlaunchClientFactory("prod-server-abc", nil) // prod SDK key begins with "prod" prefix
 
-	if f.cfg.Host != prodConfigMinValues.host {
+	cfg := DefaultConfig()
+	if f.cfg.Host != cfg.Host {
 		t.Error("unexpected config value")
 	}
 
-	if f.cfg.PollingInterval != prodConfigMinValues.minPollingInterval {
+	if f.cfg.PollingInterval != cfg.PollingInterval {
 		t.Error("unexpected config value")
 	}
 
-	if f.cfg.MetricsFlushInterval != prodConfigMinValues.minMetricsFlushInterval {
+	if f.cfg.MetricsFlushInterval != cfg.MetricsFlushInterval {
 		t.Error("unexpected config value")
 	}
 
-	if f.cfg.MetricsQueueSize != prodConfigMinValues.minMetricsQueueSize {
+	if f.cfg.MetricsQueueSize != cfg.MetricsQueueSize {
 		t.Error("unexpected config value")
 	}
 }
 
 func TestWhen_NullConfigIsPassedForNonProdSDKKey_Then_ValuesAreInitializedToReasonableDefaults(t *testing.T) {
-	f, _ := NewUnlaunchClientFactory("xyz", nil) // pnon-rod SDK key don't have "prod" prefix
+	f, _ := NewUnlaunchClientFactory("xyz", nil) // non-prod SDK key don't have "prod" prefix
 
-	if f.cfg.Host != debugConfigMinValues.host {
-		t.Error("unexpected config value")
-	}
-
-	if f.cfg.PollingInterval != debugConfigMinValues.minPollingInterval {
-		t.Error("unexpected config value")
-	}
-
-	if f.cfg.MetricsFlushInterval != debugConfigMinValues.minMetricsFlushInterval {
-		t.Error("unexpected config value")
-	}
-
-	if f.cfg.MetricsQueueSize != debugConfigMinValues.minMetricsQueueSize {
+	if f.cfg.Host != "https://api.unlaunch.io" {
 		t.Error("unexpected config value")
 	}
 }
 
 func TestWhen_InvalidValuesArePassed_Then_TheyAreResetToEnvironmentDefaults(t *testing.T) {
 	cfg := &UnlaunchClientConfig{
-		PollingInterval:      1000,   // too aggressive; will be reset
-		MetricsFlushInterval: 120000, // ok
+		PollingInterval:      1 * time.Second,   // too aggressive; will be reset
+		MetricsFlushInterval: 120 * time.Second, // ok
 		MetricsQueueSize:     1,      // too aggressive; will be reset
-		HTTPTimeout:          1000,   // ok
+		HTTPTimeout:          1 * time.Second,   // ok
 	}
 
 	f, _ := NewUnlaunchClientFactory("prod-server-abc", cfg)
 
-	if f.cfg.PollingInterval != prodConfigMinValues.minPollingInterval {
+	if f.cfg.PollingInterval == 1 * time.Second {
 		t.Error("unexpected config value")
 	}
 
-	if f.cfg.MetricsFlushInterval != 120000 {
+	if f.cfg.MetricsFlushInterval != 120 * time.Second {
 		t.Error("unexpected config value")
 	}
 
-	if f.cfg.MetricsQueueSize != prodConfigMinValues.minMetricsQueueSize {
+	if f.cfg.MetricsQueueSize == 1 {
 		t.Error("unexpected config value")
 	}
 }
