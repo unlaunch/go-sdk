@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
+	"sync"
 	"testing"
 	"time"
 )
@@ -11,8 +12,12 @@ type mockHTTPClient struct {
 	returnValidJSON bool
 }
 
+var mockHTTPClientCallsMu = &sync.Mutex{}
 var mockHTTPClientCalls = make(map[string]bool) // to record function calls
 func (h *mockHTTPClient) Get(path string) ([]byte, error) {
+	mockHTTPClientCallsMu.Lock()
+	defer mockHTTPClientCallsMu.Unlock()
+
 	mockHTTPClientCalls["Get"] = true
 
 	if h.returnValidJSON {
@@ -29,19 +34,25 @@ func (h *mockHTTPClient) Post(path string, body []byte) error {
 
 func TestWhen_PollingIntervalIsHit_Then_FetchFlagsIsCalled(t *testing.T) {
 	reset()
+
+
 	_ = getHTTPFeatureStore()
 
 	time.Sleep(1 * time.Second)
 
+	mockHTTPClientCallsMu.Lock()
 	if !mockHTTPClientCalls["Get"] {
 		t.Error(fmt.Sprintf("Expected HTTP Get to be called"))
 	}
+	mockHTTPClientCallsMu.Unlock()
 
 	// wait for it to be called again
 	reset()
+	mockHTTPClientCallsMu.Lock()
 	if mockHTTPClientCalls["Get"] {
 		t.Error(fmt.Sprintf("Expected HTTP Get NOT to be called"))
 	}
+	mockHTTPClientCallsMu.Unlock()
 
 	time.Sleep(1 * time.Second)
 
@@ -83,5 +94,7 @@ func getHTTPFeatureStore() FeatureStore {
 }
 
 func reset() {
+	mockHTTPClientCallsMu.Lock()
+	defer mockHTTPClientCallsMu.Unlock()
 	mockHTTPClientCalls = make(map[string]bool)
 }
