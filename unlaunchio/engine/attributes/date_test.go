@@ -27,8 +27,18 @@ func TestDateOperators(t *testing.T) {
 	}
 
 	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug152009, "000"), 10, 64)
+	if dateOrDateTimeApply(dateAug162009, v, "GT", true) {
+		t.Errorf("GT shounldn't date should match")
+	}
+
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug152009, "000"), 10, 64)
 	if !dateOrDateTimeApply(dateAug162009, v, "LT", true) {
 		t.Errorf("LT date should match")
+	}
+
+	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug172009, "000"), 10, 64)
+	if dateOrDateTimeApply(dateAug162009, v, "LT", true) {
+		t.Errorf("LT date shouldn't match")
 	}
 
 	v, _ = strconv.ParseInt(strings.TrimSuffix(dateAug162009, "000"), 10, 64)
@@ -69,8 +79,18 @@ func TestDateTimeOperators(t *testing.T) {
 	}
 
 	v, _ = strconv.ParseInt(strings.TrimSuffix(time0, "000"), 10, 64)
+	if dateOrDateTimeApply(time1, v, "GT", false) {
+		t.Errorf("GT datetime shouldn't match")
+	}
+
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time0, "000"), 10, 64)
 	if !dateOrDateTimeApply(time1, v, "LT", false) {
 		t.Errorf("LT datetime should match")
+	}
+
+	v, _ = strconv.ParseInt(strings.TrimSuffix(time2, "000"), 10, 64)
+	if dateOrDateTimeApply(time1, v, "LT", false) {
+		t.Errorf("LT datetime shouldn't match")
 	}
 
 	if !dateOrDateTimeApply(time1, time.Now().UTC().Unix(), "GTE", false) {
