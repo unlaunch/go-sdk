@@ -2,12 +2,12 @@ package client
 
 import (
 	"errors"
+	"strings"
 	"github.com/unlaunch/go-sdk/unlaunchio/engine"
 	"github.com/unlaunch/go-sdk/unlaunchio/service"
 	"github.com/unlaunch/go-sdk/unlaunchio/service/api"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
-	"strings"
 )
 
 // UnlaunchFactory ...
@@ -27,7 +27,6 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 	var c *UnlaunchClientConfig
 	c = normalizeConfigValues(cfg, strings.HasPrefix(SDKKey, "prod"))
 
-
 	logging := logger.NewLogger(c.LoggerConfig)
 
 	return &UnlaunchFactory{
@@ -38,37 +37,55 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 }
 
 // Client ...
-func (f *UnlaunchFactory) Client() *UnlaunchClient {
+func (f *UnlaunchFactory) Client() ClientInterface {
 
 	// TODO: Create and pass HTTP client instead of sdkey key, host
 	// like eventsCount
 
-	eventsRecorder := api.NewHTTPEventsRecorder(
-		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
-		"/api/v1/impressions",
-		f.cfg.MetricsFlushInterval,
-		f.cfg.MetricsQueueSize,
-		"impressions",
-		f.logger)
+	if f.cfg.OfflineMode {
 
-	eventsCounts := api.NewEventsCountAggregator(
-		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
-		"/api/v1/events",
-		f.cfg.MetricsFlushInterval,
-		f.cfg.MetricsQueueSize,
-		f.logger)
+		f.logger.Info("offline mode ", f.cfg.OfflineMode)
 
-	hc := util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger)
+		return &OfflineClient{
+			FeatureStore: service.NewHTTPFeatureStore(
+				nil,
+				f.cfg.PollingInterval,
+				f.logger),
+			eventsRecorder:        nil,
+			eventsCountAggregator: nil,
+			logger:                f.logger,
+			evaluator:             engine.NewEvaluator(f.logger),
+		}
 
-	return &UnlaunchClient{
-		FeatureStore: service.NewHTTPFeatureStore(
-			hc,
-			f.cfg.PollingInterval,
-			f.logger),
-		eventsRecorder:        eventsRecorder,
-		eventsCountAggregator: eventsCounts,
-		logger:                f.logger,
-		evaluator:             engine.NewEvaluator(f.logger),
+	} else {
+
+		eventsRecorder := api.NewHTTPEventsRecorder(
+			util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
+			"/api/v1/impressions",
+			f.cfg.MetricsFlushInterval,
+			f.cfg.MetricsQueueSize,
+			"impressions",
+			f.logger)
+
+		eventsCounts := api.NewEventsCountAggregator(
+			util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
+			"/api/v1/events",
+			f.cfg.MetricsFlushInterval,
+			f.cfg.MetricsQueueSize,
+			f.logger)
+
+		hc := util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger)
+
+		return &SimpleClient{
+			FeatureStore: service.NewHTTPFeatureStore(
+				hc,
+				f.cfg.PollingInterval,
+				f.logger),
+			eventsRecorder:        eventsRecorder,
+			eventsCountAggregator: eventsCounts,
+			logger:                f.logger,
+			evaluator:             engine.NewEvaluator(f.logger),
+		}
 	}
 
 }

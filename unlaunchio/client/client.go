@@ -11,8 +11,8 @@ import (
 	"time"
 )
 
-// UnlaunchClient is the main interface for interacting with Unlaunch
-type UnlaunchClient struct {
+// SimpleClient is the main interface for interacting with Unlaunch
+type SimpleClient struct {
 	FeatureStore          service.FeatureStore
 	eventsRecorder        api.EventsRecorder
 	eventsCountAggregator api.EventsCountAggregator
@@ -22,7 +22,7 @@ type UnlaunchClient struct {
 }
 
 // Feature ...
-func (c *UnlaunchClient) Feature(
+func (c *SimpleClient) Feature(
 	featureKey string,
 	identity string,
 	attributes map[string]interface{},
@@ -30,13 +30,13 @@ func (c *UnlaunchClient) Feature(
 	return c.processFlagEvaluation(featureKey, identity, attributes)
 }
 
-func (c *UnlaunchClient) IsShutdown() bool {
+func (c *SimpleClient) IsShutdown() bool {
 	return c.shutdown
 }
 
 // Variation evaluates and returns the variation (variation key) for this feature. Variations are defined using the
 // Unlaunch console at https://app.unlaunch.io
-func (c *UnlaunchClient) Variation(
+func (c *SimpleClient) Variation(
 	featureKey string,
 	identity string,
 	attributes map[string]interface{},
@@ -45,7 +45,7 @@ func (c *UnlaunchClient) Variation(
 }
 
 // processFlagEvaluation evaluates a flag and then emits metrics
-func (c *UnlaunchClient) processFlagEvaluation(
+func (c *SimpleClient) processFlagEvaluation(
 	featureKey string,
 	identity string,
 	attributes map[string]interface{},
@@ -94,7 +94,7 @@ func (c *UnlaunchClient) processFlagEvaluation(
 	return ulf
 }
 
-func (c *UnlaunchClient) evaluateFlag(
+func (c *SimpleClient) evaluateFlag(
 	featureKey string,
 	identity string,
 	attributes map[string]interface{}) *dtos.UnlaunchFeature {
@@ -159,7 +159,7 @@ func (c *UnlaunchClient) evaluateFlag(
 }
 
 // AwaitUntilReady blocks until the client initialization is done or timeout occurs, whichever comes first
-func (c *UnlaunchClient) AwaitUntilReady(timeout time.Duration) error {
+func (c *SimpleClient) AwaitUntilReady(timeout time.Duration) error {
 	if c.FeatureStore.IsReady() {
 		return nil
 	}
@@ -177,7 +177,7 @@ func (c *UnlaunchClient) AwaitUntilReady(timeout time.Duration) error {
 }
 
 // Shutdown shuts down the client, and all associated go routines
-func (c *UnlaunchClient) Shutdown() {
+func (c *SimpleClient) Shutdown() {
 	if !c.shutdown {
 		c.FeatureStore.Shutdown()
 		c.eventsRecorder.Shutdown()
