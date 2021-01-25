@@ -47,12 +47,6 @@ func (f *UnlaunchFactory) Client() ClientInterface {
 		f.logger.Info("offline mode ", f.cfg.OfflineMode)
 
 		return &OfflineClient{
-			FeatureStore: service.NewHTTPFeatureStore(
-				nil,
-				f.cfg.PollingInterval,
-				f.logger),
-			eventsRecorder:        nil,
-			eventsCountAggregator: nil,
 			logger:                f.logger,
 			evaluator:             engine.NewEvaluator(f.logger),
 		}

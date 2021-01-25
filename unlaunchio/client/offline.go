@@ -94,6 +94,16 @@ func (c *OfflineClient) evaluateFlag(
 		}
 	}
 
+	if c.IsShutdown() {
+		c.logger.Error("Sdk has shutdown")
+		return &dtos.UnlaunchFeature{
+			Feature:                featureKey,
+			Variation:              "control",
+			VariationConfiguration: nil,
+			EvaluationReason:       "SDK has shutdown. Returning 'control' variation on shutdown.",
+		}
+	}
+
 	controlFeature := &dtos.UnlaunchFeature{
 		Feature:                featureKey,
 		Variation:              "control",
@@ -114,5 +124,7 @@ func (c *OfflineClient) AwaitUntilReady(timeout time.Duration) error {
 
 // Shutdown shuts down the client, and all associated go routines
 func (c *OfflineClient) Shutdown() {
-	// Do nothing same as Java Sdk
+	if !c.shutdown {
+		c.shutdown = true
+	}
 }
