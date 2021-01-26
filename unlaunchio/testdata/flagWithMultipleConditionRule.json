@@ -1,0 +1,91 @@
+    {
+      "key": "testing-desc",
+      "name": "testing desc",
+      "variations": [
+        {
+          "id": 883,
+          "key": "on",
+          "name": null,
+          "description": "",
+          "color": "#F0C24F",
+          "configs": {},
+          "order": 1,
+          "allowList": null
+        },
+        {
+          "id": 882,
+          "key": "off",
+          "name": null,
+          "description": "",
+          "color": "#153BA3",
+          "configs": {},
+          "order": 2,
+          "allowList": null
+        }
+      ],
+      "type": "string",
+      "state": "ACTIVE",
+      "offVariation": 882,
+      "rules": [
+        {
+          "id": 831,
+          "isDefault": false,
+          "delete": false,
+          "conditions": [
+            {
+              "id": 205,
+              "attributeId": 83,
+              "attribute": "device",
+              "type": "string",
+              "value": "ABCS",
+              "op": "EQ",
+              "delete": false
+            },
+            {
+              "id": 206,
+              "attributeId": 164,
+              "attribute": "registered",
+              "type": "boolean",
+              "value": "true",
+              "op": "EQ",
+              "delete": false
+            }
+          ],
+          "splits": [
+            {
+              "id": 1176,
+              "variationId": 883,
+              "rolloutPercentage": 100,
+              "delete": false
+            }
+          ],
+          "priority": 1
+        },
+        {
+          "id": 830,
+          "isDefault": true,
+          "delete": false,
+          "conditions": [],
+          "splits": [
+            {
+              "id": 1175,
+              "variationId": 882,
+              "rolloutPercentage": 100,
+              "delete": false
+            }
+          ],
+          "priority": 0
+        }
+      ],
+      "environments": null,
+      "createdAt": 1611602474018,
+      "lastModifiedAt": 1611602474018,
+      "clientSideAccess": false,
+      "archived": false,
+      "creator": "Fahmina",
+      "modifier": null,
+      "prerequisiteFlags": {},
+      "targetUsers": [],
+      "lastAccessedAt": null
+    }
+  
