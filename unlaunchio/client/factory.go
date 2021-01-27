@@ -27,7 +27,6 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 	var c *UnlaunchClientConfig
 	c = normalizeConfigValues(cfg, strings.HasPrefix(SDKKey, "prod"))
 
-
 	logging := logger.NewLogger(c.LoggerConfig)
 
 	return &UnlaunchFactory{
@@ -38,10 +37,17 @@ func NewUnlaunchClientFactory(SDKKey string, cfg *UnlaunchClientConfig) (*Unlaun
 }
 
 // Client ...
-func (f *UnlaunchFactory) Client() *UnlaunchClient {
+func (f *UnlaunchFactory) Client() Client {
 
 	// TODO: Create and pass HTTP client instead of sdkey key, host
 	// like eventsCount
+
+	if f.cfg.OfflineMode {
+		f.logger.Info("offline mode ", f.cfg.OfflineMode)
+		return &OfflineClient{
+			logger: f.logger,
+		}
+	}
 
 	eventsRecorder := api.NewHTTPEventsRecorder(
 		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
@@ -60,7 +66,7 @@ func (f *UnlaunchFactory) Client() *UnlaunchClient {
 
 	hc := util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger)
 
-	return &UnlaunchClient{
+	return &SimpleClient{
 		FeatureStore: service.NewHTTPFeatureStore(
 			hc,
 			f.cfg.PollingInterval,

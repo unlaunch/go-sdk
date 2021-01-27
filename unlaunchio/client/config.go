@@ -25,7 +25,7 @@ func DefaultConfig() *UnlaunchClientConfig {
 		MetricsFlushInterval: 45 * time.Second,
 		MetricsQueueSize:     500,
 		OfflineMode:          false,
-		LoggerConfig: 		  nil,
+		LoggerConfig:         nil,
 	}
 }
 
@@ -52,24 +52,23 @@ func normalizeConfigValues(cfg *UnlaunchClientConfig, prod bool) *UnlaunchClient
 	if cfg == nil {
 		if prod {
 			return DefaultConfig()
-		} else {
-			return &UnlaunchClientConfig{
-				PollingInterval:      15 * time.Second,
-				HTTPTimeout:          10 * time.Second,
-				Host:                 "https://api.unlaunch.io",
-				MetricsFlushInterval: 15 * time.Second,
-				MetricsQueueSize:     20,
-				OfflineMode:          false,
-				LoggerConfig: 		  nil,
-			}
 		}
-	} else {
-		res = cfg
+		return &UnlaunchClientConfig{
+			PollingInterval:      15 * time.Second,
+			HTTPTimeout:          10 * time.Second,
+			Host:                 "https://api.unlaunch.io",
+			MetricsFlushInterval: 15 * time.Second,
+			MetricsQueueSize:     20,
+			OfflineMode:          false,
+			LoggerConfig:         nil,
+		}
 	}
 
+	res = cfg
+
 	// make sure that no setting is set below its minimum value or is wrong
-	if res.PollingInterval  < minValues.pollingInterval {
-			res.PollingInterval = minValues.pollingInterval
+	if res.PollingInterval < minValues.pollingInterval {
+		res.PollingInterval = minValues.pollingInterval
 	}
 
 	if res.HTTPTimeout < minValues.httpTimeout {
@@ -87,7 +86,6 @@ func normalizeConfigValues(cfg *UnlaunchClientConfig, prod bool) *UnlaunchClient
 	if res.Host == "" {
 		res.Host = "https://api.unlaunch.io"
 	}
-
 
 	return res
 }

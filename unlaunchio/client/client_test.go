@@ -102,10 +102,10 @@ func (e *mockFeatureStore) IsReady() bool {
 
 var mfs = &mockFeatureStore{}
 
-func clientWithMocks() *UnlaunchClient {
+func clientWithMocks() *SimpleClient {
 	mfs.ready = true
 
-	return &UnlaunchClient{
+	return &SimpleClient{
 		FeatureStore:          mfs,
 		eventsRecorder:        &mockEventsRecorder{},
 		eventsCountAggregator: &mockEventsCountAggregator{},
