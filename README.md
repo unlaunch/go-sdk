@@ -52,6 +52,16 @@ func main() {
 	}
 }
 ```
+### Offline Mode
+
+You can start the SDK in offline mode for testing purposes. In offline mode, flags aren't downloaded from the server and no data is sent. All calls to `Variation` or its variants will return `control`. Read more in the official guide.
+
+To set offline mode :
+```
+config := client.DefaultConfig()
+config.OfflineMode = true
+```
+
 ## Build Instructions
 
 To run all tests
