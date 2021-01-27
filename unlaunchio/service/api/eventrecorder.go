@@ -16,14 +16,15 @@ type EventsRecorder interface {
 }
 
 type SimpleEventsRecorder struct {
-	logger       logger.Interface
-	url          string
-	httpClient   util.HTTPClient
-	queue        *list.List
-	queueMu      *sync.Mutex
-	maxQueueSize int
-	name         string
-	shutdown     chan bool
+	enableImpressions bool
+	logger            logger.Interface
+	url               string
+	httpClient        util.HTTPClient
+	queue             *list.List
+	queueMu           *sync.Mutex
+	maxQueueSize      int
+	name              string
+	shutdown          chan bool
 }
 
 const itemsToSendInBatch = 500
@@ -82,7 +83,11 @@ func (e *SimpleEventsRecorder) flush() {
 }
 
 func (e *SimpleEventsRecorder) Record(event *dtos.Event) error {
-	if event == nil {
+	if  event == nil {
+		return nil
+	}
+
+	if !e.enableImpressions && event.Type == "IMPRESSION" {
 		return nil
 	}
 
@@ -101,6 +106,7 @@ func (e *SimpleEventsRecorder) Record(event *dtos.Event) error {
 }
 
 func NewHTTPEventsRecorder(
+	enableImpressions bool,
 	httpClient util.HTTPClient,
 	url string,
 	flushInterval time.Duration,
@@ -108,13 +114,14 @@ func NewHTTPEventsRecorder(
 	name string,
 	logger logger.Interface) *SimpleEventsRecorder {
 	er := &SimpleEventsRecorder{
-		logger:       logger,
-		url:          url,
-		queue:        list.New(),
-		queueMu:      &sync.Mutex{},
-		name:         name,
-		maxQueueSize: maxQueueSize,
-		httpClient:   httpClient,
+		enableImpressions: enableImpressions,
+		logger:            logger,
+		url:               url,
+		queue:             list.New(),
+		queueMu:           &sync.Mutex{},
+		name:              name,
+		maxQueueSize:      maxQueueSize,
+		httpClient:        httpClient,
 	}
 	er.shutdown = util.Schedule(er.postMetrics, flushInterval)
 	return er

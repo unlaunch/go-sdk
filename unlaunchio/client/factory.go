@@ -50,6 +50,7 @@ func (f *UnlaunchFactory) Client() Client {
 	}
 
 	eventsRecorder := api.NewHTTPEventsRecorder(
+		false,
 		util.NewHTTPClient(f.sdkKey, f.cfg.Host, f.cfg.HTTPTimeout, f.logger),
 		"/api/v1/impressions",
 		f.cfg.MetricsFlushInterval,
