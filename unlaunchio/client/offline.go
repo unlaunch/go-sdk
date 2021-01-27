@@ -5,20 +5,13 @@ import (
 	"time"
 
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
-	"github.com/unlaunch/go-sdk/unlaunchio/engine"
-	"github.com/unlaunch/go-sdk/unlaunchio/service"
-	"github.com/unlaunch/go-sdk/unlaunchio/service/api"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
 )
 
 // OfflineClient is the main interface for interacting with Unlaunch
 type OfflineClient struct {
-	FeatureStore          service.FeatureStore
-	eventsRecorder        api.EventsRecorder
-	eventsCountAggregator api.EventsCountAggregator
 	logger                logger.Interface
 	shutdown              bool
-	evaluator             engine.Evaluator
 }
 
 // Feature ...
@@ -30,6 +23,7 @@ func (c *OfflineClient) Feature(
 	return c.processFlagEvaluation(featureKey, identity, attributes)
 }
 
+// IsShutdown returns true if the client is shutdown
 func (c *OfflineClient) IsShutdown() bool {
 	return c.shutdown
 }

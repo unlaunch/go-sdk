@@ -30,6 +30,7 @@ func (c *SimpleClient) Feature(
 	return c.processFlagEvaluation(featureKey, identity, attributes)
 }
 
+// IsShutdown returns true if the client has already shutdown
 func (c *SimpleClient) IsShutdown() bool {
 	return c.shutdown
 }

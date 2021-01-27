@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func offlineClient() ClientInterface {
+func offlineClient() Client {
 
 	cfg := DefaultConfig()
 	cfg.OfflineMode = true
@@ -34,9 +34,9 @@ func TestWhen_OfflineMode_CallFeature(t *testing.T) {
 	if f.Variation != "control" {
 		t.Errorf("Expected '%s'. Got '%s'", "control", f.Variation)
 	}
-	expectedReson := "Client is initialized in Offline Mode. Returning 'control' variation for all flags."
-	if f.EvaluationReason != expectedReson {
-		t.Errorf("Expected '%s'. Got '%s'", expectedReson, f.EvaluationReason)
+	expectedReason := "Client is initialized in Offline Mode. Returning 'control' variation for all flags."
+	if f.EvaluationReason != expectedReason {
+		t.Errorf("Expected '%s'. Got '%s'", expectedReason, f.EvaluationReason)
 	}
 }
 
