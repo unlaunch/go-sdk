@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"sort"
+	"time"
+
 	"github.com/unlaunch/go-sdk/unlaunchio/dtos"
 	"github.com/unlaunch/go-sdk/unlaunchio/util"
 	"github.com/unlaunch/go-sdk/unlaunchio/util/logger"
-	"sort"
-	"time"
 )
 
 type HTTPFeatureStore struct {
@@ -17,6 +18,8 @@ type HTTPFeatureStore struct {
 	features            map[string]dtos.Feature
 	initialSyncComplete bool
 	shutdownCh          chan bool
+	sync0Complete       bool
+	res                 []byte
 }
 
 func (h *HTTPFeatureStore) Shutdown() {
@@ -25,30 +28,42 @@ func (h *HTTPFeatureStore) Shutdown() {
 }
 
 func (h *HTTPFeatureStore) fetchFlags() error {
-	res, err := h.httpClient.Get("/api/v1/flags")
+	var res []byte
+	var err error
+	if !h.sync0Complete {
+		res, err = h.httpClient.Get("/api/v1/flags")
 
-	if err != nil {
-		if httpError, ok := err.(*dtos.HTTPError); ok {
-			if httpError.Code == 403 {
-				h.logger.Error(
-					fmt.Sprintf("The API key you provided was rejected by the server. %s", util.SDKKeyHelpMessage))
+		if err != nil {
+			if httpError, ok := err.(*dtos.HTTPError); ok {
+				if httpError.Code == 403 {
+					h.logger.Error(
+						fmt.Sprintf("The API key you provided was rejected by the server. %s", util.SDKKeyHelpMessage))
+				}
+			} else {
+				h.logger.Error("error fetching flags ", err)
+				return err
 			}
-		} else {
-			h.logger.Error("error fetching flags ", err)
-			return err
 		}
+
+		if res == nil {
+			// No error and empty response means nothing changed
+			// most like due to 304; not modified
+			return nil
+		}
+
+		h.logger.Trace("responseDto ", string(res))
+
+	} else {
+		res = h.res
 	}
 
-	if res == nil {
-		// No error and empty response means nothing changed
-		// most like due to 304; not modified
-		return nil
-	}
+	return h.initFeatureMap(res)
 
-	h.logger.Trace("responseDto ", string(res))
+}
 
+func (h *HTTPFeatureStore) initFeatureMap(res []byte) error {
 	var responseDto dtos.TopLevelEnvelope
-	err = json.Unmarshal(res, &responseDto)
+	err := json.Unmarshal(res, &responseDto)
 
 	if err != nil {
 		h.logger.Error("error parsing feature flag JSON response ", err)
@@ -77,6 +92,7 @@ func (h *HTTPFeatureStore) fetchFlags() error {
 	h.features = temp
 
 	h.logger.Debug("Downloaded: ", len(h.features))
+
 	return nil
 }
 
@@ -115,12 +131,16 @@ func (h *HTTPFeatureStore) Ready(timeout time.Duration) {
 func NewHTTPFeatureStore(
 	httpClient util.HTTPClient,
 	pollingInterval time.Duration,
-	logger logger.Interface) FeatureStore {
+	logger logger.Interface,
+	sync0Complete bool,
+	res []byte) FeatureStore {
 	httpStore := &HTTPFeatureStore{
 		httpClient:          httpClient,
 		logger:              logger,
 		initialSyncComplete: false,
 		features:            nil,
+		sync0Complete:       sync0Complete,
+		res:                 res,
 	}
 
 	httpStore.shutdownCh = util.RunImmediatelyAndSchedule(httpStore.fetchFlags, pollingInterval)
