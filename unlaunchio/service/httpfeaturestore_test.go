@@ -75,7 +75,7 @@ func TestWhen_DataIsReturned_Then_FeatureStoreIsReady(t *testing.T) {
 	h := &mockHTTPClient{}
 	h.returnValidJSON = true
 
-	fs := NewHTTPFeatureStore(h, 100000000, logger.NewLogger(nil))
+	fs := NewHTTPFeatureStore(h, 100000000, logger.NewLogger(nil), false, nil)
 
 	time.Sleep(100 * time.Millisecond)
 
@@ -89,7 +89,7 @@ func getHTTPFeatureStore() FeatureStore {
 	h := NewHTTPFeatureStore(
 		&mockHTTPClient{},
 		900,
-		logger.NewLogger(nil))
+		logger.NewLogger(nil), false, nil)
 	return h
 }
 
